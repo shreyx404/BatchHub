@@ -1,6 +1,26 @@
 import { supabase, isSupabaseConfigured } from './supabase';
 import { DEMO_POSTS, DEMO_SUBJECTS } from './demoData';
 
+async function adminRequest(action, payload) {
+  const token = sessionStorage.getItem('batchhub_admin_token');
+  const response = await fetch('/api/admin', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { 'Authorization': `Bearer ${token}` }),
+    },
+    body: JSON.stringify({ action, payload })
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Admin request failed');
+  }
+
+  const { data } = await response.json();
+  return data;
+}
+
 /* ============================================================
    Posts API
    ============================================================ */
@@ -108,14 +128,7 @@ export async function createPost(postData) {
     return newPost;
   }
 
-  const { data, error } = await supabase
-    .from('posts')
-    .insert(postData)
-    .select('*, subjects(*), attachments(*)')
-    .single();
-
-  if (error) throw error;
-  return data;
+  return await adminRequest('createPost', postData);
 }
 
 /**
@@ -129,15 +142,7 @@ export async function updatePost(id, updates) {
     return DEMO_POSTS[idx];
   }
 
-  const { data, error } = await supabase
-    .from('posts')
-    .update(updates)
-    .eq('id', id)
-    .select('*, subjects(*), attachments(*)')
-    .single();
-
-  if (error) throw error;
-  return data;
+  return await adminRequest('updatePost', { id, updates });
 }
 
 /**
@@ -150,8 +155,7 @@ export async function deletePost(id) {
     return;
   }
 
-  const { error } = await supabase.from('posts').delete().eq('id', id);
-  if (error) throw error;
+  await adminRequest('deletePost', { id });
 }
 
 /* ============================================================
@@ -179,14 +183,7 @@ export async function createSubject(subjectData) {
     return newSubject;
   }
 
-  const { data, error } = await supabase
-    .from('subjects')
-    .insert(subjectData)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
+  return await adminRequest('createSubject', subjectData);
 }
 
 export async function updateSubject(id, updates) {
@@ -197,15 +194,7 @@ export async function updateSubject(id, updates) {
     return DEMO_SUBJECTS[idx];
   }
 
-  const { data, error } = await supabase
-    .from('subjects')
-    .update(updates)
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
+  return await adminRequest('updateSubject', { id, updates });
 }
 
 export async function deleteSubject(id) {
@@ -215,8 +204,7 @@ export async function deleteSubject(id) {
     return;
   }
 
-  const { error } = await supabase.from('subjects').delete().eq('id', id);
-  if (error) throw error;
+  await adminRequest('deleteSubject', { id });
 }
 
 /* ============================================================
@@ -257,21 +245,13 @@ export async function createAttachment(attachmentData) {
     return { id: `demo-att-${Date.now()}`, ...attachmentData, created_at: new Date().toISOString() };
   }
 
-  const { data, error } = await supabase
-    .from('attachments')
-    .insert(attachmentData)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
+  return await adminRequest('createAttachment', attachmentData);
 }
 
 export async function deleteAttachment(id) {
   if (!isSupabaseConfigured()) return;
 
-  const { error } = await supabase.from('attachments').delete().eq('id', id);
-  if (error) throw error;
+  await adminRequest('deleteAttachment', { id });
 }
 
 /* ============================================================
