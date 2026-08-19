@@ -49,7 +49,7 @@ export default function PostCard({ post }) {
         </div>
 
         {/* Title — Playfair Display, generous size, tight leading */}
-        <h3 className="font-display font-medium text-[1.5rem] sm:text-[1.75rem] text-[var(--color-text)] line-clamp-3 transition-colors duration-500 leading-[1.15] tracking-[-0.015em] group-hover:text-[var(--hover-border-color)]">
+        <h3 className="font-display font-medium text-[1.5rem] sm:text-[1.75rem] text-[var(--color-text)] transition-colors duration-500 leading-[1.15] tracking-[-0.015em] group-hover:text-[var(--hover-border-color)]">
           {post.title}
         </h3>
 

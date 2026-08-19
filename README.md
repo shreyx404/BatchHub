@@ -11,7 +11,9 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 - 📋 View detailed posts with markdown content
 - 📎 Download attachments
 - 📅 See upcoming deadlines (automatically unpinned when passed)
-- 📌 Pinned important updates and highlighted notices
+- 📌 Pinned important updates
+- 📢 Highlighted Notices & Important section at the top of the feed
+- 🗂️ Structured feed: Notices → Pinned → Deadline-sorted → General updates
 - 🔗 Deep links for sharing on WhatsApp
 
 ### Admin (BR)
@@ -119,7 +121,7 @@ src/
 ├── components/
 │   ├── layout/           # Header, Footer
 │   ├── ui/               # Badges, search, filters, modals
-│   ├── posts/            # Post cards, grid, deadlines
+│   ├── posts/            # Post cards, grid, deadlines, notices section
 │   └── admin/            # Admin forms, tables, sidebar
 └── pages/                # Route pages
 
