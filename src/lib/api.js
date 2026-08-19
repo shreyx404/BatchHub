@@ -50,7 +50,24 @@ export async function fetchPosts({ type, subjectId, search, status = 'published'
 
   const { data, error } = await query;
   if (error) throw error;
-  return data;
+
+  // Dynamic unpinning: if a post is pinned but its due date has passed, treat it as unpinned.
+  const now = new Date();
+  const processedData = data.map(post => {
+    if (post.is_pinned && post.due_date && new Date(post.due_date) < now) {
+      return { ...post, is_pinned: false };
+    }
+    return post;
+  });
+
+  // Since we modified is_pinned, we must re-sort the data client-side.
+  // Supabase already sorted it, but the DB still thinks the overdue ones are pinned.
+  processedData.sort((a, b) => {
+    if (a.is_pinned !== b.is_pinned) return b.is_pinned ? 1 : -1;
+    return new Date(b.created_at) - new Date(a.created_at);
+  });
+
+  return processedData;
 }
 
 /**
@@ -274,6 +291,14 @@ function filterDemoPosts({ type, subjectId, search, status }) {
         (p.content && p.content.toLowerCase().includes(q))
     );
   }
+  const now = new Date();
+  filtered = filtered.map(post => {
+    if (post.is_pinned && post.due_date && new Date(post.due_date) < now) {
+      return { ...post, is_pinned: false };
+    }
+    return post;
+  });
+
   // Pinned first, then by created_at desc
   filtered.sort((a, b) => {
     if (a.is_pinned !== b.is_pinned) return b.is_pinned ? 1 : -1;
