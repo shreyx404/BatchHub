@@ -6,6 +6,7 @@ import FilterBar from '../components/ui/FilterBar';
 import PostGrid from '../components/posts/PostGrid';
 import DeadlineBanner from '../components/posts/DeadlineBanner';
 import PinnedSection from '../components/posts/PinnedSection';
+import NoticesSection from '../components/posts/NoticesSection';
 import LoadingState from '../components/ui/LoadingState';
 import ErrorState from '../components/ui/ErrorState';
 import { usePosts, useUpcomingDeadlines } from '../hooks/usePosts';
@@ -36,11 +37,38 @@ export default function HomePage() {
   const { deadlines, loading: deadlinesLoading } = useUpcomingDeadlines();
   const { subjects } = useSubjects();
 
-  // Only show pinned section when no filters are active
-  const showPinned = !selectedType && !selectedSubject && !debouncedSearch;
+  // Only show structured sections when no filters are active
+  const showStructured = !selectedType && !selectedSubject && !debouncedSearch;
 
-  // Separate non-pinned posts when showing pinned section
-  const displayPosts = showPinned ? posts.filter((p) => !p.is_pinned) : posts;
+  // Categorise posts for structured "All Updates" view
+  const { noticePosts, pinnedPosts, withDeadline, withoutDeadline, remainingPosts } = useMemo(() => {
+    if (!showStructured) {
+      return { noticePosts: [], pinnedPosts: [], withDeadline: [], withoutDeadline: [], remainingPosts: posts };
+    }
+
+    // 1. Notices & Important (highlighted at top)
+    const notices = posts.filter((p) => p.type === 'notice' || p.type === 'important');
+    const noticeIds = new Set(notices.map((p) => p.id));
+
+    // 2. Pinned posts (excluding ones already in notices)
+    const pinned = posts.filter((p) => p.is_pinned && !noticeIds.has(p.id));
+    const pinnedIds = new Set(pinned.map((p) => p.id));
+
+    // 3 & 4. Remaining posts (not notice/important, not pinned)
+    const rest = posts.filter((p) => !noticeIds.has(p.id) && !pinnedIds.has(p.id));
+
+    // Posts WITH due dates — sorted ascending (soonest deadline first)
+    const hasDue = rest
+      .filter((p) => p.due_date)
+      .sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
+
+    // Posts WITHOUT due dates — sorted by created_at ascending (first come first serve)
+    const noDue = rest
+      .filter((p) => !p.due_date)
+      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+    return { noticePosts: notices, pinnedPosts: pinned, withDeadline: hasDue, withoutDeadline: noDue, remainingPosts: [] };
+  }, [posts, showStructured]);
 
   return (
     <div className="min-h-dvh flex flex-col bg-[var(--color-bg)]">
@@ -92,28 +120,69 @@ export default function HomePage() {
           subjects={subjects}
         />
 
-        {/* Pinned section */}
-        {showPinned && !loading && <PinnedSection posts={posts} />}
-
-        {/* Main post grid */}
+        {/* Main content */}
         {error ? (
           <ErrorState message={error} onRetry={refetch} />
         ) : loading ? (
           <LoadingState />
-        ) : (
+        ) : showStructured ? (
           <>
-            {showPinned && displayPosts.length > 0 && (
+            {/* All Updates heading */}
+            {posts.length > 0 && (
               <div className="flex items-center gap-2 pt-3">
                 <h2 className="text-[var(--text-sm)] font-medium tracking-[0.02em] text-[var(--color-text)]">
                   All Updates
                 </h2>
                 <span className="text-[var(--text-xs)] font-light text-[var(--color-text-dim)]">
-                  ({displayPosts.length})
+                  ({posts.length})
                 </span>
               </div>
             )}
-            <PostGrid posts={displayPosts} loading={loading} />
+
+            {/* 1. Notices & Important — highlighted section */}
+            <NoticesSection posts={posts} />
+
+            {/* 2. Pinned posts */}
+            <PinnedSection posts={posts} />
+
+            {/* 3. Posts with due dates — ascending by deadline */}
+            {withDeadline.length > 0 && (
+              <div className="space-y-0">
+                <div className="flex items-center gap-2 mb-3">
+                  <h3 className="text-[10px] font-medium text-[var(--color-text-dim)] tracking-[0.1em] uppercase">
+                    Upcoming Deadlines
+                  </h3>
+                  <span className="text-[10px] font-light text-[var(--color-text-dim)]">
+                    ({withDeadline.length})
+                  </span>
+                </div>
+                <PostGrid posts={withDeadline} loading={false} />
+              </div>
+            )}
+
+            {/* 4. Posts without due dates — FCFS (created_at ascending) */}
+            {withoutDeadline.length > 0 && (
+              <div className="space-y-0">
+                <div className="flex items-center gap-2 mb-3">
+                  <h3 className="text-[10px] font-medium text-[var(--color-text-dim)] tracking-[0.1em] uppercase">
+                    General Updates
+                  </h3>
+                  <span className="text-[10px] font-light text-[var(--color-text-dim)]">
+                    ({withoutDeadline.length})
+                  </span>
+                </div>
+                <PostGrid posts={withoutDeadline} loading={false} />
+              </div>
+            )}
+
+            {/* Empty state when no posts at all */}
+            {posts.length === 0 && (
+              <PostGrid posts={[]} loading={false} />
+            )}
           </>
+        ) : (
+          /* Filtered view — flat list, no sections */
+          <PostGrid posts={remainingPosts.length > 0 ? remainingPosts : posts} loading={loading} />
         )}
       </main>
 

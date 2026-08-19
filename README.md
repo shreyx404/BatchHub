@@ -10,8 +10,8 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 - 🔍 Browse, search, and filter updates
 - 📋 View detailed posts with markdown content
 - 📎 Download attachments
-- 📅 See upcoming deadlines
-- 📌 Pinned important updates
+- 📅 See upcoming deadlines (automatically unpinned when passed)
+- 📌 Pinned important updates and highlighted notices
 - 🔗 Deep links for sharing on WhatsApp
 
 ### Admin (BR)
@@ -58,7 +58,9 @@ Edit `.env.local` with your Supabase credentials, admin password, and optionally
 ```env
 VITE_SUPABASE_URL=your-supabase-url
 VITE_SUPABASE_ANON_KEY=your-anon-key
-VITE_ADMIN_PASSWORD=your-secure-password
+
+# Server-side secrets (No VITE_ prefix!)
+ADMIN_PASSWORD=your-secure-password
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key (Required for Admin Dashboard & Discord)
 DISCORD_PUBLIC_KEY=your-discord-public-key (Optional, for Discord Bot)
 ```
