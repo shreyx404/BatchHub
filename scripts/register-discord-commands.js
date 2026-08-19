@@ -42,6 +42,24 @@ const commands = [
         description: 'The detailed description or body of the post',
         type: 3, // STRING type
         required: false,
+      },
+      {
+        name: 'due_date',
+        description: 'Due date (e.g., 2025-10-31)',
+        type: 3, // STRING type
+        required: false,
+      },
+      {
+        name: 'is_pinned',
+        description: 'Pin this post to the top?',
+        type: 5, // BOOLEAN type
+        required: false,
+      },
+      {
+        name: 'tags',
+        description: 'Comma separated tags (e.g., math, urgent)',
+        type: 3, // STRING type
+        required: false,
       }
     ]
   }

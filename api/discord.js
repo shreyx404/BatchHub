@@ -71,10 +71,20 @@ export default async function handler(req, res) {
     const titleOpt = options.find(opt => opt.name === 'title');
     const typeOpt = options.find(opt => opt.name === 'type');
     const contentOpt = options.find(opt => opt.name === 'content');
+    const dueOpt = options.find(opt => opt.name === 'due_date');
+    const pinOpt = options.find(opt => opt.name === 'is_pinned');
+    const tagsOpt = options.find(opt => opt.name === 'tags');
     
     const title = titleOpt ? titleOpt.value : 'Untitled';
     const postType = typeOpt ? typeOpt.value : 'notice';
     const content = contentOpt ? contentOpt.value : '';
+    const due_date = dueOpt ? dueOpt.value : null;
+    const is_pinned = pinOpt ? pinOpt.value : false;
+    
+    let tags = [];
+    if (tagsOpt && tagsOpt.value) {
+      tags = tagsOpt.value.split(',').map(t => t.trim());
+    }
 
     // Initialize Supabase with the SERVICE_ROLE key to bypass RLS policies
     const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
@@ -99,7 +109,10 @@ export default async function handler(req, res) {
           type: postType,
           content,
           status: 'published',
-          created_by: 'Discord Bot'
+          created_by: 'Discord Bot',
+          due_date,
+          is_pinned,
+          tags
         }
       ]);
 
