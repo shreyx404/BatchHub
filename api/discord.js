@@ -120,7 +120,7 @@ export default async function handler(req, res) {
       console.error("Supabase Error:", error);
       return res.status(200).json({
         type: 4,
-        data: { content: `❌ Failed to create post: ${error.message}` }
+        data: { content: '❌ Something went wrong while creating the post. Please try again.' }
       });
     }
 

@@ -195,7 +195,12 @@ export default function PostForm({ existingPost, onSaved }) {
       >
         {showPreview ? (
           <div className="min-h-[200px] p-4 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-border)] prose">
-            <ReactMarkdown>{form.content || '*No content yet*'}</ReactMarkdown>
+            <ReactMarkdown
+              disallowedElements={['script', 'iframe', 'object', 'embed']}
+              unwrapDisallowed
+            >
+              {form.content || '*No content yet*'}
+            </ReactMarkdown>
           </div>
         ) : (
           <textarea

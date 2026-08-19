@@ -43,7 +43,9 @@ export async function fetchPosts({ type, subjectId, search, status = 'published'
   if (type) query = query.eq('type', type);
   if (subjectId) query = query.eq('subject_id', subjectId);
   if (search) {
-    query = query.or(`title.ilike.%${search}%,content.ilike.%${search}%`);
+    // Escape PostgREST/SQL wildcard characters to prevent filter manipulation
+    const escaped = search.replace(/[%_\\]/g, '\\$&');
+    query = query.or(`title.ilike.%${escaped}%,content.ilike.%${escaped}%`);
   }
 
   const { data, error } = await query;
@@ -221,7 +223,9 @@ export async function uploadFile(file) {
     };
   }
 
-  const fileName = `${Date.now()}-${file.name}`;
+  // Use crypto UUID + sanitized filename to prevent collisions and path traversal
+  const sanitizedName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+  const fileName = `${crypto.randomUUID()}-${sanitizedName}`;
   const { error: uploadError } = await supabase.storage
     .from('attachments')
     .upload(fileName, file);

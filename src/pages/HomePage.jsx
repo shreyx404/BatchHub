@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import SearchBar from '../components/ui/SearchBar';
@@ -20,10 +20,11 @@ export default function HomePage() {
 
   // Debounced search
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const searchTimerRef = useRef(null);
   const handleSearch = useCallback((val) => {
     setSearch(val);
-    clearTimeout(window.__bh_search_timer);
-    window.__bh_search_timer = setTimeout(() => setDebouncedSearch(val), 300);
+    clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(() => setDebouncedSearch(val), 300);
   }, []);
 
   const filters = useMemo(

@@ -51,6 +51,7 @@ export default function FileUploader({ files, onFilesChange }) {
           ref={inputRef}
           type="file"
           multiple
+          accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.webp,.zip,.txt,.csv,.md"
           className="hidden"
           onChange={(e) => handleFiles(e.target.files)}
         />

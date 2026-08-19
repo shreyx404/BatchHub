@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { fetchSubjects } from '../lib/api';
 
 export function useSubjects() {
@@ -6,7 +6,7 @@ export function useSubjects() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  async function load() {
+  const load = useCallback(async () => {
     try {
       setLoading(true);
       const data = await fetchSubjects();
@@ -16,11 +16,12 @@ export function useSubjects() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   return { subjects, loading, error, refetch: load };
 }
+

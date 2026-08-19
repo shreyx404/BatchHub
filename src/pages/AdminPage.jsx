@@ -179,7 +179,7 @@ function EditPostWrapper() {
       .then(setPost)
       .catch(() => navigate('/admin/posts'))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, navigate]);
 
   if (loading) return <div className="flex justify-center py-16"><div className="w-6 h-6 rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-accent)] animate-spin" /></div>;
   if (!post) return null;

@@ -95,7 +95,12 @@ export default function PostPage() {
         {/* Content */}
         {post.content && (
           <div className="prose mb-8">
-            <ReactMarkdown>{post.content}</ReactMarkdown>
+            <ReactMarkdown
+              disallowedElements={['script', 'iframe', 'object', 'embed']}
+              unwrapDisallowed
+            >
+              {post.content}
+            </ReactMarkdown>
           </div>
         )}
 

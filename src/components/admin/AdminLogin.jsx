@@ -7,7 +7,7 @@ export default function AdminLogin({ onLogin }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -17,14 +17,18 @@ export default function AdminLogin({ onLogin }) {
     }
 
     setLoading(true);
-    // Small delay for UX
-    setTimeout(() => {
-      const success = onLogin(password);
-      if (!success) {
+    try {
+      const result = await onLogin(password);
+      if (result === 'rate_limited') {
+        setError('Too many failed attempts. Please try again later.');
+      } else if (!result) {
         setError('Invalid password. Please try again.');
       }
+    } catch {
+      setError('Something went wrong. Please try again.');
+    } finally {
       setLoading(false);
-    }, 300);
+    }
   };
 
   return (

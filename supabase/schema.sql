@@ -95,7 +95,7 @@ ALTER TABLE attachments ENABLE ROW LEVEL SECURITY;
 
 -- Public read access (anon can SELECT)
 CREATE POLICY "Public read subjects"  ON subjects  FOR SELECT USING (true);
-CREATE POLICY "Public read posts"     ON posts     FOR SELECT USING (true);
+CREATE POLICY "Public read posts"     ON posts     FOR SELECT USING (status = 'published');
 CREATE POLICY "Public read attachments" ON attachments FOR SELECT USING (true);
 
 -- Service role has full access (used by Edge Functions)
