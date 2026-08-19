@@ -15,12 +15,13 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 - 🔗 Deep links for sharing on WhatsApp
 
 ### Admin (BR)
-- 🔐 Password-protected admin dashboard
+- 🔐 Password-protected admin dashboard (backed by secure Serverless API)
 - ✏️ Create, edit, publish, archive posts
 - 📘 Manage assignments, labs, notices, deadlines, resources
 - 📚 Manage subjects with color coding
 - 📎 Upload attachments (drag-and-drop)
 - 🏷️ Add tags and external links
+- 🤖 Discord Bot Integration: Use slash commands to post instantly from Discord
 
 ## Content Types
 
@@ -53,7 +54,14 @@ npm install
 cp .env.example .env.local
 ```
 
-Edit `.env.local` with your Supabase credentials and admin password.
+Edit `.env.local` with your Supabase credentials, admin password, and optionally Discord keys if using the bot:
+```env
+VITE_SUPABASE_URL=your-supabase-url
+VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_ADMIN_PASSWORD=your-secure-password
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key (Required for Admin Dashboard & Discord)
+DISCORD_PUBLIC_KEY=your-discord-public-key (Optional, for Discord Bot)
+```
 
 ### 3. Set up Supabase
 1. Create a project at [supabase.com](https://supabase.com)
@@ -74,6 +82,18 @@ npm run dev
 ## Demo Mode
 
 If Supabase credentials are not configured, BatchHub runs in **demo mode** with sample data. Perfect for previewing the UI without setting up a database.
+
+## 🤖 Discord Bot Integration (Optional)
+
+BatchHub includes a built-in serverless function to receive posts directly from Discord via Slash Commands (`/post`). 
+
+1. Create an app in the [Discord Developer Portal](https://discord.com/developers/applications).
+2. Deploy BatchHub to Vercel and add `DISCORD_PUBLIC_KEY` and `SUPABASE_SERVICE_ROLE_KEY` to your Vercel Environment Variables.
+3. In Discord's Developer Portal, set your **Interactions Endpoint URL** to `https://<your-vercel-domain>/api/discord`.
+4. Register the slash commands to your server by running:
+```bash
+DISCORD_TOKEN="your-bot-token" DISCORD_APP_ID="your-app-id" node scripts/register-discord-commands.js
+```
 
 ## Deployment
 
@@ -100,6 +120,13 @@ src/
 │   ├── posts/            # Post cards, grid, deadlines
 │   └── admin/            # Admin forms, tables, sidebar
 └── pages/                # Route pages
+
+api/                      # Vercel Serverless Functions
+├── admin.js              # Secure backend for the admin dashboard
+└── discord.js            # Discord interactions webhook
+
+scripts/                  
+└── register-discord-commands.js # Script to deploy Discord slash commands
 ```
 
 ## License
