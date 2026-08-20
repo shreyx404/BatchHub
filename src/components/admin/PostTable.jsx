@@ -21,9 +21,10 @@ export default function PostTable() {
     try {
       setLoading(true);
       const data = await fetchAllPosts();
-      setPosts(data);
+      setPosts(data || []);
     } catch (err) {
-      toast.error('Failed to load posts');
+      console.error('Error loading posts:', err);
+      toast.error(err.message || 'Failed to load posts');
     } finally {
       setLoading(false);
     }
@@ -41,7 +42,8 @@ export default function PostTable() {
       toast.success('Post archived');
       loadPosts();
     } catch (err) {
-      toast.error('Failed to archive post');
+      console.error('Error archiving post:', err);
+      toast.error(err.message || 'Failed to archive post');
     }
   };
 
@@ -53,7 +55,8 @@ export default function PostTable() {
       setDeleteTarget(null);
       loadPosts();
     } catch (err) {
-      toast.error('Failed to delete post');
+      console.error('Error deleting post:', err);
+      toast.error(err.message || 'Failed to delete post');
     }
   };
 

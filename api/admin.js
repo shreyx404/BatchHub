@@ -177,7 +177,7 @@ export default async function handler(req, res) {
   }
 
   const clientIp = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
-  const { fingerprint, turnstileToken } = req.body || {};
+  const { fingerprint, turnstileToken, action, payload } = req.body || {};
 
   // ── Layer 1: Per-IP rate limit (in-memory) ──
   if (isIpRateLimited(clientIp)) {
@@ -191,10 +191,12 @@ export default async function handler(req, res) {
     return res.status(429).json({ error: 'This device has been locked out due to too many failed attempts. Please try again in 24 hours.' });
   }
 
-  // ── Layer 3: Cloudflare Turnstile CAPTCHA verification ──
-  const turnstileValid = await verifyTurnstileToken(turnstileToken, clientIp);
-  if (!turnstileValid) {
-    return res.status(403).json({ error: 'Bot verification failed. Please refresh the page and try again.' });
+  // ── Layer 3: Cloudflare Turnstile CAPTCHA verification (on login / ping) ──
+  if (action === '__ping' || turnstileToken) {
+    const turnstileValid = await verifyTurnstileToken(turnstileToken, clientIp);
+    if (!turnstileValid) {
+      return res.status(403).json({ error: 'Bot verification failed. Please refresh the page and try again.' });
+    }
   }
 
   // ── Layer 4: Verify Authorization ──
@@ -253,6 +255,11 @@ export default async function handler(req, res) {
     cleanupOldAttempts(supabase); // Fire-and-forget cleanup
   }
 
+  // If this was an auth ping / login check, return success immediately
+  if (action === '__ping') {
+    return res.status(200).json({ data: { authenticated: true } });
+  }
+
   if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
     return res.status(500).json({ error: 'Server missing Supabase keys.' });
   }
@@ -262,8 +269,6 @@ export default async function handler(req, res) {
   }
 
   // ── Process the action with validated payloads ──
-  const { action, payload } = req.body;
-
   if (!action || typeof action !== 'string') {
     return res.status(400).json({ error: 'Missing or invalid action.' });
   }
@@ -315,7 +320,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ data: result.data });
   } catch (error) {
     console.error('Admin API Error:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(500).json({ error: error.message || 'Internal Server Error' });
   }
 }
 
