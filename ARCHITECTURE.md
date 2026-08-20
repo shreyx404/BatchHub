@@ -76,20 +76,27 @@ Response → Client-side processing:
 ### 2.2 Admin Authentication & Operations
 
 ```
-Admin Browser
+Admin Browser (Login Flow)
     │  1. Generates device fingerprint (canvas + WebGL + hardware)
     │  2. Solves Cloudflare Turnstile invisible challenge
-    │  3. Sends password + fingerprint + Turnstile token
+    │  3. Sends password + fingerprint + Turnstile token with action: '__ping'
     ▼
-Vercel Serverless Function (api/admin.js)
+Vercel Serverless Function / Local Vite Dev Middleware (api/admin.js)
     │  1. Layer 1: Per-IP rate limit check (10 attempts / 24h lockout)
     │  2. Layer 2: Per-device fingerprint check (10 attempts / 24h lockout)
-    │  3. Layer 3: Cloudflare Turnstile token validation (anti-bot)
+    │  3. Layer 3: Cloudflare Turnstile token validation on login (anti-bot)
     │  4. Layer 4: Global rate limit check (>30 failed attempts/24h site-wide)
     │  5. Layer 5: Timing-safe password comparison (crypto.timingSafeEqual)
     │  6. Logs attempt to Supabase (admin_login_attempts table)
-    │  7. Payload field whitelisting (pick())
-    │  8. Action routing (switch/case)
+    │  7. Returns session authorization confirmation
+    ▼
+Admin Browser (Authenticated Operations Flow: create/update/delete)
+    │  Sends Authorization: Bearer <token> + { action, payload }
+    ▼
+Vercel Serverless Function / Local Vite Dev Middleware (api/admin.js)
+    │  1. Rate limiter & Bearer token verification
+    │  2. Payload field whitelisting (pick())
+    │  3. Action routing (switch/case)
     ▼
 Supabase (via Service Role Key — bypasses RLS)
     │
@@ -242,7 +249,7 @@ The admin endpoint uses a single `POST` with an `action` field to route requests
 | `deleteAttachment` | `{id}` | Delete row |
 
 ### 4.3 Security Layers
-
+ 
 ```
 Request arrives at /api/admin
     │
@@ -250,14 +257,14 @@ Request arrives at /api/admin
     ├── 2. Method check (POST only)
     ├── 3. Layer 1: In-memory IP rate limiter (10 failed attempts / 24-hour lockout)
     ├── 4. Layer 2: In-memory device fingerprint limiter (10 failed attempts / 24-hour lockout)
-    ├── 5. Layer 3: Cloudflare Turnstile token verification (blocks automated bots)
-    ├── 6. Layer 4: Global rate limit check (>30 failed attempts/24h across all IPs via Supabase)
-    ├── 7. Layer 5: Timing-safe password comparison (crypto.timingSafeEqual against ADMIN_PASSWORD)
+    ├── 5. Layer 3: Cloudflare Turnstile token verification on login (__ping)
+    ├── 6. Layer 4: Timing-safe password comparison (crypto.timingSafeEqual against ADMIN_PASSWORD)
+    ├── 7. Layer 5: Global rate limit check (>30 failed attempts/24h across all IPs via Supabase)
     ├── 8. Log attempt to Supabase (admin_login_attempts table)
     ├── 9. Clear IP and fingerprint failures on success + auto-cleanup old logs (>7 days)
     ├── 10. Supabase client initialised with SERVICE_ROLE_KEY
     ├── 11. Payload sanitised via pick() with field whitelists
-    └── 12. Action routed and executed
+    └── 12. Action routed and executed (or returns { data: { authenticated: true } } on __ping)
 ```
 
 ---

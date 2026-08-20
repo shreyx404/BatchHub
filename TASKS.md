@@ -137,22 +137,24 @@
 - [x] **T-055** — Integrate Cloudflare Turnstile bot verification (client widget + server verification in `api/admin.js`)
 - [x] **T-056** — Add persistent global velocity rate limiting (30 failed attempts/day site-wide) via Supabase `admin_login_attempts` table
 - [x] **T-057** — Enhance post sharing on `PostPage` with formatted text templating, native Web Share API, and clipboard copy fallback
+- [x] **T-058** — Refine Cloudflare Turnstile anti-bot verification to login authentication ping actions, unblocking authenticated admin CRUD operations
+- [x] **T-059** — Implement Vite dev server SSR middleware for `/api/admin` to execute serverless handler locally during `npm run dev`
 
 ---
 
 ## Future Tasks (Backlog)
 
-- [ ] **T-058** — Student authentication (Google OAuth via Supabase Auth)
-- [ ] **T-059** — Push notifications for new posts / approaching deadlines
-- [ ] **T-060** — Multi-batch support (use `batch_id` field, admin selects batch)
-- [ ] **T-061** — Admin analytics dashboard (post views, engagement metrics)
-- [ ] **T-062** — PWA support with offline caching (service worker)
-- [ ] **T-063** — Email digest for weekly summaries
-- [ ] **T-064** — Comments / reactions on posts
-- [ ] **T-065** — Calendar view for deadlines
-- [ ] **T-066** — Dark/Light theme toggle (currently dark-only)
-- [ ] **T-067** — Bulk post operations in admin (archive all, delete selected)
-- [ ] **T-068** — Post scheduling (publish at a future date)
-- [ ] **T-069** — Supabase Realtime subscriptions for live feed updates
-- [ ] **T-070** — Export posts as PDF or CSV from admin
-- [ ] **T-071** — Subject-wise archive / history page
+- [ ] **T-060** — Student authentication (Google OAuth via Supabase Auth)
+- [ ] **T-061** — Push notifications for new posts / approaching deadlines
+- [ ] **T-062** — Multi-batch support (use `batch_id` field, admin selects batch)
+- [ ] **T-063** — Admin analytics dashboard (post views, engagement metrics)
+- [ ] **T-064** — PWA support with offline caching (service worker)
+- [ ] **T-065** — Email digest for weekly summaries
+- [ ] **T-066** — Comments / reactions on posts
+- [ ] **T-067** — Calendar view for deadlines
+- [ ] **T-068** — Dark/Light theme toggle (currently dark-only)
+- [ ] **T-069** — Bulk post operations in admin (archive all, delete selected)
+- [ ] **T-070** — Post scheduling (publish at a future date)
+- [ ] **T-071** — Supabase Realtime subscriptions for live feed updates
+- [ ] **T-072** — Export posts as PDF or CSV from admin
+- [ ] **T-073** — Subject-wise archive / history page

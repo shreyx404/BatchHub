@@ -67,7 +67,8 @@ BatchHub is built with a modern JAMstack architecture: a React SPA frontend host
 |------|---------|---------|
 | **@vitejs/plugin-react** | 4.5 | React Fast Refresh + JSX transform for Vite |
 | **@tailwindcss/vite** | 4.1 | Tailwind CSS integration with Vite build pipeline |
-| **dotenv** | 17.4 | Environment variable loading for local scripts (Discord command registration) |
+| **dotenv** | 17.4 | Environment variable loading for dev server and local scripts |
+| **Vite Dev API Middleware** | Custom SSR | Executes `/api/admin.js` serverless handler during local `npm run dev` development |
 
 ---
 
