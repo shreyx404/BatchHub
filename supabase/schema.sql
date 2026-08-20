@@ -107,3 +107,26 @@ CREATE POLICY "Service role full access posts" ON posts
 
 CREATE POLICY "Service role full access attachments" ON attachments
   FOR ALL USING (auth.role() = 'service_role');
+
+-- ============================================================
+-- ADMIN LOGIN ATTEMPTS TABLE (Global Rate Limiting)
+-- Tracks all login attempts for persistent, cross-IP rate limiting
+-- ============================================================
+CREATE TABLE IF NOT EXISTS admin_login_attempts (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  ip          TEXT NOT NULL DEFAULT 'unknown',
+  fingerprint TEXT,
+  success     BOOLEAN NOT NULL DEFAULT false,
+  attempted_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Indexes for efficient rate limit queries
+CREATE INDEX IF NOT EXISTS idx_login_attempts_attempted_at ON admin_login_attempts(attempted_at DESC);
+CREATE INDEX IF NOT EXISTS idx_login_attempts_success ON admin_login_attempts(success) WHERE success = false;
+CREATE INDEX IF NOT EXISTS idx_login_attempts_fingerprint ON admin_login_attempts(fingerprint) WHERE fingerprint IS NOT NULL;
+
+-- RLS: No public access — only service role can read/write
+ALTER TABLE admin_login_attempts ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Service role full access login_attempts" ON admin_login_attempts
+  FOR ALL USING (auth.role() = 'service_role');

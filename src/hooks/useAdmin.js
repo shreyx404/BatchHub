@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { getDeviceFingerprint } from '../lib/fingerprint';
 
 const ADMIN_TOKEN_KEY = 'batchhub_admin_token';
 const ATTEMPTS_STORAGE_KEY = 'batchhub_admin_login_attempts';
@@ -92,7 +93,7 @@ export function useAdmin() {
     return () => clearInterval(interval);
   }, []);
 
-  const login = useCallback(async (password) => {
+  const login = useCallback(async (password, turnstileToken = null) => {
     if (!password || !password.trim()) {
       return { success: false, error: 'empty_password' };
     }
@@ -108,6 +109,9 @@ export function useAdmin() {
       };
     }
 
+    // Generate device fingerprint for per-device rate limiting
+    const fingerprint = getDeviceFingerprint();
+
     try {
       const response = await fetch('/api/admin', {
         method: 'POST',
@@ -115,7 +119,11 @@ export function useAdmin() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${password}`,
         },
-        body: JSON.stringify({ action: '__ping' }),
+        body: JSON.stringify({
+          action: '__ping',
+          fingerprint,
+          ...(turnstileToken && { turnstileToken }),
+        }),
       });
 
       if (response.status === 429) {
@@ -132,6 +140,11 @@ export function useAdmin() {
         const lock = getLockoutInfo();
         setLockoutInfo(lock);
         return { success: false, error: 'rate_limited', isLocked: true, remainingSeconds: lock.remainingSeconds };
+      }
+
+      if (response.status === 403) {
+        // Turnstile bot verification failed
+        return { success: false, error: 'turnstile_failed' };
       }
 
       if (response.status === 401) {

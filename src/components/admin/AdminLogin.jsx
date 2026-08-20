@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
-import { Lock, GraduationCap, AlertCircle, ShieldAlert, Clock } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Lock, GraduationCap, AlertCircle, ShieldAlert, Clock, Shield } from 'lucide-react';
 import { APP_NAME } from '../../lib/constants';
 import { getLockoutInfo } from '../../hooks/useAdmin';
+
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY;
 
 export default function AdminLogin({ onLogin }) {
   const [password, setPassword] = useState('');
@@ -10,6 +12,78 @@ export default function AdminLogin({ onLogin }) {
   const [remainingAttempts, setRemainingAttempts] = useState(() => getLockoutInfo().remainingAttempts);
   const [isLocked, setIsLocked] = useState(() => getLockoutInfo().isLocked);
   const [remainingSeconds, setRemainingSeconds] = useState(() => getLockoutInfo().remainingSeconds);
+
+  // Turnstile state
+  const turnstileRef = useRef(null);
+  const turnstileWidgetId = useRef(null);
+  const [turnstileToken, setTurnstileToken] = useState(null);
+  const [turnstileReady, setTurnstileReady] = useState(!TURNSTILE_SITE_KEY); // Ready if not configured
+
+  // Initialize Turnstile widget
+  useEffect(() => {
+    if (!TURNSTILE_SITE_KEY || isLocked) return;
+
+    const renderWidget = () => {
+      if (!window.turnstile || !turnstileRef.current) return;
+
+      // Remove existing widget if re-rendering
+      if (turnstileWidgetId.current !== null) {
+        try { window.turnstile.remove(turnstileWidgetId.current); } catch {}
+        turnstileWidgetId.current = null;
+      }
+
+      turnstileWidgetId.current = window.turnstile.render(turnstileRef.current, {
+        sitekey: TURNSTILE_SITE_KEY,
+        theme: 'dark',
+        size: 'flexible',
+        callback: (token) => {
+          setTurnstileToken(token);
+          setTurnstileReady(true);
+        },
+        'expired-callback': () => {
+          setTurnstileToken(null);
+          setTurnstileReady(false);
+          // Auto-refresh
+          if (turnstileWidgetId.current !== null) {
+            window.turnstile.reset(turnstileWidgetId.current);
+          }
+        },
+        'error-callback': () => {
+          // Fail open — allow login even if Turnstile has issues
+          setTurnstileReady(true);
+          setTurnstileToken(null);
+        },
+      });
+    };
+
+    // Wait for Turnstile script to load
+    if (window.turnstile) {
+      renderWidget();
+    } else {
+      const interval = setInterval(() => {
+        if (window.turnstile) {
+          clearInterval(interval);
+          renderWidget();
+        }
+      }, 200);
+      // Give up after 10 seconds — fail open
+      const timeout = setTimeout(() => {
+        clearInterval(interval);
+        setTurnstileReady(true);
+      }, 10000);
+      return () => {
+        clearInterval(interval);
+        clearTimeout(timeout);
+      };
+    }
+
+    return () => {
+      if (turnstileWidgetId.current !== null) {
+        try { window.turnstile.remove(turnstileWidgetId.current); } catch {}
+        turnstileWidgetId.current = null;
+      }
+    };
+  }, [isLocked]);
 
   // Active countdown timer when locked
   useEffect(() => {
@@ -44,6 +118,14 @@ export default function AdminLogin({ onLogin }) {
     return parts.join(' ');
   };
 
+  const resetTurnstile = useCallback(() => {
+    if (TURNSTILE_SITE_KEY && turnstileWidgetId.current !== null && window.turnstile) {
+      setTurnstileToken(null);
+      setTurnstileReady(false);
+      window.turnstile.reset(turnstileWidgetId.current);
+    }
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -60,13 +142,17 @@ export default function AdminLogin({ onLogin }) {
 
     setLoading(true);
     try {
-      const result = await onLogin(password);
+      const result = await onLogin(password, turnstileToken);
       if (result?.success) {
-        // Success handled by auth state change
         return;
       }
 
-      if (result?.isLocked || result?.error === 'rate_limited') {
+      // Reset Turnstile for next attempt
+      resetTurnstile();
+
+      if (result?.error === 'turnstile_failed') {
+        setError('Bot verification failed. Please refresh the page and try again.');
+      } else if (result?.isLocked || result?.error === 'rate_limited') {
         setIsLocked(true);
         setRemainingSeconds(result.remainingSeconds || 86400);
         setRemainingAttempts(0);
@@ -84,6 +170,7 @@ export default function AdminLogin({ onLogin }) {
       }
     } catch {
       setError('Something went wrong. Please try again.');
+      resetTurnstile();
     } finally {
       setLoading(false);
     }
@@ -154,9 +241,16 @@ export default function AdminLogin({ onLogin }) {
             )}
           </div>
 
+          {/* Cloudflare Turnstile Widget */}
+          {TURNSTILE_SITE_KEY && !isLocked && (
+            <div className="flex justify-center">
+              <div ref={turnstileRef} />
+            </div>
+          )}
+
           <button
             type="submit"
-            disabled={loading || isLocked}
+            disabled={loading || isLocked || (TURNSTILE_SITE_KEY && !turnstileReady)}
             className="w-full h-11 rounded-xl bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-black text-[var(--text-sm)] font-semibold transition-colors duration-300 flex items-center justify-center gap-2 tracking-[0.005em]"
           >
             {loading ? (
@@ -170,6 +264,12 @@ export default function AdminLogin({ onLogin }) {
         </form>
 
         <div className="mt-6 text-center">
+          {TURNSTILE_SITE_KEY && !isLocked && (
+            <p className="text-[10px] text-[var(--color-text-dim)] mb-2 flex items-center justify-center gap-1 tracking-[0.02em]">
+              <Shield size={10} />
+              Protected by Cloudflare Turnstile
+            </p>
+          )}
           {!isLocked && remainingAttempts < 10 && (
             <p className="text-[10px] font-mono text-amber-400/80 mb-2 tracking-[0.02em]">
               Security: {remainingAttempts} attempt{remainingAttempts === 1 ? '' : 's'} remaining (Limit: 10 / 24h)
