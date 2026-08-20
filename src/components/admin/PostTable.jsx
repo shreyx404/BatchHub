@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Edit2, Trash2, Archive, Eye, Search, MoreVertical } from 'lucide-react';
+import { Edit2, Trash2, Archive, Eye, Search, MoreVertical, ArrowUpDown, Calendar, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 import Badge from '../ui/Badge';
@@ -10,12 +10,19 @@ import Modal from '../ui/Modal';
 import { fetchAllPosts, updatePost, deletePost } from '../../lib/api';
 import { POST_STATUSES } from '../../lib/constants';
 
+const SORT_OPTIONS = [
+  { key: 'created_at', label: 'Created Date', icon: Clock },
+  { key: 'due_date', label: 'Due Date', icon: Calendar },
+];
+
 export default function PostTable() {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [sortBy, setSortBy] = useState('created_at');
+  const [sortDirection, setSortDirection] = useState('desc');
 
   const loadPosts = async () => {
     try {
@@ -35,6 +42,26 @@ export default function PostTable() {
   const filteredPosts = statusFilter === 'all'
     ? posts
     : posts.filter((p) => p.status === statusFilter);
+
+  /* ── Sorting logic ── */
+  const sortedPosts = [...filteredPosts].sort((a, b) => {
+    if (sortBy === 'due_date') {
+      const aHas = !!a.due_date;
+      const bHas = !!b.due_date;
+
+      // Posts with no deadline always float to the top
+      if (!aHas && !bHas) return 0;
+      if (!aHas) return -1;
+      if (!bHas) return 1;
+
+      const diff = new Date(a.due_date) - new Date(b.due_date);
+      return sortDirection === 'asc' ? diff : -diff;
+    }
+
+    // Default: created_at
+    const diff = new Date(a.created_at || 0) - new Date(b.created_at || 0);
+    return sortDirection === 'asc' ? diff : -diff;
+  });
 
   const handleArchive = async (post) => {
     try {
@@ -58,6 +85,10 @@ export default function PostTable() {
       console.error('Error deleting post:', err);
       toast.error(err.message || 'Failed to delete post');
     }
+  };
+
+  const toggleSortDirection = () => {
+    setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
   };
 
   if (loading) return <LoadingSpinner />;
@@ -90,11 +121,46 @@ export default function PostTable() {
         </div>
       </div>
 
-      {filteredPosts.length === 0 ? (
+      {/* Sort controls */}
+      <div className="flex items-center gap-2">
+        <span className="text-[10px] uppercase tracking-[0.05em] font-medium text-[var(--color-text-dim)]">
+          Sort by
+        </span>
+        {SORT_OPTIONS.map(({ key, label, icon: SortIcon }) => (
+          <button
+            key={key}
+            onClick={() => setSortBy(key)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              sortBy === key
+                ? 'bg-[var(--color-accent)] text-black'
+                : 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
+            }`}
+          >
+            <SortIcon size={12} />
+            {label}
+          </button>
+        ))}
+        <button
+          onClick={toggleSortDirection}
+          title={sortDirection === 'asc' ? 'Oldest first' : 'Newest first'}
+          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)] transition-all"
+        >
+          <ArrowUpDown size={12} />
+          {sortDirection === 'asc' ? '↑ Asc' : '↓ Desc'}
+        </button>
+
+        {sortBy === 'due_date' && (
+          <span className="text-[10px] text-[var(--color-text-dim)] italic ml-1">
+            Posts without deadlines appear first
+          </span>
+        )}
+      </div>
+
+      {sortedPosts.length === 0 ? (
         <EmptyState title="No posts" description="No posts match the selected filter." />
       ) : (
         <div className="space-y-2">
-          {filteredPosts.map((post) => (
+          {sortedPosts.map((post) => (
             <div
               key={post.id}
               className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] transition-all group"

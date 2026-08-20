@@ -194,7 +194,7 @@ Attachment record linked to post via post_id FK
     │       ├── <PostForm>         // "/admin/create" — New post
     │       ├── <EditPostWrapper>  // "/admin/edit/:id" — Edit post
     │       │   └── <PostForm>
-    │       ├── <PostTable>        // "/admin/posts" — All posts list
+    │       ├── <PostTable>        // "/admin/posts" — All posts list (status filter, created/due date sort)
     │       └── <SubjectManager>   // "/admin/subjects" — CRUD subjects
     │
     └── <NotFoundPage>             // "*" — 404

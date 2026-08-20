@@ -55,7 +55,7 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 |---|---------|-------------|
 | F-09 | **Secure Login & Multi-Layer Defense** | Password validated server-side with `crypto.timingSafeEqual`; protected by 4 security layers: 10 attempts / 24-hour lockout per IP, per-device fingerprint tracking, Cloudflare Turnstile bot verification, and a 30 failed attempts / 24-hour global site-wide limit |
 | F-10 | **Dashboard Overview** | Stats cards (total posts, published, drafts, subjects) with quick actions |
-| F-11 | **Post CRUD** | Create, edit, publish, archive, and delete posts with live Markdown preview |
+| F-11 | **Post CRUD & Management** | Create, edit, publish, archive, and delete posts with live Markdown preview; filter by status and sort by created date or due date |
 | F-12 | **Subject Manager** | Create, edit, delete subjects with color coding |
 | F-13 | **File Uploads** | Drag-and-drop file uploader; files stored in Supabase Storage (10 MB limit per file) |
 | F-14 | **Metadata Management** | Tags (comma-separated), external links (label + URL pairs), due dates, pin toggle, status control |

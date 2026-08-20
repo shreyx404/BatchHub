@@ -68,6 +68,7 @@
 | FR-036 | Drag-and-drop file upload with 10 MB per file size limit | P1 | ✅ Implemented |
 | FR-037 | Multiple link entries per post with label + URL pairs | P1 | ✅ Implemented |
 | FR-038 | Comma-separated tag input | P2 | ✅ Implemented |
+| FR-038a | Sort all posts by Created Date or Due Date with Asc/Desc toggle; posts without deadlines float to top in Due Date sort | P1 | ✅ Implemented |
 
 ### 1.6 Subject Management (Admin)
 
@@ -98,9 +99,9 @@
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| FR-046 | Detect missing Supabase credentials and fall back to in-memory demo data | P1 | ✅ Implemented |
-| FR-047 | Demo data includes sample subjects and posts with relative dates for freshness | P2 | ✅ Implemented |
-| FR-048 | All CRUD operations work against in-memory arrays in demo mode | P2 | ✅ Implemented |
+| FR-054 | Detect missing Supabase credentials and fall back to in-memory demo data | P1 | ✅ Implemented |
+| FR-055 | Demo data includes sample subjects and posts with relative dates for freshness | P2 | ✅ Implemented |
+| FR-056 | All CRUD operations work against in-memory arrays in demo mode | P2 | ✅ Implemented |
 
 ---
 
