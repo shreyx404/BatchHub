@@ -69,7 +69,7 @@
 | FR-036 | Drag-and-drop file upload with 10 MB per file size limit | P1 | ✅ Implemented |
 | FR-037 | Multiple link entries per post with label + URL pairs | P1 | ✅ Implemented |
 | FR-038 | Comma-separated tag input | P2 | ✅ Implemented |
-| FR-038a | Sort all posts by Created Date or Due Date with Asc/Desc toggle; posts without deadlines float to top in Due Date sort | P1 | ✅ Implemented |
+| FR-038a | Sort all posts by Due Date (default, Ascending) or Created Date with Asc/Desc toggle; posts without deadlines float to top in Due Date sort | P1 | ✅ Implemented |
 
 ### 1.6 Subject Management (Admin)
 

@@ -139,7 +139,7 @@
 - [x] **T-057** — Enhance post sharing on `PostPage` with formatted text templating, native Web Share API, and clipboard copy fallback
 - [x] **T-058** — Refine Cloudflare Turnstile anti-bot verification to login authentication ping actions, unblocking authenticated admin CRUD operations
 - [x] **T-059** — Implement Vite dev server SSR middleware for `/api/admin` to execute serverless handler locally during `npm run dev`
-- [x] **T-060** — Add flexible sorting controls in admin `PostTable` (Created Date & Due Date with ascending/descending toggle and floating posts with no deadlines to top)
+- [x] **T-060** — Add flexible sorting controls in admin `PostTable` (default: Due Date Ascending, with Created Date option, Asc/Desc toggle, and floating posts with no deadlines to top)
 - [x] **T-061** — Embed live "Student View" preview panel in Admin Dashboard home (`AdminPage.jsx`) mirroring homepage structured feed
 
 ---

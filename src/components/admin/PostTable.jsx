@@ -21,8 +21,8 @@ export default function PostTable() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
   const [deleteTarget, setDeleteTarget] = useState(null);
-  const [sortBy, setSortBy] = useState('created_at');
-  const [sortDirection, setSortDirection] = useState('desc');
+  const [sortBy, setSortBy] = useState('due_date');
+  const [sortDirection, setSortDirection] = useState('asc');
 
   const loadPosts = async () => {
     try {
