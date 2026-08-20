@@ -1,13 +1,20 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Routes, Route, useNavigate, useParams } from 'react-router-dom';
-import { Menu, FileText, BookOpen, Plus, TrendingUp } from 'lucide-react';
+import { Menu, FileText, BookOpen, Plus, TrendingUp, Eye } from 'lucide-react';
 import AdminLogin from '../components/admin/AdminLogin';
 import AdminSidebar from '../components/admin/AdminSidebar';
 import PostForm from '../components/admin/PostForm';
 import PostTable from '../components/admin/PostTable';
 import SubjectManager from '../components/admin/SubjectManager';
+import DeadlineBanner from '../components/posts/DeadlineBanner';
+import NoticesSection from '../components/posts/NoticesSection';
+import PinnedSection from '../components/posts/PinnedSection';
+import PostGrid from '../components/posts/PostGrid';
+import LoadingState from '../components/ui/LoadingState';
+import ErrorState from '../components/ui/ErrorState';
 import { useAdmin } from '../hooks/useAdmin';
+import { usePosts, useUpcomingDeadlines } from '../hooks/usePosts';
 import { fetchAllPosts, fetchPost } from '../lib/api';
 import { useSubjects } from '../hooks/useSubjects';
 
@@ -79,6 +86,36 @@ function AdminDashboard() {
     });
   }, []);
 
+  /* ── Student feed data (same hooks students use) ── */
+  const { posts, loading: postsLoading, error: postsError, refetch } = usePosts({});
+  const { deadlines, loading: deadlinesLoading } = useUpcomingDeadlines();
+
+  // Categorise posts exactly like HomePage's structured view
+  const { noticePosts, pinnedPosts, withDeadline, withoutDeadline } = useMemo(() => {
+    // 1. Notices & Important (highlighted at top)
+    const notices = posts.filter((p) => p.type === 'notice' || p.type === 'important');
+    const noticeIds = new Set(notices.map((p) => p.id));
+
+    // 2. Pinned posts (excluding ones already in notices)
+    const pinned = posts.filter((p) => p.is_pinned && !noticeIds.has(p.id));
+    const pinnedIds = new Set(pinned.map((p) => p.id));
+
+    // 3 & 4. Remaining posts (not notice/important, not pinned)
+    const rest = posts.filter((p) => !noticeIds.has(p.id) && !pinnedIds.has(p.id));
+
+    // Posts WITH due dates — sorted ascending (soonest deadline first)
+    const hasDue = rest
+      .filter((p) => p.due_date)
+      .sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
+
+    // Posts WITHOUT due dates — sorted by created_at ascending (first come first serve)
+    const noDue = rest
+      .filter((p) => !p.due_date)
+      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+    return { noticePosts: notices, pinnedPosts: pinned, withDeadline: hasDue, withoutDeadline: noDue };
+  }, [posts]);
+
   const cards = [
     {
       label: 'Total Posts', value: stats.total, icon: FileText,
@@ -143,6 +180,89 @@ function AdminDashboard() {
           description="View, edit, or archive existing posts"
           onClick={() => navigate('/admin/posts')}
         />
+      </div>
+
+      {/* ── Student View Preview ── */}
+      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center gap-2 px-5 py-3 border-b border-[var(--color-border)] bg-[var(--color-surface)]">
+          <Eye size={14} className="text-[var(--color-accent)]" />
+          <span className="text-[10px] font-medium text-[var(--color-text)] tracking-[0.08em] uppercase">
+            Student View
+          </span>
+          <span className="text-[10px] font-light text-[var(--color-text-dim)] tracking-[0.01em]">
+            — What students see on the homepage
+          </span>
+        </div>
+
+        {/* Feed content */}
+        <div className="p-5 space-y-6 max-h-[70vh] overflow-y-auto">
+          {postsError ? (
+            <ErrorState message={postsError} onRetry={refetch} />
+          ) : postsLoading ? (
+            <LoadingState />
+          ) : (
+            <>
+              {/* Deadline banner */}
+              {!deadlinesLoading && deadlines.length > 0 && (
+                <DeadlineBanner deadlines={deadlines} />
+              )}
+
+              {/* All Updates heading */}
+              {posts.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <h3 className="text-[var(--text-sm)] font-medium tracking-[0.02em] text-[var(--color-text)]">
+                    All Updates
+                  </h3>
+                  <span className="text-[var(--text-xs)] font-light text-[var(--color-text-dim)]">
+                    ({posts.length})
+                  </span>
+                </div>
+              )}
+
+              {/* 1. Notices & Important */}
+              <NoticesSection posts={posts} />
+
+              {/* 2. Pinned posts */}
+              <PinnedSection posts={posts} />
+
+              {/* 3. Posts with due dates — ascending by deadline */}
+              {withDeadline.length > 0 && (
+                <div className="space-y-0">
+                  <div className="flex items-center gap-2 mb-3">
+                    <h3 className="text-[10px] font-medium text-[var(--color-text-dim)] tracking-[0.1em] uppercase">
+                      Upcoming Deadlines
+                    </h3>
+                    <span className="text-[10px] font-light text-[var(--color-text-dim)]">
+                      ({withDeadline.length})
+                    </span>
+                  </div>
+                  <PostGrid posts={withDeadline} loading={false} />
+                </div>
+              )}
+
+              {/* 4. Posts without due dates — FCFS */}
+              {withoutDeadline.length > 0 && (
+                <div className="space-y-0">
+                  <div className="flex items-center gap-2 mb-3">
+                    <h3 className="text-[10px] font-medium text-[var(--color-text-dim)] tracking-[0.1em] uppercase">
+                      General Updates
+                    </h3>
+                    <span className="text-[10px] font-light text-[var(--color-text-dim)]">
+                      ({withoutDeadline.length})
+                    </span>
+                  </div>
+                  <PostGrid posts={withoutDeadline} loading={false} />
+                </div>
+              )}
+
+              {/* Empty state */}
+              {posts.length === 0 && (
+                <PostGrid posts={[]} loading={false} />
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
