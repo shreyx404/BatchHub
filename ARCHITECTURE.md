@@ -171,6 +171,7 @@ Attachment record linked to post via post_id FK
     │   ├── <ReactMarkdown>        // Rendered content
     │   ├── Attachments list
     │   ├── Links list
+    │   ├── Share action           // Web Share API + clipboard fallback
     │   └── <Footer>
     │
     ├── <AdminPage>                // "/admin/*" — Protected dashboard

@@ -14,7 +14,7 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 - 📌 Pinned important updates
 - 📢 Highlighted Notices & Important section at the top of the feed
 - 🗂️ Structured feed: Notices → Pinned → Deadline-sorted → General updates
-- 🔗 Deep links for sharing on WhatsApp
+- 🔗 Deep links and native formatted post sharing with clipboard fallback
 
 ### Admin (BR)
 - 🔐 Password-protected admin dashboard backed by a secure Serverless API

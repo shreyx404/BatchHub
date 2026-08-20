@@ -25,6 +25,7 @@ BatchHub is built with a modern JAMstack architecture: a React SPA frontend host
 | **date-fns** | 4.1 | Date utilities | Tree-shakeable date formatting, relative times, and comparisons |
 | **Cloudflare Turnstile** | v0 API | Invisible CAPTCHA / Anti-Bot | Free, privacy-focused bot defense loaded asynchronously without UX friction |
 | **Device Fingerprinting** | Internal | Hardware & Graphics Hashing | Zero-dependency canvas, WebGL, and hardware signals hashed via djb2 algorithm |
+| **Web Share & Clipboard** | Native Web APIs | Formatted Post Sharing | Native OS share sheet with automatic asynchronous clipboard copy fallback |
 
 ---
 

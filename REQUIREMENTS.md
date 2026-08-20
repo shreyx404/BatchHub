@@ -32,7 +32,7 @@
 | FR-014 | Render tags as styled chips | P1 | ✅ Implemented |
 | FR-015 | Display external links with label and URL in clickable cards | P1 | ✅ Implemented |
 | FR-016 | Display file attachments with file name, size, type icon, and download link | P0 | ✅ Implemented |
-| FR-017 | Provide a "Share on WhatsApp" button using native Web Share API with clipboard fallback | P0 | ✅ Implemented |
+| FR-017 | Provide a "Share" button using native Web Share API with formatted text (`*Title*\nBatchHub: URL`) and robust clipboard fallback | P0 | ✅ Implemented |
 | FR-018 | Show a "Back to BatchHub" navigation bar at the top | P1 | ✅ Implemented |
 
 ### 1.3 Admin Authentication
@@ -51,48 +51,48 @@
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| FR-024 | Display dashboard with stat cards: Total Posts, Published, Drafts, Subjects | P0 | ✅ Implemented |
-| FR-025 | Provide quick action buttons: "Create New Post" and "Manage Posts" | P1 | ✅ Implemented |
-| FR-026 | Sidebar navigation with links to Dashboard, Create Post, Manage Posts, and Subjects | P0 | ✅ Implemented |
-| FR-027 | Responsive sidebar that collapses to a hamburger menu on mobile | P1 | ✅ Implemented |
+| FR-027 | Display dashboard with stat cards: Total Posts, Published, Drafts, Subjects | P0 | ✅ Implemented |
+| FR-028 | Provide quick action buttons: "Create New Post" and "Manage Posts" | P1 | ✅ Implemented |
+| FR-029 | Sidebar navigation with links to Dashboard, Create Post, Manage Posts, and Subjects | P0 | ✅ Implemented |
+| FR-030 | Responsive sidebar that collapses to a hamburger menu on mobile | P1 | ✅ Implemented |
 
 ### 1.5 Post Management (Admin)
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| FR-028 | Create new posts with: title (required), content (Markdown), type, subject, due date, status, pin toggle, tags, links, and file attachments | P0 | ✅ Implemented |
-| FR-029 | Edit existing posts with all fields pre-populated | P0 | ✅ Implemented |
-| FR-030 | Delete posts with confirmation | P0 | ✅ Implemented |
-| FR-031 | Change post status between published, draft, and archived | P0 | ✅ Implemented |
-| FR-032 | Live Markdown preview toggle in the content editor | P1 | ✅ Implemented |
-| FR-033 | Drag-and-drop file upload with 10 MB per file size limit | P1 | ✅ Implemented |
-| FR-034 | Multiple link entries per post with label + URL pairs | P1 | ✅ Implemented |
-| FR-035 | Comma-separated tag input | P2 | ✅ Implemented |
+| FR-031 | Create new posts with: title (required), content (Markdown), type, subject, due date, status, pin toggle, tags, links, and file attachments | P0 | ✅ Implemented |
+| FR-032 | Edit existing posts with all fields pre-populated | P0 | ✅ Implemented |
+| FR-033 | Delete posts with confirmation | P0 | ✅ Implemented |
+| FR-034 | Change post status between published, draft, and archived | P0 | ✅ Implemented |
+| FR-035 | Live Markdown preview toggle in the content editor | P1 | ✅ Implemented |
+| FR-036 | Drag-and-drop file upload with 10 MB per file size limit | P1 | ✅ Implemented |
+| FR-037 | Multiple link entries per post with label + URL pairs | P1 | ✅ Implemented |
+| FR-038 | Comma-separated tag input | P2 | ✅ Implemented |
 
 ### 1.6 Subject Management (Admin)
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| FR-036 | Create subjects with name, code, and hex color | P0 | ✅ Implemented |
-| FR-037 | Edit existing subjects | P0 | ✅ Implemented |
-| FR-038 | Delete subjects (associated posts get `subject_id = NULL` via `ON DELETE SET NULL`) | P0 | ✅ Implemented |
+| FR-039 | Create subjects with name, code, and hex color | P0 | ✅ Implemented |
+| FR-040 | Edit existing subjects | P0 | ✅ Implemented |
+| FR-041 | Delete subjects (associated posts get `subject_id = NULL` via `ON DELETE SET NULL`) | P0 | ✅ Implemented |
 
 ### 1.7 Discord Bot Integration
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| FR-039 | Handle Discord interaction webhook with Ed25519 signature verification | P1 | ✅ Implemented |
-| FR-040 | Respond to Discord PING (type 1) for endpoint verification | P1 | ✅ Implemented |
-| FR-041 | Create published posts from `/post` slash command with title, type, content, due_date, is_pinned, and tags | P1 | ✅ Implemented |
-| FR-042 | Provide a registration script for deploying slash commands to Discord | P2 | ✅ Implemented |
+| FR-042 | Handle Discord interaction webhook with Ed25519 signature verification | P1 | ✅ Implemented |
+| FR-043 | Respond to Discord PING (type 1) for endpoint verification | P1 | ✅ Implemented |
+| FR-044 | Create published posts from `/post` slash command with title, type, content, due_date, is_pinned, and tags | P1 | ✅ Implemented |
+| FR-045 | Provide a registration script for deploying slash commands to Discord | P2 | ✅ Implemented |
 
 ### 1.8 Demo Mode
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| FR-043 | Detect missing Supabase credentials and fall back to in-memory demo data | P1 | ✅ Implemented |
-| FR-044 | Demo data includes sample subjects and posts with relative dates for freshness | P2 | ✅ Implemented |
-| FR-045 | All CRUD operations work against in-memory arrays in demo mode | P2 | ✅ Implemented |
+| FR-046 | Detect missing Supabase credentials and fall back to in-memory demo data | P1 | ✅ Implemented |
+| FR-047 | Demo data includes sample subjects and posts with relative dates for freshness | P2 | ✅ Implemented |
+| FR-048 | All CRUD operations work against in-memory arrays in demo mode | P2 | ✅ Implemented |
 
 ---
 

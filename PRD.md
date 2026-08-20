@@ -45,8 +45,8 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 | F-03 | **Dynamic Unpinning** | Posts with expired `due_date` automatically lose their pinned status client-side |
 | F-04 | **Search** | Debounced (300 ms) full-text search across title and content fields |
 | F-05 | **Filters** | Filter by content type (assignment, lab, notice, etc.) and by subject |
-| F-06 | **Post Detail Page** | Full Markdown rendering, tags, external links, file attachments with download, and share button |
-| F-07 | **Deep Links** | Every post has a unique URL (`/post/:id`) shareable on WhatsApp via native Web Share API or clipboard copy |
+| F-06 | **Post Detail Page** | Full Markdown rendering, tags, external links, file attachments with download, and formatted share button |
+| F-07 | **Deep Links & Sharing** | Every post has a unique URL (`/post/:id`) shareable via native Web Share API with rich formatted text (`*Title*\nBatchHub: url`) and robust clipboard fallback |
 | F-08 | **Demo Mode** | App runs with sample data when Supabase is not configured, allowing UI preview without a database |
 
 ### 3.2 Admin Dashboard (Password-Protected)
