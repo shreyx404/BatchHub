@@ -124,22 +124,27 @@
 - [x] **T-049** — Add staggered animations and micro-interactions
 - [x] **T-050** — Create `.env.example` with documented variables
 - [x] **T-051** — Write `README.md` with setup instructions
+- [x] **T-052** — Fix timezone-shifting bug on post edit with `toLocalISOString` helper and add custom Publication Date support
+- [x] **T-053** — Implement persistent 10-attempt, 24-hour lockout in `useAdmin.js` with live countdown timer in `AdminLogin.jsx`
+- [x] **T-054** — Create client-side zero-dependency device fingerprinting utility (`src/lib/fingerprint.js`)
+- [x] **T-055** — Integrate Cloudflare Turnstile bot verification (client widget + server verification in `api/admin.js`)
+- [x] **T-056** — Add persistent global velocity rate limiting (30 failed attempts/day site-wide) via Supabase `admin_login_attempts` table
 
 ---
 
 ## Future Tasks (Backlog)
 
-- [ ] **T-052** — Student authentication (Google OAuth via Supabase Auth)
-- [ ] **T-053** — Push notifications for new posts / approaching deadlines
-- [ ] **T-054** — Multi-batch support (use `batch_id` field, admin selects batch)
-- [ ] **T-055** — Admin analytics dashboard (post views, engagement metrics)
-- [ ] **T-056** — PWA support with offline caching (service worker)
-- [ ] **T-057** — Email digest for weekly summaries
-- [ ] **T-058** — Comments / reactions on posts
-- [ ] **T-059** — Calendar view for deadlines
-- [ ] **T-060** — Dark/Light theme toggle (currently dark-only)
-- [ ] **T-061** — Bulk post operations in admin (archive all, delete selected)
-- [ ] **T-062** — Post scheduling (publish at a future date)
-- [ ] **T-063** — Supabase Realtime subscriptions for live feed updates
-- [ ] **T-064** — Export posts as PDF or CSV from admin
-- [ ] **T-065** — Subject-wise archive / history page
+- [ ] **T-057** — Student authentication (Google OAuth via Supabase Auth)
+- [ ] **T-058** — Push notifications for new posts / approaching deadlines
+- [ ] **T-059** — Multi-batch support (use `batch_id` field, admin selects batch)
+- [ ] **T-060** — Admin analytics dashboard (post views, engagement metrics)
+- [ ] **T-061** — PWA support with offline caching (service worker)
+- [ ] **T-062** — Email digest for weekly summaries
+- [ ] **T-063** — Comments / reactions on posts
+- [ ] **T-064** — Calendar view for deadlines
+- [ ] **T-065** — Dark/Light theme toggle (currently dark-only)
+- [ ] **T-066** — Bulk post operations in admin (archive all, delete selected)
+- [ ] **T-067** — Post scheduling (publish at a future date)
+- [ ] **T-068** — Supabase Realtime subscriptions for live feed updates
+- [ ] **T-069** — Export posts as PDF or CSV from admin
+- [ ] **T-070** — Subject-wise archive / history page

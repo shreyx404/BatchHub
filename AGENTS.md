@@ -28,12 +28,13 @@ src/
 │   ├── supabase.js       # Supabase client init (returns null if not configured)
 │   ├── api.js            # ALL data fetching — dual-mode (Supabase + demo fallback)
 │   ├── constants.js      # Content types, statuses, app metadata
-│   └── demoData.js       # In-memory mock data for demo mode
+│   ├── demoData.js       # In-memory mock data for demo mode
+│   └── fingerprint.js    # Client device fingerprinting (hardware & canvas hashing)
 ├── hooks/
 │   ├── usePosts.js       # usePosts(filters), useUpcomingDeadlines()
 │   ├── usePost.js        # usePost(id)
 │   ├── useSubjects.js    # useSubjects()
-│   └── useAdmin.js       # useAdmin() — auth state + login/logout
+│   └── useAdmin.js       # useAdmin() — auth state + login/logout + 24h lockout
 ├── components/
 │   ├── layout/           # Header, Footer
 │   ├── ui/               # Badge, SearchBar, FilterBar, Modal, LoadingState, ErrorState, EmptyState
@@ -46,11 +47,11 @@ src/
     └── NotFoundPage.jsx  # 404 page
 
 api/
-├── admin.js              # Secure admin API (auth + rate limit + CRUD)
+├── admin.js              # Secure admin API (auth + 4-tier rate limit/Turnstile + CRUD)
 └── discord.js            # Discord interaction webhook
 
 supabase/
-├── schema.sql            # Database DDL + indexes + RLS policies + triggers
+├── schema.sql            # Database DDL + indexes + RLS policies + triggers + admin_login_attempts
 └── seed.sql              # Sample data for initial setup
 
 scripts/
@@ -127,7 +128,9 @@ File uploads are the **one exception** — they go directly from the client to S
 | Rule | Detail |
 |------|--------|
 | **No client-side password checking** | The admin password is never compared in the browser |
-| **No VITE_ prefix for secrets** | `ADMIN_PASSWORD`, `SUPABASE_SERVICE_ROLE_KEY`, `DISCORD_PUBLIC_KEY` must NOT have `VITE_` prefix |
+| **No VITE_ prefix for secrets** | `ADMIN_PASSWORD`, `SUPABASE_SERVICE_ROLE_KEY`, `TURNSTILE_SECRET_KEY`, `DISCORD_PUBLIC_KEY` must NOT have `VITE_` prefix |
+| **VITE_ prefix for client keys** | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_TURNSTILE_SITE_KEY` require `VITE_` prefix |
+| **4-Tier Admin Protection** | IP rate limit (10/24h), Device fingerprint limit (10/24h), Cloudflare Turnstile bot verification, and Global Supabase limit (30/24h) |
 | **Payload whitelisting** | Always use `pick()` to extract only allowed fields before database operations |
 | **Sanitise user input** | Escape search queries for PostgREST wildcards; disallow dangerous Markdown elements |
 | **UUID filenames** | Always prefix uploaded filenames with `crypto.randomUUID()` |

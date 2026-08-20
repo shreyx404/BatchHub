@@ -36,14 +36,16 @@
 | FR-018 | Show a "Back to BatchHub" navigation bar at the top | P1 | ✅ Implemented |
 
 ### 1.3 Admin Authentication
-
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
 | FR-019 | Password-protected admin login screen at `/admin` | P0 | ✅ Implemented |
 | FR-020 | Password validated server-side only (never checked client-side) | P0 | ✅ Implemented |
 | FR-021 | Store authenticated session token in `sessionStorage` (cleared on tab close) | P0 | ✅ Implemented |
 | FR-022 | Support logout action that clears the session token | P0 | ✅ Implemented |
-| FR-023 | Show rate-limit error after too many failed attempts | P1 | ✅ Implemented |
+| FR-023 | Enforce persistent 10-attempt, 24-hour lockout stored in `localStorage` with live UI countdown timer | P0 | ✅ Implemented |
+| FR-024 | Integrate Cloudflare Turnstile invisible bot challenge on admin login form | P0 | ✅ Implemented |
+| FR-025 | Compute and track browser device fingerprint across IP/VPN changes | P0 | ✅ Implemented |
+| FR-026 | Enforce global velocity limit of 30 failed login attempts/day site-wide | P0 | ✅ Implemented |
 
 ### 1.4 Admin Dashboard
 
@@ -111,12 +113,12 @@
 |----|-------------|----------------|
 | NFR-005 | Server-side password validation | Admin password sent as Bearer token, verified by serverless function |
 | NFR-006 | Timing-safe password comparison | `crypto.timingSafeEqual` prevents timing attacks |
-| NFR-007 | Rate limiting on auth | 10 failed attempts per IP within 15-minute window |
+| NFR-007 | 4-Tier Brute Force Protection | (1) 10 attempts/24h per IP, (2) 10 attempts/24h per device fingerprint, (3) Cloudflare Turnstile anti-bot challenge, (4) 30 failed attempts/24h global limit via Supabase |
 | NFR-008 | Payload field whitelisting | Only allowed fields (`POST_FIELDS`, `SUBJECT_FIELDS`, `ATTACHMENT_FIELDS`) are extracted from request payloads |
 | NFR-009 | Search input sanitisation | PostgREST/SQL wildcard characters (`%`, `_`, `\`) escaped before query |
 | NFR-010 | Markdown sanitisation | `script`, `iframe`, `object`, `embed` elements are disallowed in rendered Markdown |
 | NFR-011 | Row Level Security (RLS) | All Supabase tables have RLS enabled; anon can only SELECT published posts |
-| NFR-012 | Content Security Policy | CSP headers configured in `vercel.json` |
+| NFR-012 | Content Security Policy | CSP headers configured in `vercel.json` with Turnstile domains allowed |
 | NFR-013 | File upload path safety | Filenames sanitised and prefixed with `crypto.randomUUID()` to prevent collisions and path traversal |
 | NFR-014 | CORS configuration | Configurable `ALLOWED_ORIGIN` env var; defaults to `*` |
 
@@ -183,6 +185,16 @@
 | `file_type` | TEXT | MIME type |
 | `created_at` | TIMESTAMPTZ | Auto-set |
 
+### 3.4 Admin Login Attempts Table
+
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `id` | UUID | Primary key, auto-generated |
+| `ip` | TEXT | Client IP address (default `'unknown'`) |
+| `fingerprint` | TEXT | Optional browser device fingerprint hash |
+| `success` | BOOLEAN | `true` if login succeeded, `false` otherwise |
+| `attempted_at` | TIMESTAMPTZ | Auto-set to `now()` |
+
 ---
 
 ## 4. Environment Variables
@@ -191,8 +203,10 @@
 |----------|-------|----------|---------|
 | `VITE_SUPABASE_URL` | Client + Server | Yes (for production) | Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Client | Yes (for production) | Supabase anonymous key |
+| `VITE_TURNSTILE_SITE_KEY` | Client | Optional | Cloudflare Turnstile public site key |
 | `ADMIN_PASSWORD` | Server only | Yes | Admin dashboard password |
 | `SUPABASE_SERVICE_ROLE_KEY` | Server only | Yes | Full DB access for admin API and Discord bot |
+| `TURNSTILE_SECRET_KEY` | Server only | Optional | Cloudflare Turnstile server validation secret |
 | `DISCORD_PUBLIC_KEY` | Server only | Optional | Discord interaction signature verification |
 | `DISCORD_TOKEN` | Local script only | Optional | Bot token for command registration |
 | `DISCORD_APP_ID` | Local script only | Optional | Application ID for command registration |

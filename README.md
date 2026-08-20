@@ -17,8 +17,9 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 - 🔗 Deep links for sharing on WhatsApp
 
 ### Admin (BR)
-- 🔐 Password-protected admin dashboard (backed by secure Serverless API)
-- ✏️ Create, edit, publish, archive posts
+- 🔐 Password-protected admin dashboard backed by a secure Serverless API
+- 🛡️ 4-Tier Security Fortress: Cloudflare Turnstile bot verification, Device Fingerprinting, 10-attempt 24-hour lockout, and 30/day global rate limiting
+- ✏️ Create, edit, publish, archive posts with timezone-safe date picking
 - 📘 Manage assignments, labs, notices, deadlines, resources
 - 📚 Manage subjects with color coding
 - 📎 Upload attachments (drag-and-drop)
@@ -56,20 +57,23 @@ npm install
 cp .env.example .env.local
 ```
 
-Edit `.env.local` with your Supabase credentials, admin password, and optionally Discord keys if using the bot:
+Edit `.env.local` with your Supabase credentials, admin password, and optionally Turnstile / Discord keys:
 ```env
+# Client-side (bundled into frontend)
 VITE_SUPABASE_URL=your-supabase-url
 VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_TURNSTILE_SITE_KEY=your-turnstile-site-key (Optional, Cloudflare Turnstile bot protection)
 
 # Server-side secrets (No VITE_ prefix!)
 ADMIN_PASSWORD=your-secure-password
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key (Required for Admin Dashboard & Discord)
+TURNSTILE_SECRET_KEY=your-turnstile-secret-key (Optional, server-side bot verification)
 DISCORD_PUBLIC_KEY=your-discord-public-key (Optional, for Discord Bot)
 ```
 
 ### 3. Set up Supabase
 1. Create a project at [supabase.com](https://supabase.com)
-2. Run `supabase/schema.sql` in the SQL Editor
+2. Run `supabase/schema.sql` in the SQL Editor (creates tables including `admin_login_attempts`)
 3. Run `supabase/seed.sql` for sample data
 4. Create a storage bucket named `attachments` (set to Public)
 5. Copy your Project URL and Anon Key to `.env.local`
@@ -107,7 +111,7 @@ DISCORD_TOKEN="your-bot-token" DISCORD_APP_ID="your-app-id" node scripts/registe
 3. Add environment variables in project settings
 4. Deploy!
 
-The `vercel.json` handles SPA routing automatically.
+The `vercel.json` handles SPA routing and CSP automatically.
 
 ## Project Structure
 
@@ -116,17 +120,17 @@ src/
 ├── main.jsx              # Entry point
 ├── App.jsx               # Router
 ├── index.css             # Design system
-├── lib/                  # API, constants, Supabase client
-├── hooks/                # Custom React hooks
+├── lib/                  # API, constants, Supabase client, fingerprint.js
+├── hooks/                # Custom React hooks (usePosts, usePost, useSubjects, useAdmin)
 ├── components/
 │   ├── layout/           # Header, Footer
 │   ├── ui/               # Badges, search, filters, modals
 │   ├── posts/            # Post cards, grid, deadlines, notices section
-│   └── admin/            # Admin forms, tables, sidebar
+│   └── admin/            # Admin forms, tables, sidebar, login with Turnstile
 └── pages/                # Route pages
 
 api/                      # Vercel Serverless Functions
-├── admin.js              # Secure backend for the admin dashboard
+├── admin.js              # Secure backend for admin dashboard (4-tier security)
 └── discord.js            # Discord interactions webhook
 
 scripts/                  

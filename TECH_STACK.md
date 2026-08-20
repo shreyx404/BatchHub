@@ -23,6 +23,8 @@ BatchHub is built with a modern JAMstack architecture: a React SPA frontend host
 | **React Markdown** | 10.1 | Markdown rendering | Safe rendering of user-authored content with element filtering |
 | **React Hot Toast** | 2.5 | Toast notifications | Lightweight, customisable notification system |
 | **date-fns** | 4.1 | Date utilities | Tree-shakeable date formatting, relative times, and comparisons |
+| **Cloudflare Turnstile** | v0 API | Invisible CAPTCHA / Anti-Bot | Free, privacy-focused bot defense loaded asynchronously without UX friction |
+| **Device Fingerprinting** | Internal | Hardware & Graphics Hashing | Zero-dependency canvas, WebGL, and hardware signals hashed via djb2 algorithm |
 
 ---
 
@@ -34,6 +36,7 @@ BatchHub is built with a modern JAMstack architecture: a React SPA frontend host
 | **PostgreSQL** | Relational database | Strong typing, array columns (`TEXT[]`), JSONB support, full-text search (GIN indexes), triggers |
 | **Supabase Storage** | File/attachment hosting | Integrated with the DB; public bucket with direct upload from client |
 | **Supabase JS Client** | 2.49 | Official SDK for both client (anon key) and server (service role key) access |
+| **admin_login_attempts** | Database Table | Persistent site-wide login attempt logging for 24-hour rate limiting & audit |
 
 ---
 
@@ -43,6 +46,7 @@ BatchHub is built with a modern JAMstack architecture: a React SPA frontend host
 |------------|---------|------------|
 | **Vercel Serverless Functions** | Backend API endpoints | Zero-config deployment alongside the frontend; scales automatically |
 | **Node.js (crypto)** | Timing-safe password comparison | Built-in `crypto.timingSafeEqual` prevents timing side-channel attacks |
+| **Cloudflare Siteverify API** | Server-side bot verification | Validates client Turnstile tokens with Cloudflare |
 | **tweetnacl** | 1.0.3 | Ed25519 signature verification for Discord webhook security |
 
 ---
@@ -132,13 +136,16 @@ BatchHub is built with a modern JAMstack architecture: a React SPA frontend host
 | Area | Technology / Approach |
 |------|----------------------|
 | **Admin auth** | Bearer token over HTTPS, validated server-side with `crypto.timingSafeEqual` |
-| **Rate limiting** | In-memory IP-based counter (10 failures / 15 min window) |
+| **Layer 1: IP Rate Limiting** | In-memory IP-based tracker (10 failed attempts triggers 24-hour lockout) |
+| **Layer 2: Device Fingerprinting** | Client canvas + WebGL + hardware hash tracking (10 failed attempts triggers 24-hour lockout across VPNs) |
+| **Layer 3: Bot Challenge** | Cloudflare Turnstile invisible CAPTCHA token validated via `challenges.cloudflare.com` |
+| **Layer 4: Global Rate Limiting** | Persistent Supabase query on `admin_login_attempts` (30 failed attempts/24h site-wide triggers cooldown) |
 | **Payload safety** | Server-side field whitelisting via `pick()` function |
 | **Search safety** | SQL wildcard character escaping (`%`, `_`, `\`) |
 | **Markdown safety** | Disallowed elements: `script`, `iframe`, `object`, `embed` |
 | **Discord webhook** | Ed25519 signature verification via `tweetnacl` |
 | **File uploads** | UUID-prefixed filenames, character sanitisation |
-| **HTTP headers** | CSP, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy` |
+| **HTTP headers** | CSP (including Cloudflare Turnstile), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy` |
 | **Database access** | Row Level Security: anon = read published only; service role = full access |
 
 ---

@@ -53,7 +53,7 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 
 | # | Feature | Description |
 |---|---------|-------------|
-| F-09 | **Secure Login** | Password validated server-side via Vercel serverless function; never checked client-side |
+| F-09 | **Secure Login & Multi-Layer Defense** | Password validated server-side with `crypto.timingSafeEqual`; protected by 4 security layers: 10 attempts / 24-hour lockout per IP, per-device fingerprint tracking, Cloudflare Turnstile bot verification, and a 30 failed attempts / 24-hour global site-wide limit |
 | F-10 | **Dashboard Overview** | Stats cards (total posts, published, drafts, subjects) with quick actions |
 | F-11 | **Post CRUD** | Create, edit, publish, archive, and delete posts with live Markdown preview |
 | F-12 | **Subject Manager** | Create, edit, delete subjects with color coding |
@@ -112,7 +112,7 @@ When filters or search are active, all sections collapse into a flat, chronologi
 | **Performance** | First Contentful Paint < 1.5s on 4G |
 | **Mobile-first** | Fully usable on 320px+ screens |
 | **Accessibility** | Focus-visible outlines, semantic HTML, ARIA labels on interactive elements |
-| **Security** | RLS on all tables, timing-safe password comparison, rate limiting (10 attempts / 15 min), CSP headers, payload field whitelisting |
+| **Security** | RLS on all tables, timing-safe password comparison, 4-tier brute force defense: 10 attempts / 24h lockout per IP & device fingerprint, Cloudflare Turnstile anti-bot, 30/day global rate limiting, CSP headers, payload field whitelisting |
 | **Offline resilience** | Demo mode with sample data when DB is unavailable |
 | **SEO** | Proper meta tags, semantic heading hierarchy |
 

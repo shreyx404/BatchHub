@@ -35,6 +35,8 @@
                             │  │   • subjects        │  │
                             │  │   • posts           │  │
                             │  │   • attachments     │  │
+                            │  │   • admin_login_    │  │
+                            │  │     attempts        │  │
                             │  │   (RLS enabled)     │  │
                             │  └────────────────────┘  │
                             │                          │
@@ -71,17 +73,23 @@ Response → Client-side processing:
     • Categorisation into sections (notices, pinned, deadline-sorted, general)
 ```
 
-### 2.2 Admin Creating / Editing Posts
+### 2.2 Admin Authentication & Operations
 
 ```
 Admin Browser
-    │  Bearer token (password) in Authorization header
+    │  1. Generates device fingerprint (canvas + WebGL + hardware)
+    │  2. Solves Cloudflare Turnstile invisible challenge
+    │  3. Sends password + fingerprint + Turnstile token
     ▼
 Vercel Serverless Function (api/admin.js)
-    │  1. Rate limit check (IP-based, 10/15min)
-    │  2. Timing-safe password comparison
-    │  3. Payload field whitelisting (pick())
-    │  4. Action routing (switch/case)
+    │  1. Layer 1: Per-IP rate limit check (10 attempts / 24h lockout)
+    │  2. Layer 2: Per-device fingerprint check (10 attempts / 24h lockout)
+    │  3. Layer 3: Cloudflare Turnstile token validation (anti-bot)
+    │  4. Layer 4: Global rate limit check (>30 failed attempts/24h site-wide)
+    │  5. Layer 5: Timing-safe password comparison (crypto.timingSafeEqual)
+    │  6. Logs attempt to Supabase (admin_login_attempts table)
+    │  7. Payload field whitelisting (pick())
+    │  8. Action routing (switch/case)
     ▼
 Supabase (via Service Role Key — bypasses RLS)
     │
@@ -89,7 +97,7 @@ Supabase (via Service Role Key — bypasses RLS)
 PostgreSQL mutation (INSERT / UPDATE / DELETE)
     │  Trigger: updated_at auto-set on UPDATE
     ▼
-Response → Admin UI updates
+Response → Admin UI updates (or lockout countdown if rate-limited)
 ```
 
 ### 2.3 Discord Bot Posting
@@ -230,16 +238,20 @@ The admin endpoint uses a single `POST` with an `action` field to route requests
 ### 4.3 Security Layers
 
 ```
-Request arrives
+Request arrives at /api/admin
     │
     ├── 1. CORS headers set (Access-Control-Allow-*)
     ├── 2. Method check (POST only)
-    ├── 3. Rate limit check (IP → Map, 10 attempts / 15 min window)
-    ├── 4. Bearer token extraction from Authorization header
-    ├── 5. Timing-safe comparison with ADMIN_PASSWORD env var
-    ├── 6. Supabase client initialised with SERVICE_ROLE_KEY
-    ├── 7. Payload sanitised via pick() with field whitelists
-    └── 8. Action routed and executed
+    ├── 3. Layer 1: In-memory IP rate limiter (10 failed attempts / 24-hour lockout)
+    ├── 4. Layer 2: In-memory device fingerprint limiter (10 failed attempts / 24-hour lockout)
+    ├── 5. Layer 3: Cloudflare Turnstile token verification (blocks automated bots)
+    ├── 6. Layer 4: Global rate limit check (>30 failed attempts/24h across all IPs via Supabase)
+    ├── 7. Layer 5: Timing-safe password comparison (crypto.timingSafeEqual against ADMIN_PASSWORD)
+    ├── 8. Log attempt to Supabase (admin_login_attempts table)
+    ├── 9. Clear IP and fingerprint failures on success + auto-cleanup old logs (>7 days)
+    ├── 10. Supabase client initialised with SERVICE_ROLE_KEY
+    ├── 11. Payload sanitised via pick() with field whitelists
+    └── 12. Action routed and executed
 ```
 
 ---
@@ -252,12 +264,12 @@ Request arrives
 subjects (1) ──────────< (N) posts (1) ──────────< (N) attachments
     │                         │                         │
     │ id (PK, UUID)           │ id (PK, UUID)           │ id (PK, UUID)
-    │ name                    │ title                    │ post_id (FK)
-    │ code                    │ content                  │ file_name
-    │ color                   │ type                     │ file_url
-    │ created_at              │ subject_id (FK)          │ file_size
-    │                         │ is_pinned                │ file_type
-                              │ status                   │ created_at
+    │ name                    │ title                   │ post_id (FK)
+    │ code                    │ content                 │ file_name
+    │ color                   │ type                    │ file_url
+    │ created_at              │ subject_id (FK)         │ file_size
+    │                         │ is_pinned               │ file_type
+                              │ status                  │ created_at
                               │ due_date
                               │ tags[]
                               │ links (JSONB)
@@ -265,6 +277,13 @@ subjects (1) ──────────< (N) posts (1) ───────
                               │ created_by
                               │ created_at
                               │ updated_at (trigger)
+
+admin_login_attempts (standalone log table)
+    │ id (PK, UUID)
+    │ ip (TEXT)
+    │ fingerprint (TEXT)
+    │ success (BOOLEAN)
+    │ attempted_at (TIMESTAMPTZ)
 ```
 
 ### 5.2 Indexes
@@ -280,6 +299,9 @@ subjects (1) ──────────< (N) posts (1) ───────
 | `idx_posts_batch` | `batch_id` | B-tree | Future multi-tenant |
 | `idx_attachments_post` | `post_id` | B-tree | Join performance |
 | `idx_posts_search` | `title + content` | GIN (tsvector) | Full-text search |
+| `idx_login_attempts_attempted_at` | `attempted_at DESC` | B-tree | Fast 24-hour rate-limit window checks |
+| `idx_login_attempts_success` | `success` (partial) | B-tree | Quick count of failed attempts |
+| `idx_login_attempts_fingerprint` | `fingerprint` (partial) | B-tree | Fast device lookup |
 
 ### 5.3 Row Level Security Policies
 
@@ -288,6 +310,7 @@ subjects (1) ──────────< (N) posts (1) ───────
 | `subjects` | SELECT | Public (all) |
 | `posts` | SELECT | Public WHERE `status = 'published'` |
 | `attachments` | SELECT | Public (all) |
+| `admin_login_attempts` | ALL | Service role only (no public access) |
 | All tables | ALL | Service role only (admin/bot operations) |
 
 ---
@@ -305,15 +328,17 @@ Vercel CI/CD
     ├── Deploy api/ functions as serverless
     └── Apply vercel.json:
         • SPA rewrite: /* → /index.html (except /api/*)
-        • Security headers: CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy
+        • Security headers: CSP (including Turnstile), X-Frame-Options, X-Content-Type-Options, Referrer-Policy
 ```
 
 ### Environment Variables (Vercel Dashboard)
 
-| Variable | Exposure |
-|----------|----------|
-| `VITE_SUPABASE_URL` | Build time (bundled into client) |
-| `VITE_SUPABASE_ANON_KEY` | Build time (bundled into client) |
-| `ADMIN_PASSWORD` | Runtime only (serverless functions) |
-| `SUPABASE_SERVICE_ROLE_KEY` | Runtime only (serverless functions) |
-| `DISCORD_PUBLIC_KEY` | Runtime only (serverless functions) |
+| Variable | Exposure | Description |
+|----------|----------|-------------|
+| `VITE_SUPABASE_URL` | Build time (bundled into client) | Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | Build time (bundled into client) | Supabase anon key |
+| `VITE_TURNSTILE_SITE_KEY` | Build time (bundled into client) | Cloudflare Turnstile public site key |
+| `ADMIN_PASSWORD` | Runtime only (serverless functions) | Admin dashboard master password |
+| `SUPABASE_SERVICE_ROLE_KEY` | Runtime only (serverless functions) | Full database access key |
+| `TURNSTILE_SECRET_KEY` | Runtime only (serverless functions) | Cloudflare Turnstile server validation key |
+| `DISCORD_PUBLIC_KEY` | Runtime only (serverless functions) | Discord interaction webhook signature verification |
