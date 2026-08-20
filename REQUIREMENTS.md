@@ -1,0 +1,198 @@
+# BatchHub — Requirements Specification
+
+> **Version:** 1.0  
+> **Last Updated:** 2026-08-20
+
+---
+
+## 1. Functional Requirements
+
+### 1.1 Public Feed (Student View)
+
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| FR-001 | Display published posts in a structured feed with sections: Notices & Important → Pinned → Deadline-sorted → General | P0 | ✅ Implemented |
+| FR-002 | Show an upcoming deadlines banner with countdown timers at the top of the feed | P0 | ✅ Implemented |
+| FR-003 | Visually highlight urgent deadlines (< 48 hours remaining) with inverted styling | P0 | ✅ Implemented |
+| FR-004 | Automatically unpin posts whose `due_date` has passed (client-side dynamic unpinning) | P1 | ✅ Implemented |
+| FR-005 | Provide debounced search (300 ms) across `title` and `content` fields | P0 | ✅ Implemented |
+| FR-006 | Allow filtering by content type (assignment, lab, notice, deadline, resource, important) | P0 | ✅ Implemented |
+| FR-007 | Allow filtering by subject | P0 | ✅ Implemented |
+| FR-008 | Collapse structured sections into a flat list when any filter or search is active | P1 | ✅ Implemented |
+| FR-009 | Show "Overdue" label on post cards whose deadline has passed | P1 | ✅ Implemented |
+| FR-010 | Display post count next to section headings | P2 | ✅ Implemented |
+
+### 1.2 Post Detail Page
+
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| FR-011 | Render post content as Markdown with sanitisation (disallow `script`, `iframe`, `object`, `embed`) | P0 | ✅ Implemented |
+| FR-012 | Display type badge, subject badge, creation date, and relative timestamp | P0 | ✅ Implemented |
+| FR-013 | Display due date with formatted date and time when present | P0 | ✅ Implemented |
+| FR-014 | Render tags as styled chips | P1 | ✅ Implemented |
+| FR-015 | Display external links with label and URL in clickable cards | P1 | ✅ Implemented |
+| FR-016 | Display file attachments with file name, size, type icon, and download link | P0 | ✅ Implemented |
+| FR-017 | Provide a "Share on WhatsApp" button using native Web Share API with clipboard fallback | P0 | ✅ Implemented |
+| FR-018 | Show a "Back to BatchHub" navigation bar at the top | P1 | ✅ Implemented |
+
+### 1.3 Admin Authentication
+
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| FR-019 | Password-protected admin login screen at `/admin` | P0 | ✅ Implemented |
+| FR-020 | Password validated server-side only (never checked client-side) | P0 | ✅ Implemented |
+| FR-021 | Store authenticated session token in `sessionStorage` (cleared on tab close) | P0 | ✅ Implemented |
+| FR-022 | Support logout action that clears the session token | P0 | ✅ Implemented |
+| FR-023 | Show rate-limit error after too many failed attempts | P1 | ✅ Implemented |
+
+### 1.4 Admin Dashboard
+
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| FR-024 | Display dashboard with stat cards: Total Posts, Published, Drafts, Subjects | P0 | ✅ Implemented |
+| FR-025 | Provide quick action buttons: "Create New Post" and "Manage Posts" | P1 | ✅ Implemented |
+| FR-026 | Sidebar navigation with links to Dashboard, Create Post, Manage Posts, and Subjects | P0 | ✅ Implemented |
+| FR-027 | Responsive sidebar that collapses to a hamburger menu on mobile | P1 | ✅ Implemented |
+
+### 1.5 Post Management (Admin)
+
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| FR-028 | Create new posts with: title (required), content (Markdown), type, subject, due date, status, pin toggle, tags, links, and file attachments | P0 | ✅ Implemented |
+| FR-029 | Edit existing posts with all fields pre-populated | P0 | ✅ Implemented |
+| FR-030 | Delete posts with confirmation | P0 | ✅ Implemented |
+| FR-031 | Change post status between published, draft, and archived | P0 | ✅ Implemented |
+| FR-032 | Live Markdown preview toggle in the content editor | P1 | ✅ Implemented |
+| FR-033 | Drag-and-drop file upload with 10 MB per file size limit | P1 | ✅ Implemented |
+| FR-034 | Multiple link entries per post with label + URL pairs | P1 | ✅ Implemented |
+| FR-035 | Comma-separated tag input | P2 | ✅ Implemented |
+
+### 1.6 Subject Management (Admin)
+
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| FR-036 | Create subjects with name, code, and hex color | P0 | ✅ Implemented |
+| FR-037 | Edit existing subjects | P0 | ✅ Implemented |
+| FR-038 | Delete subjects (associated posts get `subject_id = NULL` via `ON DELETE SET NULL`) | P0 | ✅ Implemented |
+
+### 1.7 Discord Bot Integration
+
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| FR-039 | Handle Discord interaction webhook with Ed25519 signature verification | P1 | ✅ Implemented |
+| FR-040 | Respond to Discord PING (type 1) for endpoint verification | P1 | ✅ Implemented |
+| FR-041 | Create published posts from `/post` slash command with title, type, content, due_date, is_pinned, and tags | P1 | ✅ Implemented |
+| FR-042 | Provide a registration script for deploying slash commands to Discord | P2 | ✅ Implemented |
+
+### 1.8 Demo Mode
+
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| FR-043 | Detect missing Supabase credentials and fall back to in-memory demo data | P1 | ✅ Implemented |
+| FR-044 | Demo data includes sample subjects and posts with relative dates for freshness | P2 | ✅ Implemented |
+| FR-045 | All CRUD operations work against in-memory arrays in demo mode | P2 | ✅ Implemented |
+
+---
+
+## 2. Non-Functional Requirements
+
+### 2.1 Performance
+
+| ID | Requirement | Target |
+|----|-------------|--------|
+| NFR-001 | First Contentful Paint | < 1.5s on 4G |
+| NFR-002 | Bundle size (gzipped) | < 150 KB |
+| NFR-003 | Search debounce latency | 300 ms |
+| NFR-004 | Serverless function cold start | < 500 ms |
+
+### 2.2 Security
+
+| ID | Requirement | Implementation |
+|----|-------------|----------------|
+| NFR-005 | Server-side password validation | Admin password sent as Bearer token, verified by serverless function |
+| NFR-006 | Timing-safe password comparison | `crypto.timingSafeEqual` prevents timing attacks |
+| NFR-007 | Rate limiting on auth | 10 failed attempts per IP within 15-minute window |
+| NFR-008 | Payload field whitelisting | Only allowed fields (`POST_FIELDS`, `SUBJECT_FIELDS`, `ATTACHMENT_FIELDS`) are extracted from request payloads |
+| NFR-009 | Search input sanitisation | PostgREST/SQL wildcard characters (`%`, `_`, `\`) escaped before query |
+| NFR-010 | Markdown sanitisation | `script`, `iframe`, `object`, `embed` elements are disallowed in rendered Markdown |
+| NFR-011 | Row Level Security (RLS) | All Supabase tables have RLS enabled; anon can only SELECT published posts |
+| NFR-012 | Content Security Policy | CSP headers configured in `vercel.json` |
+| NFR-013 | File upload path safety | Filenames sanitised and prefixed with `crypto.randomUUID()` to prevent collisions and path traversal |
+| NFR-014 | CORS configuration | Configurable `ALLOWED_ORIGIN` env var; defaults to `*` |
+
+### 2.3 Usability
+
+| ID | Requirement | Target |
+|----|-------------|--------|
+| NFR-015 | Mobile-first responsive design | Fully usable from 320px screen width |
+| NFR-016 | Accessibility: Focus outlines | All interactive elements have visible `focus-visible` outlines |
+| NFR-017 | Accessibility: ARIA labels | Search toggle, admin buttons have `aria-label` attributes |
+| NFR-018 | Smooth animations | Fade-in, staggered children, and hover transitions using `cubic-bezier` easing |
+
+### 2.4 Reliability
+
+| ID | Requirement | Target |
+|----|-------------|--------|
+| NFR-019 | Graceful degradation | App functions in demo mode without Supabase |
+| NFR-020 | Error states | Dedicated error component with retry button for failed API calls |
+| NFR-021 | Loading states | Skeleton loaders and spinners for all async operations |
+| NFR-022 | Toast notifications | Success/error feedback for all admin actions |
+
+---
+
+## 3. Data Requirements
+
+### 3.1 Subjects Table
+
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `id` | UUID | Primary key, auto-generated |
+| `name` | TEXT | Not null |
+| `code` | TEXT | Optional short code |
+| `color` | TEXT | Hex colour, default `#6366f1` |
+| `created_at` | TIMESTAMPTZ | Auto-set |
+
+### 3.2 Posts Table
+
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `id` | UUID | Primary key, auto-generated |
+| `title` | TEXT | Not null |
+| `content` | TEXT | Markdown body |
+| `type` | TEXT | Enum check: `assignment`, `lab`, `notice`, `deadline`, `resource`, `important` |
+| `subject_id` | UUID | FK → subjects, `ON DELETE SET NULL` |
+| `is_pinned` | BOOLEAN | Default `false` |
+| `status` | TEXT | Enum check: `published`, `draft`, `archived` |
+| `due_date` | TIMESTAMPTZ | Optional deadline |
+| `tags` | TEXT[] | Array of strings |
+| `links` | JSONB | Array of `{label, url}` objects |
+| `batch_id` | TEXT | Default `'default'` (placeholder for multi-tenant) |
+| `created_by` | TEXT | Default `'admin'` |
+| `created_at` | TIMESTAMPTZ | Auto-set |
+| `updated_at` | TIMESTAMPTZ | Auto-updated via trigger |
+
+### 3.3 Attachments Table
+
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `id` | UUID | Primary key, auto-generated |
+| `post_id` | UUID | FK → posts, `ON DELETE CASCADE` |
+| `file_name` | TEXT | Not null |
+| `file_url` | TEXT | Not null, public URL from Supabase Storage |
+| `file_size` | BIGINT | Size in bytes |
+| `file_type` | TEXT | MIME type |
+| `created_at` | TIMESTAMPTZ | Auto-set |
+
+---
+
+## 4. Environment Variables
+
+| Variable | Scope | Required | Purpose |
+|----------|-------|----------|---------|
+| `VITE_SUPABASE_URL` | Client + Server | Yes (for production) | Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | Client | Yes (for production) | Supabase anonymous key |
+| `ADMIN_PASSWORD` | Server only | Yes | Admin dashboard password |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server only | Yes | Full DB access for admin API and Discord bot |
+| `DISCORD_PUBLIC_KEY` | Server only | Optional | Discord interaction signature verification |
+| `DISCORD_TOKEN` | Local script only | Optional | Bot token for command registration |
+| `DISCORD_APP_ID` | Local script only | Optional | Application ID for command registration |
