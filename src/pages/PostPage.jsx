@@ -42,13 +42,30 @@ export default function PostPage() {
   const hasLinks = post.links && post.links.length > 0;
   const hasAttachments = post.attachments && post.attachments.length > 0;
 
-  const handleShare = () => {
+  const handleShare = async () => {
     const url = window.location.href;
+    const shareText = `*${post.title}*\n${APP_NAME}: ${url}`;
+
     if (navigator.share) {
-      navigator.share({ title: post.title, text: `${post.title} — ${APP_NAME}`, url });
+      try {
+        await navigator.share({ text: shareText });
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          try {
+            await navigator.clipboard.writeText(shareText);
+            toast.success('Copied to clipboard!');
+          } catch {
+            toast.error('Failed to copy to clipboard');
+          }
+        }
+      }
     } else {
-      navigator.clipboard.writeText(url);
-      toast.success('Link copied!');
+      try {
+        await navigator.clipboard.writeText(shareText);
+        toast.success('Copied to clipboard!');
+      } catch {
+        toast.error('Failed to copy to clipboard');
+      }
     }
   };
 
@@ -188,7 +205,7 @@ export default function PostPage() {
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-black text-[var(--text-sm)] font-medium transition-colors duration-300 tracking-[0.005em]"
           >
             <Share2 size={14} />
-            Share on WhatsApp
+            Share
           </button>
         </div>
       </main>
