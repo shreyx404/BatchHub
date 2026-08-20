@@ -55,6 +55,7 @@
 | FR-028 | Provide quick action buttons: "Create New Post" and "Manage Posts" | P1 | ✅ Implemented |
 | FR-029 | Sidebar navigation with links to Dashboard, Create Post, Manage Posts, and Subjects | P0 | ✅ Implemented |
 | FR-030 | Responsive sidebar that collapses to a hamburger menu on mobile | P1 | ✅ Implemented |
+| FR-030a | Embed live "Student View" feed preview on dashboard overview mirroring exact homepage feed (Deadline banner, Notices, Pinned, Upcoming Deadlines, General Updates) | P1 | ✅ Implemented |
 
 ### 1.5 Post Management (Admin)
 

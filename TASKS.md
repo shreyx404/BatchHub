@@ -111,7 +111,7 @@
   - [x] Dynamic unpinning logic
 - [x] **T-040** — `PostPage` — full post detail with Markdown, tags, links, attachments, share
 - [x] **T-041** — `AdminPage` — protected admin with nested routes
-  - [x] Dashboard with stats cards and quick actions
+  - [x] Dashboard with stats cards, quick actions, and embedded live "Student View" preview
   - [x] Create post route
   - [x] Edit post route (with data prefetch)
   - [x] Posts management route
@@ -140,22 +140,23 @@
 - [x] **T-058** — Refine Cloudflare Turnstile anti-bot verification to login authentication ping actions, unblocking authenticated admin CRUD operations
 - [x] **T-059** — Implement Vite dev server SSR middleware for `/api/admin` to execute serverless handler locally during `npm run dev`
 - [x] **T-060** — Add flexible sorting controls in admin `PostTable` (Created Date & Due Date with ascending/descending toggle and floating posts with no deadlines to top)
+- [x] **T-061** — Embed live "Student View" preview panel in Admin Dashboard home (`AdminPage.jsx`) mirroring homepage structured feed
 
 ---
 
 ## Future Tasks (Backlog)
 
-- [ ] **T-060** — Student authentication (Google OAuth via Supabase Auth)
-- [ ] **T-061** — Push notifications for new posts / approaching deadlines
-- [ ] **T-062** — Multi-batch support (use `batch_id` field, admin selects batch)
-- [ ] **T-063** — Admin analytics dashboard (post views, engagement metrics)
-- [ ] **T-064** — PWA support with offline caching (service worker)
-- [ ] **T-065** — Email digest for weekly summaries
-- [ ] **T-066** — Comments / reactions on posts
-- [ ] **T-067** — Calendar view for deadlines
-- [ ] **T-068** — Dark/Light theme toggle (currently dark-only)
-- [ ] **T-069** — Bulk post operations in admin (archive all, delete selected)
-- [ ] **T-070** — Post scheduling (publish at a future date)
-- [ ] **T-071** — Supabase Realtime subscriptions for live feed updates
-- [ ] **T-072** — Export posts as PDF or CSV from admin
-- [ ] **T-073** — Subject-wise archive / history page
+- [ ] **T-062** — Student authentication (Google OAuth via Supabase Auth)
+- [ ] **T-063** — Push notifications for new posts / approaching deadlines
+- [ ] **T-064** — Multi-batch support (use `batch_id` field, admin selects batch)
+- [ ] **T-065** — Admin analytics dashboard (post views, engagement metrics)
+- [ ] **T-066** — PWA support with offline caching (service worker)
+- [ ] **T-067** — Email digest for weekly summaries
+- [ ] **T-068** — Comments / reactions on posts
+- [ ] **T-069** — Calendar view for deadlines
+- [ ] **T-070** — Dark/Light theme toggle (currently dark-only)
+- [ ] **T-071** — Bulk post operations in admin (archive all, delete selected)
+- [ ] **T-072** — Post scheduling (publish at a future date)
+- [ ] **T-073** — Supabase Realtime subscriptions for live feed updates
+- [ ] **T-074** — Export posts as PDF or CSV from admin
+- [ ] **T-075** — Subject-wise archive / history page

@@ -19,6 +19,7 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 ### Admin (BR)
 - 🔐 Password-protected admin dashboard backed by a secure Serverless API
 - 🛡️ 4-Tier Security Fortress: Cloudflare Turnstile bot verification, Device Fingerprinting, 10-attempt 24-hour lockout, and 30/day global rate limiting
+- 👁️ Live "Student View" preview embedded directly inside the Admin Dashboard overview
 - ✏️ Create, edit, publish, archive posts with timezone-safe date picking
 - 📊 Manage all posts with status filters and Created Date / Due Date sorting (with no-deadline post priority)
 - 📘 Manage assignments, labs, notices, deadlines, resources

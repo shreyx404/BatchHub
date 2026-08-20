@@ -190,7 +190,7 @@ Attachment record linked to post via post_id FK
     │   ├── <AdminLogin>           // Password gate
     │   ├── <AdminSidebar>         // Navigation sidebar
     │   └── Nested routes:
-    │       ├── <AdminDashboard>   // "/admin" — Stats + quick actions
+    │       ├── <AdminDashboard>   // "/admin" — Stats + quick actions + live Student View feed preview
     │       ├── <PostForm>         // "/admin/create" — New post
     │       ├── <EditPostWrapper>  // "/admin/edit/:id" — Edit post
     │       │   └── <PostForm>
