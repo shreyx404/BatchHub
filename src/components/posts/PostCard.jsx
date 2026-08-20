@@ -36,7 +36,7 @@ export default function PostCard({ post }) {
         {/* Timestamp & Badges row */}
         <div className="flex items-center gap-3 flex-wrap">
           <span className="font-mono text-[10px] tracking-wider text-[var(--color-text-dim)] uppercase">
-            {format(new Date(post.created_at || new Date()), 'dd-MM-yyyy / HH:mm')}
+            Posted: {format(new Date(post.created_at || new Date()), 'dd-MM-yyyy / HH:mm')}
           </span>
           <Badge type={post.type} />
           {post.subjects && <Badge subject={post.subjects} />}
@@ -63,7 +63,7 @@ export default function PostCard({ post }) {
         {/* Meta row */}
         <div className="flex items-center justify-between mt-1 pt-3 border-t border-[var(--color-border)] border-dashed">
           <div className="flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.06em] text-[var(--color-text-dim)]">
-            {/* Due date */}
+            {/* Due date & Time */}
             {hasDueDate && (
               <span
                 className={`flex items-center gap-1.5 ${
@@ -74,8 +74,8 @@ export default function PostCard({ post }) {
               >
                 <Clock size={11} />
                 {isOverdue
-                  ? `Overdue (${format(dueDate, 'dd-MM-yyyy')})`
-                  : `${format(dueDate, 'dd-MM-yyyy')} · Due ${formatDistanceToNow(dueDate, { addSuffix: true })}`}
+                  ? `Overdue: ${format(dueDate, 'dd-MM-yyyy · h:mm a')}`
+                  : `Due: ${format(dueDate, 'dd-MM-yyyy · h:mm a')} (${formatDistanceToNow(dueDate, { addSuffix: true })})`}
               </span>
             )}
 

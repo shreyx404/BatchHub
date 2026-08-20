@@ -139,7 +139,7 @@ export async function createPost(postData) {
     const newPost = {
       id: `demo-${Date.now()}`,
       ...postData,
-      created_at: new Date().toISOString(),
+      created_at: postData.created_at || new Date().toISOString(),
       updated_at: new Date().toISOString(),
       attachments: [],
     };

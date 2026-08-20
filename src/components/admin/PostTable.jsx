@@ -114,9 +114,16 @@ export default function PostTable() {
                 <p className="text-sm font-medium text-[var(--color-text)] truncate">
                   {post.title}
                 </p>
-                <p className="text-xs text-[var(--color-text-dim)] mt-0.5">
-                  {format(new Date(post.created_at), 'dd-MM-yyyy · h:mm a')}
-                </p>
+                <div className="flex items-center gap-3 text-xs text-[var(--color-text-dim)] mt-1 flex-wrap">
+                  <span>
+                    Posted: {format(new Date(post.created_at || new Date()), 'dd-MM-yyyy · h:mm a')}
+                  </span>
+                  {post.due_date && (
+                    <span className="text-red-400/90 font-medium">
+                      · Due: {format(new Date(post.due_date), 'dd-MM-yyyy · h:mm a')}
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Actions */}

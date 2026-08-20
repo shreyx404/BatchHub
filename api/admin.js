@@ -2,10 +2,10 @@ import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 
 // ── Simple in-memory rate limiter ──────────────────────────────
-// Tracks failed auth attempts per IP. Resets on server cold start (acceptable for serverless).
+// Tracks failed auth attempts per IP with a 10-attempt limit and 24-hour window / lockout.
 const failedAttempts = new Map();
 const MAX_ATTEMPTS = 10;
-const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+const WINDOW_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 function isRateLimited(ip) {
   const entry = failedAttempts.get(ip);
@@ -26,6 +26,10 @@ function recordFailedAttempt(ip) {
   }
 }
 
+function clearFailedAttempts(ip) {
+  failedAttempts.delete(ip);
+}
+
 // ── Timing-safe string comparison ──────────────────────────────
 function timingSafeCompare(a, b) {
   const bufA = Buffer.from(a);
@@ -39,7 +43,7 @@ function timingSafeCompare(a, b) {
 }
 
 // ── Payload validators (whitelist allowed fields) ──────────────
-const POST_FIELDS = ['title', 'content', 'type', 'subject_id', 'is_pinned', 'status', 'due_date', 'tags', 'links'];
+const POST_FIELDS = ['title', 'content', 'type', 'subject_id', 'is_pinned', 'status', 'due_date', 'created_at', 'tags', 'links'];
 const SUBJECT_FIELDS = ['name', 'code', 'color'];
 const ATTACHMENT_FIELDS = ['post_id', 'file_name', 'file_url', 'file_size', 'file_type'];
 
@@ -78,7 +82,8 @@ export default async function handler(req, res) {
   // 1. Rate limiting
   const clientIp = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
   if (isRateLimited(clientIp)) {
-    return res.status(429).json({ error: 'Too many failed attempts. Please try again later.' });
+    res.setHeader('Retry-After', '86400');
+    return res.status(429).json({ error: 'Too many failed attempts (10/10). Account locked for 24 hours. Please try again later.' });
   }
 
   // 2. Verify Authorization
@@ -93,8 +98,17 @@ export default async function handler(req, res) {
 
   if (!authHeader || !timingSafeCompare(authHeader, `Bearer ${adminPassword}`)) {
     recordFailedAttempt(clientIp);
-    return res.status(401).json({ error: 'Unauthorized. Invalid admin password.' });
+    const entry = failedAttempts.get(clientIp);
+    const remaining = Math.max(0, MAX_ATTEMPTS - (entry?.count || 1));
+    return res.status(401).json({
+      error: remaining > 0
+        ? `Unauthorized. Invalid admin password. ${remaining} attempt${remaining === 1 ? '' : 's'} remaining.`
+        : 'Too many failed attempts (10/10). Account locked for 24 hours.'
+    });
   }
+
+  // Clear failed attempts on successful authentication
+  clearFailedAttempts(clientIp);
 
   // 3. Initialize Supabase Admin Client
   const SUPABASE_URL = process.env.VITE_SUPABASE_URL;

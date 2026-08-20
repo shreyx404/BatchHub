@@ -8,6 +8,19 @@ import { CONTENT_TYPE_LIST } from '../../lib/constants';
 import { useSubjects } from '../../hooks/useSubjects';
 import { createPost, updatePost, uploadFile, createAttachment } from '../../lib/api';
 
+function toLocalISOString(date) {
+  if (!date) return '';
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return '';
+  const pad = (n) => String(n).padStart(2, '0');
+  const year = d.getFullYear();
+  const month = pad(d.getMonth() + 1);
+  const day = pad(d.getDate());
+  const hours = pad(d.getHours());
+  const minutes = pad(d.getMinutes());
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
 export default function PostForm({ existingPost, onSaved }) {
   const navigate = useNavigate();
   const { subjects } = useSubjects();
@@ -23,6 +36,7 @@ export default function PostForm({ existingPost, onSaved }) {
     is_pinned: false,
     status: 'published',
     due_date: '',
+    created_at: '',
     tags: '',
     links: [{ label: '', url: '' }],
   });
@@ -36,9 +50,8 @@ export default function PostForm({ existingPost, onSaved }) {
         subject_id: existingPost.subject_id || '',
         is_pinned: existingPost.is_pinned || false,
         status: existingPost.status || 'published',
-        due_date: existingPost.due_date
-          ? new Date(existingPost.due_date).toISOString().slice(0, 16)
-          : '',
+        due_date: toLocalISOString(existingPost.due_date),
+        created_at: toLocalISOString(existingPost.created_at),
         tags: existingPost.tags?.join(', ') || '',
         links:
           existingPost.links?.length > 0
@@ -93,6 +106,7 @@ export default function PostForm({ existingPost, onSaved }) {
         is_pinned: form.is_pinned,
         status: form.status,
         due_date: form.due_date ? new Date(form.due_date).toISOString() : null,
+        ...(form.created_at && { created_at: new Date(form.created_at).toISOString() }),
         tags: form.tags
           ? form.tags.split(',').map((t) => t.trim()).filter(Boolean)
           : [],
@@ -214,9 +228,9 @@ export default function PostForm({ existingPost, onSaved }) {
         )}
       </Field>
 
-      {/* Due date + Status + Pin */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Field label="Due Date">
+      {/* Due date + Publication date */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Field label="Due Date & Time" hint="Optional deadline for submissions/tasks">
           <input
             id="post-due-date"
             type="datetime-local"
@@ -226,6 +240,19 @@ export default function PostForm({ existingPost, onSaved }) {
           />
         </Field>
 
+        <Field label="Publication Date & Time" hint="Defaults to now if left blank">
+          <input
+            id="post-created-at"
+            type="datetime-local"
+            value={form.created_at}
+            onChange={(e) => updateField('created_at', e.target.value)}
+            className="input-field"
+          />
+        </Field>
+      </div>
+
+      {/* Status + Pin */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Status">
           <select
             id="post-status"
@@ -247,7 +274,7 @@ export default function PostForm({ existingPost, onSaved }) {
               onChange={(e) => updateField('is_pinned', e.target.checked)}
               className="w-4 h-4 rounded accent-[var(--color-accent)]"
             />
-            <span className="text-sm text-[var(--color-text)]">Pinned</span>
+            <span className="text-sm text-[var(--color-text)]">Pinned (Keep at top)</span>
           </label>
         </Field>
       </div>

@@ -80,7 +80,7 @@ export default function PostPage() {
               <Clock size={14} />
               Posted {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
               <span className="text-[var(--color-text-dim)]">
-                · {format(new Date(post.created_at), 'dd-MM-yyyy')}
+                · {format(new Date(post.created_at), 'dd-MM-yyyy · h:mm a')}
               </span>
             </span>
           )}

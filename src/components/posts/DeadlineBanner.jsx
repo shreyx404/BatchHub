@@ -50,7 +50,7 @@ export default function DeadlineBanner({ deadlines }) {
                   <Clock size={10} />
                   {formatDistanceToNow(dueDate, { addSuffix: true })}
                   <span className={isUrgent ? 'text-black/60' : 'text-[var(--color-text-dim)]'}>
-                    · {format(dueDate, 'dd-MM-yyyy')}
+                    · {format(dueDate, 'dd-MM-yyyy · h:mm a')}
                   </span>
                 </p>
               </div>
