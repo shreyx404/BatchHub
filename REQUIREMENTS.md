@@ -81,10 +81,18 @@
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| FR-042 | Handle Discord interaction webhook with Ed25519 signature verification | P1 | ✅ Implemented |
+| FR-042 | Handle Discord interaction webhook with Ed25519 signature verification via `tweetnacl` | P1 | ✅ Implemented |
 | FR-043 | Respond to Discord PING (type 1) for endpoint verification | P1 | ✅ Implemented |
-| FR-044 | Create published posts from `/post` slash command with title, type, content, due_date, is_pinned, and tags | P1 | ✅ Implemented |
-| FR-045 | Provide a registration script for deploying slash commands to Discord | P2 | ✅ Implemented |
+| FR-044 | Support `/post create` with title, type, content, due date, pin, tags, links, subject, and file attachments | P1 | ✅ Implemented |
+| FR-045 | Support `/post update` to edit existing posts by ID, including clearing fields via `"clear"` | P1 | ✅ Implemented |
+| FR-046 | Support `/post delete` to permanently remove posts and cascade-delete attachments | P1 | ✅ Implemented |
+| FR-047 | Support `/post pin` and `/post unpin` to toggle pinned status directly from Discord | P1 | ✅ Implemented |
+| FR-048 | Support `/post list` with optional filters (type, status) and count limit | P1 | ✅ Implemented |
+| FR-049 | Support `/post view` rendering full post details as a dark-aesthetic rich Discord embed | P1 | ✅ Implemented |
+| FR-050 | Support `/post archive` and `/post publish` for post visibility control | P1 | ✅ Implemented |
+| FR-051 | Handle Discord Autocomplete (`type: 4`) for live subject searching by name/code | P1 | ✅ Implemented |
+| FR-052 | Automatically download Discord attachments and persist to Supabase Storage with UUID prefix | P1 | ✅ Implemented |
+| FR-053 | Provide a registration script (`scripts/register-discord-commands.js`) deploying all 9 subcommands | P2 | ✅ Implemented |
 
 ### 1.8 Demo Mode
 

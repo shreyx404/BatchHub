@@ -100,28 +100,33 @@ PostgreSQL mutation (INSERT / UPDATE / DELETE)
 Response → Admin UI updates (or lockout countdown if rate-limited)
 ```
 
-### 2.3 Discord Bot Posting
+### 2.3 Discord Bot Post Management Flow
 
 ```
 Discord Server
-    │  User runs /post slash command
+    │  User runs /post subcommand (create, update, delete, pin, unpin, list, view, archive, publish)
     ▼
 Discord API
-    │  POST to Interactions Endpoint URL
+    │  POST to Interactions Endpoint URL (type 2 command or type 4 autocomplete)
     ▼
 Vercel Serverless Function (api/discord.js)
-    │  1. Read raw body (bodyParser disabled)
-    │  2. Ed25519 signature verification (tweetnacl)
-    │  3. Handle PING (type 1) or Command (type 2)
-    │  4. Extract options: title, type, content, due_date, is_pinned, tags
+    │  1. Read raw stream body (bodyParser disabled)
+    │  2. Cryptographic Ed25519 signature verification (tweetnacl)
+    │  3. If PING (type 1) → Return PONG (type 1)
+    │  4. If Autocomplete (type 4) → Query Supabase subjects table with ilike search → Return choices
+    │  5. If Command (type 2) → Route to subcommand handler:
+    │     ├── create: Insert post + parse links + download & upload attachment to Storage
+    │     ├── update: Update post fields + parse links (support "clear" reset keyword)
+    │     ├── delete: Delete post from Supabase (attachments cascade-deleted)
+    │     ├── pin / unpin: Update is_pinned boolean
+    │     ├── list: Query recent posts with optional type/status filter → Return overview embed
+    │     ├── view: Query post with joins (subjects, attachments) → Return rich formatted embed
+    │     └── archive / publish: Update post status
     ▼
 Supabase (via Service Role Key)
-    │
+    │  Executes PostgreSQL / Storage operations
     ▼
-PostgreSQL INSERT into posts (status = 'published', created_by = 'Discord Bot')
-    │
-    ▼
-Discord receives confirmation message: "✅ Successfully created..."
+Discord Client receives instant formatted response or rich embed
 ```
 
 ### 2.4 File Upload Flow

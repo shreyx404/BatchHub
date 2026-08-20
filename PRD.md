@@ -64,8 +64,9 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 
 | # | Feature | Description |
 |---|---------|-------------|
-| F-15 | **Slash Command `/post`** | Create posts from Discord with title, type, content, due date, pin, and tags |
-| F-16 | **Signature Verification** | Ed25519 signature verification using `tweetnacl` to ensure requests originate from Discord |
+| F-15 | **Full Post Management via `/post`** | Comprehensive slash subcommands: `/post create` (with file upload, subject autocomplete, links parsing), `/post update`, `/post delete`, `/post pin`, `/post unpin`, `/post list`, `/post view` (rich embed), `/post archive`, and `/post publish` |
+| F-16 | **Signature Verification** | Cryptographic Ed25519 signature verification using `tweetnacl` to validate all incoming Discord interactions |
+| F-17 | **Subject Autocomplete & File Pipelines** | Live subject search on Discord `type: 4` interactions; direct attachment forwarding from Discord CDN to Supabase Storage |
 
 ---
 

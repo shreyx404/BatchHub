@@ -93,15 +93,48 @@ If Supabase credentials are not configured, BatchHub runs in **demo mode** with 
 
 ## 🤖 Discord Bot Integration (Optional)
 
-BatchHub includes a built-in serverless function to receive posts directly from Discord via Slash Commands (`/post`). 
+BatchHub includes a built-in serverless function (`api/discord.js`) providing full post management directly from Discord with interactive Slash Commands.
 
-1. Create an app in the [Discord Developer Portal](https://discord.com/developers/applications).
-2. Deploy BatchHub to Vercel and add `DISCORD_PUBLIC_KEY` and `SUPABASE_SERVICE_ROLE_KEY` to your Vercel Environment Variables.
-3. In Discord's Developer Portal, set your **Interactions Endpoint URL** to `https://<your-vercel-domain>/api/discord`.
-4. Register the slash commands to your server by running:
-```bash
-DISCORD_TOKEN="your-bot-token" DISCORD_APP_ID="your-app-id" node scripts/register-discord-commands.js
-```
+### Slash Subcommands
+
+| Subcommand | Description | Key Options |
+|------------|-------------|-------------|
+| `/post create` | Create a new post | `title`*, `type`*, `content`, `due_date`, `is_pinned`, `tags`, `subject`, `links`, `file` |
+| `/post update` | Update an existing post | `id`*, `title`, `type`, `content`, `due_date`, `is_pinned`, `status`, `tags`, `subject`, `links` |
+| `/post delete` | Delete a post permanently | `id`* |
+| `/post pin` | Pin a post to the top | `id`* |
+| `/post unpin` | Unpin a post | `id`* |
+| `/post list` | List recent posts with IDs | `type`, `count` (1–10), `status` |
+| `/post view` | View full post details as a rich embed | `id`* |
+| `/post archive` | Archive post (hides from student feed) | `id`* |
+| `/post publish` | Publish a draft or archived post | `id`* |
+
+*\* = required*
+
+### Key Features
+- 📚 **Subject Autocomplete:** Start typing a subject name in `subject` to search and select from registered subjects.
+- 📎 **File Attachments:** Attach files directly in `/post create` — automatically downloaded and saved to Supabase Storage.
+- 🔗 **Links Parsing:** Pass links in `"Label | https://example.com, Slides | https://slides.com"` format.
+- 🧹 **Field Clearing:** On `/post update`, pass `"clear"` to remove `due_date`, `tags`, `subject`, or `links`.
+
+### Setup Instructions
+
+1. Create an application in the [Discord Developer Portal](https://discord.com/developers/applications).
+2. Under **General Information**, copy the **Public Key** and **Application ID**.
+3. Under the **Bot** tab, create a bot and copy its **Token**.
+4. In your Vercel project environment variables, configure:
+   - `DISCORD_PUBLIC_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `VITE_SUPABASE_URL`
+5. In Discord's Developer Portal, set your **Interactions Endpoint URL** to:
+   ```
+   https://<your-vercel-domain>/api/discord
+   ```
+6. Register the slash commands globally by running:
+   ```bash
+   node scripts/register-discord-commands.js
+   ```
+   *(Ensure `DISCORD_TOKEN` and `DISCORD_APP_ID` are set in `.env` or `.env.local`)*
 
 ## Deployment
 

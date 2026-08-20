@@ -42,12 +42,19 @@
   - [x] Timing-safe password comparison
   - [x] Payload field whitelisting
   - [x] Action routing for all CRUD operations
-- [x] **T-011** — Build Discord webhook handler (`api/discord.js`)
+- [x] **T-011** — Build full Discord webhook handler (`api/discord.js`)
   - [x] Raw body parsing (disabled default body parser)
-  - [x] Ed25519 signature verification
-  - [x] PING response handling
-  - [x] `/post` command parsing and DB insert
-- [x] **T-012** — Create Discord command registration script
+  - [x] Ed25519 cryptographic signature verification (`tweetnacl`)
+  - [x] Discord PING (`type: 1`) handshake response
+  - [x] Discord Autocomplete (`type: 4`) for live subject search
+  - [x] Full CRUD subcommands: `create`, `update`, `delete`, `pin`, `unpin`, `list`, `view`, `archive`, `publish`
+  - [x] Discord attachment download & Supabase Storage upload pipeline
+  - [x] Links parsing helper (`"Label | URL"`) and field reset handling (`"clear"`)
+  - [x] Dark-aesthetic rich embed builder for post detail and list views
+- [x] **T-012** — Create Discord command registration script (`scripts/register-discord-commands.js`)
+  - [x] Nested subcommand structure under `/post`
+  - [x] Autocomplete configuration for subjects
+  - [x] Native attachment type configuration
 
 ---
 
