@@ -50,7 +50,7 @@ api/
 ├── admin.js              # Secure admin API (auth + 4-tier rate limit/Turnstile + CRUD)
 ├── discord.js            # Discord interaction webhook
 └── cron/
-    └── auto-archive.js   # Vercel Cron — hourly auto-archive of expired posts
+    └── auto-archive.js   # Vercel Cron — daily auto-archive of expired posts (Hobby tier compliant)
 
 supabase/
 ├── schema.sql            # Database DDL + indexes + RLS policies + triggers + admin_login_attempts

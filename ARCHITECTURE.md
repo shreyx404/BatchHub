@@ -194,7 +194,7 @@ All data fetching is centralised in a single API module that:
 |----------|------|-------------|---------|
 | `POST /api/admin` | `api/admin.js` | Bearer token (password) | All admin CRUD operations |
 | `POST /api/discord` | `api/discord.js` | Ed25519 signature | Discord interaction webhook |
-| `GET /api/cron/auto-archive` | `api/cron/auto-archive.js` | `CRON_SECRET` Bearer token | Hourly auto-archive of expired posts |
+| `GET /api/cron/auto-archive` | `api/cron/auto-archive.js` | `CRON_SECRET` Bearer token | Daily auto-archive of expired posts |
 
 ### 4.2 Admin API Actions
 

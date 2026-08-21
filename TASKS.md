@@ -145,7 +145,7 @@
 - [x] **T-063** — Enhance admin dashboard overview with dedicated Archived stat card and deep-linking filter navigation
 - [x] **T-064** — Add 1-click unarchive / restore action button (`ArchiveRestore`) and URL search params sync in `PostTable`
 - [x] **T-065** — Fix mobile touch visibility for admin action buttons (`PostTable`, `SubjectManager`) and add explicit confirmation modal for archiving posts
-- [x] **T-066** — Auto-archive expired posts: admin API action (`autoArchiveExpired`), Vercel hourly cron (`api/cron/auto-archive.js`), and client-side trigger on admin dashboard load — archives published posts 24h after their `due_date`
+- [x] **T-066** — Auto-archive expired posts: admin API action (`autoArchiveExpired`), Vercel daily cron (`api/cron/auto-archive.js` scheduled at `0 0 * * *` for Vercel Hobby plan compliance), and client-side trigger on admin dashboard load — archives published posts 24h after their `due_date`
 - [x] **T-067** — Implement route-level code splitting using React `lazy()` and `Suspense` fallback in `App.jsx`
 - [x] **T-068** — Conduct strict 0px border-radius design system audit across all UI components (Modals, Badges, Chips, Inputs, Buttons, Toasts, Cards)
 - [x] **T-069** — Implement timing-safe SHA-256 password hash comparison in serverless `api/admin.js` to eliminate timing/length side-channel vulnerabilities
