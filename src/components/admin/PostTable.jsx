@@ -67,10 +67,10 @@ export default function PostTable() {
       const aHas = !!a.due_date;
       const bHas = !!b.due_date;
 
-      // Posts with deadlines appear first; dateless posts at bottom
-      if (!aHas && !bHas) return 0;
-      if (!aHas) return 1;
-      if (!bHas) return -1;
+      // Posts without deadlines appear at the very top
+      if (!aHas && !bHas) return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+      if (!aHas) return -1;
+      if (!bHas) return 1;
 
       const diff = new Date(a.due_date) - new Date(b.due_date);
       return sortDirection === 'asc' ? diff : -diff;
@@ -186,7 +186,7 @@ export default function PostTable() {
 
         {sortBy === 'due_date' && (
           <span className="text-[10px] text-[var(--color-text-dim)] italic ml-1">
-            Posts with deadlines appear first
+            Posts without deadlines appear first
           </span>
         )}
       </div>
