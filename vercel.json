@@ -1,4 +1,10 @@
 {
+  "crons": [
+    {
+      "path": "/api/cron/auto-archive",
+      "schedule": "0 * * * *"
+    }
+  ],
   "rewrites": [
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],

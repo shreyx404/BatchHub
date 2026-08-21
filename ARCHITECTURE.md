@@ -232,6 +232,7 @@ All data fetching is centralised in a single API module that:
 |----------|------|-------------|---------|
 | `POST /api/admin` | `api/admin.js` | Bearer token (password) | All admin CRUD operations |
 | `POST /api/discord` | `api/discord.js` | Ed25519 signature | Discord interaction webhook |
+| `GET /api/cron/auto-archive` | `api/cron/auto-archive.js` | `CRON_SECRET` Bearer token | Hourly auto-archive of expired posts |
 
 ### 4.2 Admin API Actions
 
@@ -249,6 +250,7 @@ The admin endpoint uses a single `POST` with an `action` field to route requests
 | `deleteSubject` | `{id}` | Delete row |
 | `createAttachment` | Attachment fields | Insert + return |
 | `deleteAttachment` | `{id}` | Delete row |
+| `autoArchiveExpired` | _(none)_ | Archive published posts with `due_date` > 24h past |
 
 ### 4.3 Security Layers
  

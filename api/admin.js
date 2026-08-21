@@ -324,6 +324,18 @@ export default async function handler(req, res) {
         if (!payload?.id) return res.status(400).json({ error: 'Missing attachment ID.' });
         result = await supabase.from('attachments').delete().eq('id', payload.id);
         break;
+      case 'autoArchiveExpired': {
+        // Archive all published posts whose due_date is more than 24 hours in the past
+        const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+        result = await supabase
+          .from('posts')
+          .update({ status: 'archived' })
+          .eq('status', 'published')
+          .not('due_date', 'is', null)
+          .lt('due_date', cutoff)
+          .select('id, title');
+        break;
+      }
       default:
         return res.status(400).json({ error: 'Unknown action.' });
     }

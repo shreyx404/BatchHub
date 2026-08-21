@@ -71,13 +71,49 @@ export async function fetchPosts({ type, subjectId, search, status = 'published'
 }
 
 /**
+ * Auto-archive published posts whose due_date passed more than 24 hours ago.
+ * Runs silently — errors are logged but never thrown to avoid blocking the UI.
+ */
+export async function autoArchiveExpiredPosts() {
+  if (!isSupabaseConfigured()) {
+    // Demo mode: mutate in-memory array
+    const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+    let count = 0;
+    for (const post of DEMO_POSTS) {
+      if (
+        post.status === 'published' &&
+        post.due_date &&
+        new Date(post.due_date).getTime() < cutoff
+      ) {
+        post.status = 'archived';
+        post.updated_at = new Date().toISOString();
+        count++;
+      }
+    }
+    return count;
+  }
+
+  try {
+    const archived = await adminRequest('autoArchiveExpired');
+    return archived?.length || 0;
+  } catch (err) {
+    console.error('Auto-archive check failed (non-fatal):', err);
+    return 0;
+  }
+}
+
+/**
  * Fetch all posts (any status: published, draft, archived) for admin.
  */
 export async function fetchAllPosts() {
   if (!isSupabaseConfigured()) {
+    // Run auto-archive before returning demo posts
+    autoArchiveExpiredPosts();
     return DEMO_POSTS;
   }
 
+  // Fire auto-archive in the background before fetching (non-blocking)
+  await autoArchiveExpiredPosts();
   return await adminRequest('getAllPosts');
 }
 
