@@ -130,12 +130,12 @@ BatchHub unifies attachments and resource references into standard `{ label, url
 | Rule | Detail |
 |------|--------|
 | **No client-side password checking** | The admin password is never compared in the browser |
-| **No VITE_ prefix for secrets** | `ADMIN_PASSWORD`, `SUPABASE_SERVICE_ROLE_KEY`, `TURNSTILE_SECRET_KEY`, `DISCORD_PUBLIC_KEY` must NOT have `VITE_` prefix |
+| **No VITE_ prefix for secrets** | `ADMIN_PASSWORD`, `SUPABASE_SERVICE_ROLE_KEY`, `TURNSTILE_SECRET_KEY`, `DISCORD_PUBLIC_KEY`, `CRON_SECRET` must NOT have `VITE_` prefix |
 | **VITE_ prefix for client keys** | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_TURNSTILE_SITE_KEY` require `VITE_` prefix |
-| **4-Tier Admin Protection** | IP rate limit (10/24h), Device fingerprint limit (10/24h), Cloudflare Turnstile bot verification, and Global Supabase limit (30/24h) |
-| **SHA-256 Timing-Safe Compares** | String comparisons use `crypto.createHash('sha256')` + `crypto.timingSafeEqual` to eliminate length leakage |
-| **Payload whitelisting** | Always use `pick()` to extract only allowed fields before database operations |
-| **Sanitise user input** | Escape search queries for PostgREST wildcards; disallow dangerous Markdown elements |
+| **5-Layer Admin Protection** | IP rate limit (10/24h in-memory + persistent Supabase check), Device fingerprint limit (10/24h), Cloudflare Turnstile bot verification, and Global Supabase limit (30/24h) |
+| **SHA-256 Timing-Safe Compares** | String comparisons in admin and cron handlers use `crypto.createHash('sha256')` + `crypto.timingSafeEqual` |
+| **Payload & URL Whitelisting** | Always use `pick()` for DB fields and validate link protocols against `https?://` and `mailto:` |
+| **Sanitise user input** | Escape search queries for PostgREST wildcards; disallow dangerous Markdown elements and URI schemes |
 | **Never expose service role key** | It goes only in Vercel env vars (runtime), never in client bundle |
 
 ---

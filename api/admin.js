@@ -86,7 +86,7 @@ async function verifyTurnstileToken(token, ip) {
   }
 }
 
-// ── Global rate limiter via Supabase ───────────────────────────
+// ── Global & Persistent rate limiters via Supabase ─────────────
 async function checkGlobalRateLimit(supabase) {
   try {
     const cutoff = new Date(Date.now() - WINDOW_MS).toISOString();
@@ -103,6 +103,27 @@ async function checkGlobalRateLimit(supabase) {
     return (count || 0) >= GLOBAL_MAX_ATTEMPTS_PER_DAY;
   } catch {
     return false; // Fail open
+  }
+}
+
+async function isPersistentIpRateLimited(supabase, ip) {
+  if (!supabase || !ip || ip === 'unknown') return false;
+  try {
+    const cutoff = new Date(Date.now() - WINDOW_MS).toISOString();
+    const { count, error } = await supabase
+      .from('admin_login_attempts')
+      .select('*', { count: 'exact', head: true })
+      .eq('ip', ip)
+      .eq('success', false)
+      .gte('attempted_at', cutoff);
+
+    if (error) {
+      console.error('Persistent IP rate limit check error:', error);
+      return false;
+    }
+    return (count || 0) >= MAX_ATTEMPTS_PER_IP;
+  } catch {
+    return false;
   }
 }
 
@@ -152,8 +173,9 @@ function pick(obj, fields) {
 }
 
 // ── CORS helper ────────────────────────────────────────────────
-function setCorsHeaders(res) {
-  const origin = process.env.ALLOWED_ORIGIN || '*';
+function setCorsHeaders(req, res) {
+  const allowedOrigin = process.env.ALLOWED_ORIGIN;
+  const origin = allowedOrigin || req.headers.origin || '*';
   res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -162,7 +184,7 @@ function setCorsHeaders(res) {
 
 // ── Main handler ───────────────────────────────────────────────
 export default async function handler(req, res) {
-  setCorsHeaders(res);
+  setCorsHeaders(req, res);
 
   if (req.method === 'OPTIONS') {
     return res.status(204).end();
@@ -204,13 +226,20 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Admin authentication is not configured on the server.' });
   }
 
-  // Initialize Supabase early — needed for global rate limit check and logging
+  // Initialize Supabase early — needed for persistent rate limit checks and logging
   const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
   const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
   let supabase = null;
 
   if (SUPABASE_URL && SUPABASE_SERVICE_KEY) {
     supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+
+    // Check persistent per-IP rate limit across serverless instances
+    const ipPersistentLimited = await isPersistentIpRateLimited(supabase, clientIp);
+    if (ipPersistentLimited) {
+      res.setHeader('Retry-After', '86400');
+      return res.status(429).json({ error: 'Too many failed attempts (10/10). Account locked for 24 hours. Please try again later.' });
+    }
 
     // ── Layer 5: Global site-wide rate limit (Supabase persistent) ──
     const globalLimited = await checkGlobalRateLimit(supabase);
@@ -227,13 +256,26 @@ export default async function handler(req, res) {
     recordIpFailedAttempt(clientIp);
     recordFingerprintFailedAttempt(fingerprint);
 
-    // Log to Supabase for persistent global tracking
+    // Log to Supabase for persistent tracking
     if (supabase) {
       await logLoginAttempt(supabase, { ip: clientIp, fingerprint, success: false });
     }
 
-    const ipEntry = failedAttempts.get(clientIp);
-    const remaining = Math.max(0, MAX_ATTEMPTS_PER_IP - (ipEntry?.count || 1));
+    let failedCount = failedAttempts.get(clientIp)?.count || 1;
+    if (supabase && clientIp !== 'unknown') {
+      try {
+        const cutoff = new Date(Date.now() - WINDOW_MS).toISOString();
+        const { count } = await supabase
+          .from('admin_login_attempts')
+          .select('*', { count: 'exact', head: true })
+          .eq('ip', clientIp)
+          .eq('success', false)
+          .gte('attempted_at', cutoff);
+        if (count && count > failedCount) failedCount = count;
+      } catch {}
+    }
+
+    const remaining = Math.max(0, MAX_ATTEMPTS_PER_IP - failedCount);
     return res.status(401).json({
       error: remaining > 0
         ? `Unauthorized. Invalid admin password. ${remaining} attempt${remaining === 1 ? '' : 's'} remaining.`

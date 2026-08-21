@@ -192,9 +192,9 @@ All data fetching is centralised in a single API module that:
 
 | Endpoint | File | Auth Method | Purpose |
 |----------|------|-------------|---------|
-| `POST /api/admin` | `api/admin.js` | Bearer token (password) | All admin CRUD operations |
+| `POST /api/admin` | `api/admin.js` | Bearer token (timing-safe SHA-256) | All admin CRUD operations with 5-layer rate limiting (in-memory & persistent Supabase IP rate limit) |
 | `POST /api/discord` | `api/discord.js` | Ed25519 signature | Discord interaction webhook |
-| `GET /api/cron/auto-archive` | `api/cron/auto-archive.js` | `CRON_SECRET` Bearer token | Daily auto-archive of expired posts |
+| `GET /api/cron/auto-archive` | `api/cron/auto-archive.js` | `CRON_SECRET` Bearer token (timing-safe SHA-256) | Daily auto-archive of expired posts (fail-closed if unconfigured) |
 
 ### 4.2 Admin API Actions
 

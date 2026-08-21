@@ -215,6 +215,7 @@
 | `ADMIN_PASSWORD` | Server only | Yes | Admin dashboard password |
 | `SUPABASE_SERVICE_ROLE_KEY` | Server only | Yes | Full DB access for admin API and Discord bot |
 | `TURNSTILE_SECRET_KEY` | Server only | Optional | Cloudflare Turnstile server validation secret |
+| `CRON_SECRET` | Server only | Optional (recommended) | Secret key protecting auto-archive cron endpoint |
 | `DISCORD_PUBLIC_KEY` | Server only | Optional | Discord interaction signature verification |
 | `DISCORD_TOKEN` | Local script only | Optional | Bot token for command registration |
 | `DISCORD_APP_ID` | Local script only | Optional | Application ID for command registration |

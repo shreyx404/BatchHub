@@ -1,4 +1,13 @@
+import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
+
+// ── Timing-safe string comparison ──────────────────────────────
+function timingSafeCompare(a, b) {
+  if (!a || !b) return false;
+  const hashA = crypto.createHash('sha256').update(String(a)).digest();
+  const hashB = crypto.createHash('sha256').update(String(b)).digest();
+  return crypto.timingSafeEqual(hashA, hashB);
+}
 
 /**
  * Vercel Cron Job — Auto-archive expired posts
@@ -14,9 +23,15 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // Verify cron secret to prevent external abuse
+  // Verify cron secret to prevent external abuse (fail closed if not configured)
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && req.headers.authorization !== `Bearer ${cronSecret}`) {
+  if (!cronSecret) {
+    console.error('[auto-archive cron] CRON_SECRET environment variable is not set.');
+    return res.status(500).json({ error: 'Cron authentication is not configured on the server.' });
+  }
+
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !timingSafeCompare(authHeader, `Bearer ${cronSecret}`)) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 

@@ -20,6 +20,18 @@ function toLocalISOString(date) {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
+function sanitizeLinkUrl(url) {
+  if (!url || typeof url !== 'string') return '';
+  const trimmed = url.trim();
+  if (/^(https?:\/\/|mailto:)/i.test(trimmed)) {
+    return trimmed;
+  }
+  if (/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/.*)?$/i.test(trimmed)) {
+    return `https://${trimmed}`;
+  }
+  return '';
+}
+
 export default function PostForm({ existingPost, onSaved }) {
   const navigate = useNavigate();
   const { subjects } = useSubjects();
@@ -94,6 +106,22 @@ export default function PostForm({ existingPost, onSaved }) {
       return;
     }
 
+    // Sanitize and validate links
+    const sanitizedLinks = [];
+    for (const link of form.links) {
+      const rawUrl = link.url?.trim();
+      if (!rawUrl) continue;
+      const cleanUrl = sanitizeLinkUrl(rawUrl);
+      if (!cleanUrl) {
+        toast.error(`Invalid URL scheme for link "${link.label || rawUrl}". Must start with http:// or https://`);
+        return;
+      }
+      sanitizedLinks.push({
+        label: link.label.trim() || cleanUrl,
+        url: cleanUrl,
+      });
+    }
+
     setSaving(true);
     try {
       const postData = {
@@ -108,7 +136,7 @@ export default function PostForm({ existingPost, onSaved }) {
         tags: form.tags
           ? form.tags.split(',').map((t) => t.trim()).filter(Boolean)
           : [],
-        links: form.links.filter((l) => l.url.trim()),
+        links: sanitizedLinks,
       };
 
       if (existingPost) {
@@ -200,6 +228,12 @@ export default function PostForm({ existingPost, onSaved }) {
             <ReactMarkdown
               disallowedElements={['script', 'iframe', 'object', 'embed']}
               unwrapDisallowed
+              urlTransform={(url) => {
+                if (!url) return '';
+                if (/^(https?:\/\/|mailto:)/i.test(url)) return url;
+                if (/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/.*)?$/i.test(url)) return `https://${url}`;
+                return '';
+              }}
             >
               {form.content || '*No content yet*'}
             </ReactMarkdown>

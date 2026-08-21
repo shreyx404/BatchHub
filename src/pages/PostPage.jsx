@@ -13,6 +13,18 @@ import ErrorState from '../components/ui/ErrorState';
 import Footer from '../components/layout/Footer';
 import { CONTENT_TYPES, APP_NAME } from '../lib/constants';
 
+function getSafeUrl(url) {
+  if (!url || typeof url !== 'string') return '#';
+  const trimmed = url.trim();
+  if (/^(https?:\/\/|mailto:)/i.test(trimmed)) {
+    return trimmed;
+  }
+  if (/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/.*)?$/i.test(trimmed)) {
+    return `https://${trimmed}`;
+  }
+  return '#';
+}
+
 export default function PostPage() {
   const { id } = useParams();
   const { post, loading, error } = usePost(id);
@@ -114,6 +126,12 @@ export default function PostPage() {
             <ReactMarkdown
               disallowedElements={['script', 'iframe', 'object', 'embed']}
               unwrapDisallowed
+              urlTransform={(url) => {
+                if (!url) return '';
+                if (/^(https?:\/\/|mailto:)/i.test(url)) return url;
+                if (/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/.*)?$/i.test(url)) return `https://${url}`;
+                return '';
+              }}
             >
               {post.content}
             </ReactMarkdown>
@@ -142,19 +160,22 @@ export default function PostPage() {
               Resource Links &amp; Attachments
             </h3>
             <div className="space-y-2">
-              {post.links.map((link, i) => (
-                <a
-                  key={i}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 px-4 py-3.5 bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] text-[var(--text-sm)] text-[var(--color-accent-hover)] font-medium transition-all duration-300 group tracking-[0.005em]"
-                >
-                  <ExternalLink size={15} className="shrink-0 text-[var(--color-text-dim)] group-hover:text-[var(--color-accent-hover)] transition-colors" />
-                  <span className="truncate flex-1 font-mono text-xs">{link.label || link.url}</span>
-                  <ArrowLeft size={13} className="ml-auto rotate-180 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all shrink-0" />
-                </a>
-              ))}
+              {post.links.map((link, i) => {
+                const safeHref = getSafeUrl(link.url);
+                return (
+                  <a
+                    key={i}
+                    href={safeHref}
+                    target={safeHref.startsWith('#') ? undefined : '_blank'}
+                    rel={safeHref.startsWith('#') ? undefined : 'noopener noreferrer'}
+                    className="flex items-center gap-3 px-4 py-3.5 bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] text-[var(--text-sm)] text-[var(--color-accent-hover)] font-medium transition-all duration-300 group tracking-[0.005em]"
+                  >
+                    <ExternalLink size={15} className="shrink-0 text-[var(--color-text-dim)] group-hover:text-[var(--color-accent-hover)] transition-colors" />
+                    <span className="truncate flex-1 font-mono text-xs">{link.label || link.url}</span>
+                    <ArrowLeft size={13} className="ml-auto rotate-180 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all shrink-0" />
+                  </a>
+                );
+              })}
             </div>
           </div>
         )}

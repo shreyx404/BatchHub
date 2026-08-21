@@ -154,6 +154,7 @@
 - [x] **T-087** — Refine post share text template format (`*<Title>*\n\n_BatchHub :_ ->\n<Link>`) and establish mandatory system markdown documentation & Git push workflows
 - [x] **T-088** — Update BatchHub brand icon and favicon assets across Header, Admin Sidebar, Admin Login, and HTML document metadata using custom graduate batch illustration
 - [x] **T-089** — Float posts without deadlines to the very top in admin `PostTable` when sorting by Due Date (with secondary sorting by newest created date)
+- [x] **T-090** — Comprehensive security hardening: Fail-closed & timing-safe authentication in auto-archive cron (`api/cron/auto-archive.js`), persistent serverless per-IP rate limiting via Supabase `admin_login_attempts` in `api/admin.js`, restricted CORS origin handling, and strict URL scheme sanitization (`https?://`, `mailto:`) in `PostPage` & `PostForm`
 
 ---
 
