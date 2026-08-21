@@ -71,20 +71,14 @@ export async function fetchPosts({ type, subjectId, search, status = 'published'
 }
 
 /**
- * Fetch all posts (any status) for admin.
+ * Fetch all posts (any status: published, draft, archived) for admin.
  */
 export async function fetchAllPosts() {
   if (!isSupabaseConfigured()) {
     return DEMO_POSTS;
   }
 
-  const { data, error } = await supabase
-    .from('posts')
-    .select('*, subjects(*), attachments(*)')
-    .order('created_at', { ascending: false });
-
-  if (error) throw error;
-  return data;
+  return await adminRequest('getAllPosts');
 }
 
 /**
@@ -95,6 +89,16 @@ export async function fetchPost(id) {
     const post = DEMO_POSTS.find((p) => p.id === id);
     if (!post) throw new Error('Post not found');
     return post;
+  }
+
+  // If admin token is available, query through admin endpoint to access drafts/archived posts
+  const token = sessionStorage.getItem('batchhub_admin_token');
+  if (token) {
+    try {
+      return await adminRequest('getPost', { id });
+    } catch {
+      // Fallback to public client if admin request fails
+    }
   }
 
   const { data, error } = await supabase

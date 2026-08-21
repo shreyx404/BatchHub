@@ -219,7 +219,7 @@ BatchHub uses **local component state + custom hooks** — no global state libra
 All data fetching is centralised in a single API module that:
 - Checks `isSupabaseConfigured()` before every call
 - Falls back to in-memory `DEMO_POSTS` / `DEMO_SUBJECTS` arrays
-- Routes admin mutations through `adminRequest()` → `POST /api/admin`
+- Routes admin mutations and privileged reads (`fetchAllPosts`, admin `fetchPost`) through `adminRequest()` → `POST /api/admin` to bypass public read RLS restrictions
 - Handles file uploads directly to Supabase Storage (client-side with anon key)
 
 ---
@@ -239,6 +239,8 @@ The admin endpoint uses a single `POST` with an `action` field to route requests
 
 | Action | Payload | Result |
 |--------|---------|--------|
+| `getAllPosts` | _(none)_ | Select all posts (bypassing public RLS) with joins |
+| `getPost` | `{id}` | Select single post by ID (bypassing public RLS) with joins |
 | `createPost` | Post fields | Insert + return with joins |
 | `updatePost` | `{id, updates}` | Update + return with joins |
 | `deletePost` | `{id}` | Delete row |

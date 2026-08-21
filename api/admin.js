@@ -276,6 +276,21 @@ export default async function handler(req, res) {
   try {
     let result;
     switch (action) {
+      case 'getAllPosts':
+        result = await supabase
+          .from('posts')
+          .select('*, subjects(*), attachments(*)')
+          .order('created_at', { ascending: false });
+        break;
+      case 'getPost': {
+        if (!payload?.id) return res.status(400).json({ error: 'Missing post ID.' });
+        result = await supabase
+          .from('posts')
+          .select('*, subjects(*), attachments(*)')
+          .eq('id', payload.id)
+          .single();
+        break;
+      }
       case 'createPost':
         result = await supabase.from('posts').insert(pick(payload, POST_FIELDS)).select('*, subjects(*), attachments(*)').single();
         break;

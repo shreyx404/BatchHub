@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Edit2, Trash2, Archive, Eye, Search, MoreVertical, ArrowUpDown, Calendar, Clock } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Edit2, Trash2, Archive, ArchiveRestore, Eye, Search, MoreVertical, ArrowUpDown, Calendar, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 import Badge from '../ui/Badge';
@@ -17,12 +17,29 @@ const SORT_OPTIONS = [
 
 export default function PostTable() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState('all');
+  const statusParam = searchParams.get('status');
+  const [statusFilter, setStatusFilter] = useState(statusParam || 'all');
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [sortBy, setSortBy] = useState('due_date');
   const [sortDirection, setSortDirection] = useState('asc');
+
+  useEffect(() => {
+    if (statusParam && ['all', 'published', 'draft', 'archived'].includes(statusParam)) {
+      setStatusFilter(statusParam);
+    }
+  }, [statusParam]);
+
+  const handleStatusFilterChange = (status) => {
+    setStatusFilter(status);
+    if (status === 'all') {
+      setSearchParams({});
+    } else {
+      setSearchParams({ status });
+    }
+  };
 
   const loadPosts = async () => {
     try {
@@ -74,6 +91,17 @@ export default function PostTable() {
     }
   };
 
+  const handleRestore = async (post) => {
+    try {
+      await updatePost(post.id, { status: 'published' });
+      toast.success('Post restored to published');
+      loadPosts();
+    } catch (err) {
+      console.error('Error restoring post:', err);
+      toast.error(err.message || 'Failed to restore post');
+    }
+  };
+
   const handleDelete = async () => {
     if (!deleteTarget) return;
     try {
@@ -103,7 +131,7 @@ export default function PostTable() {
           {['all', 'published', 'draft', 'archived'].map((s) => (
             <button
               key={s}
-              onClick={() => setStatusFilter(s)}
+              onClick={() => handleStatusFilterChange(s)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 statusFilter === s
                   ? 'bg-[var(--color-accent)] text-black'
@@ -207,11 +235,17 @@ export default function PostTable() {
                   label="Edit"
                   onClick={() => navigate(`/admin/edit/${post.id}`)}
                 />
-                {post.status !== 'archived' && (
+                {post.status !== 'archived' ? (
                   <ActionButton
                     icon={Archive}
                     label="Archive"
                     onClick={() => handleArchive(post)}
+                  />
+                ) : (
+                  <ActionButton
+                    icon={ArchiveRestore}
+                    label="Restore / Unarchive"
+                    onClick={() => handleRestore(post)}
                   />
                 )}
                 <ActionButton

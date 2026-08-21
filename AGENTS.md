@@ -109,13 +109,13 @@ Every function in `lib/api.js` MUST check `isSupabaseConfigured()` first:
 
 ### 4.2 Admin Operations
 
-All write operations (create, update, delete) MUST go through the serverless function at `/api/admin`:
+All write operations (create, update, delete) and privileged queries (`fetchAllPosts`, `fetchPost` for non-published posts) MUST go through the serverless function at `/api/admin`:
 - Client sends `{ action, payload }` as POST body
 - Server validates auth via Bearer token
 - Server sanitises payload via `pick(payload, ALLOWED_FIELDS)`
 - Server uses Supabase Service Role key (bypasses RLS)
 
-**Never** write directly to Supabase from the client. The anon key has read-only access via RLS.
+**Never** write directly to Supabase from the client, and do not rely on client `anon` key queries for admin views of drafts or archived posts. The anon key has read-only access strictly limited to `status = 'published'` via RLS.
 
 ### 4.3 File Uploads
 

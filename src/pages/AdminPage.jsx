@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { Routes, Route, useNavigate, useParams } from 'react-router-dom';
-import { Menu, FileText, BookOpen, Plus, TrendingUp, Eye } from 'lucide-react';
+import { Menu, FileText, BookOpen, Plus, TrendingUp, Eye, Archive } from 'lucide-react';
 import AdminLogin from '../components/admin/AdminLogin';
 import AdminSidebar from '../components/admin/AdminSidebar';
 import PostForm from '../components/admin/PostForm';
@@ -120,18 +120,27 @@ function AdminDashboard() {
     {
       label: 'Total Posts', value: stats.total, icon: FileText,
       color: 'var(--color-accent)', bg: 'var(--color-accent)',
+      to: '/admin/posts',
     },
     {
       label: 'Published', value: stats.published, icon: TrendingUp,
       color: '#10b981', bg: '#10b981',
+      to: '/admin/posts?status=published',
     },
     {
       label: 'Drafts', value: stats.draft, icon: FileText,
       color: '#f59e0b', bg: '#f59e0b',
+      to: '/admin/posts?status=draft',
+    },
+    {
+      label: 'Archived', value: stats.archived, icon: Archive,
+      color: '#8888a0', bg: '#8888a0',
+      to: '/admin/posts?status=archived',
     },
     {
       label: 'Subjects', value: subjects.length, icon: BookOpen,
       color: '#3b82f6', bg: '#3b82f6',
+      to: '/admin/subjects',
     },
   ];
 
@@ -148,11 +157,12 @@ function AdminDashboard() {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 stagger-children">
-        {cards.map(({ label, value, icon: Icon, color, bg }) => (
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 stagger-children">
+        {cards.map(({ label, value, icon: Icon, color, bg, to }) => (
           <div
             key={label}
-            className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+            onClick={() => to && navigate(to)}
+            className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 cursor-pointer hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]/40 transition-all group"
           >
             <div
               className="w-9 h-9 rounded-lg flex items-center justify-center mb-3"
@@ -161,7 +171,7 @@ function AdminDashboard() {
               <Icon size={18} style={{ color }} />
             </div>
             <p className="text-2xl font-display font-semibold text-[var(--color-text)] tracking-[-0.02em]">{value}</p>
-            <p className="text-[10px] text-[var(--color-text-muted)] mt-0.5 tracking-[0.03em] uppercase font-medium">{label}</p>
+            <p className="text-[10px] text-[var(--color-text-muted)] group-hover:text-[var(--color-text)] mt-0.5 tracking-[0.03em] uppercase font-medium transition-colors">{label}</p>
           </div>
         ))}
       </div>
