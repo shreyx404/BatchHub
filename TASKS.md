@@ -151,8 +151,8 @@
 - [x] **T-069** — Implement timing-safe SHA-256 password hash comparison in serverless `api/admin.js` to eliminate timing/length side-channel vulnerabilities
 - [x] **T-070** — Unify file attachments and external resources into high-contrast direct Resource Links (`links` array) across post creation and view pages
 - [x] **T-071** — Add global `Ctrl + K` / `Cmd + K` search keyboard shortcut and ESC modal dismiss for keyboard accessibility
-- [x] **T-072** — Add rich social sharing metadata (OpenGraph, Twitter Cards) and custom SVG favicon in `index.html`
 - [x] **T-087** — Refine post share text template format (`*<Title>*\n\n_BatchHub :_ ->\n<Link>`) and establish mandatory system markdown documentation & Git push workflows
+- [x] **T-088** — Update BatchHub brand icon and favicon assets across Header, Admin Sidebar, Admin Login, and HTML document metadata using custom graduate batch illustration
 
 ---
 

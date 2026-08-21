@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, FilePlus, FileText, BookOpen,
-  LogOut, GraduationCap, X
+  LogOut, X
 } from 'lucide-react';
 import { APP_NAME } from '../../lib/constants';
 
@@ -32,8 +32,12 @@ export default function AdminSidebar({ isOpen, onClose, onLogout }) {
         {/* Header */}
         <div className="flex items-center justify-between px-4 h-14 border-b border-[var(--color-border)]">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-[var(--color-text)] flex items-center justify-center">
-              <GraduationCap size={14} className="text-black" />
+            <div className="w-7 h-7 bg-white flex items-center justify-center overflow-hidden">
+              <img
+                src="/batchhub-icon.png"
+                alt={APP_NAME}
+                className="w-full h-full object-contain p-0.5"
+              />
             </div>
             <span className="font-display text-lg font-medium leading-none mt-1 text-[var(--color-text)] tracking-[-0.01em]">
               {APP_NAME}

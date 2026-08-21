@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Lock, GraduationCap, AlertCircle, ShieldAlert, Clock, Shield } from 'lucide-react';
+import { Lock, AlertCircle, ShieldAlert, Clock, Shield } from 'lucide-react';
 import { APP_NAME } from '../../lib/constants';
 import { getLockoutInfo } from '../../hooks/useAdmin';
 
@@ -185,8 +185,12 @@ export default function AdminLogin({ onLogin }) {
       <div className="w-full max-w-sm animate-fade-in-up">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-12 h-12 bg-[var(--color-text)] flex items-center justify-center mb-3 shadow-lg">
-            <GraduationCap size={24} className="text-black" />
+          <div className="w-14 h-14 bg-white flex items-center justify-center mb-3 shadow-lg overflow-hidden border border-white/20">
+            <img
+              src="/batchhub-icon.png"
+              alt={APP_NAME}
+              className="w-full h-full object-contain p-1"
+            />
           </div>
           <h1 className="text-[1.75rem] font-display font-medium text-[var(--color-text)] tracking-[-0.015em]">
             {APP_NAME} Admin

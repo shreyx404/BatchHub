@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Search, X, GraduationCap, Settings } from 'lucide-react';
+import { Search, X, Settings } from 'lucide-react';
 import { APP_NAME } from '../../lib/constants';
 
 export default function Header({ searchOpen, onToggleSearch, onSearchChange, searchValue }) {
@@ -10,9 +10,13 @@ export default function Header({ searchOpen, onToggleSearch, onSearchChange, sea
     <header className="sticky top-0 z-50 glass-strong border-b border-[var(--color-border)]">
       <div className="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between gap-3">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 shrink-0 group">
-          <div className="w-8 h-8 bg-[var(--color-text)] flex items-center justify-center transition-transform group-hover:scale-105">
-            <GraduationCap size={18} className="text-black" />
+        <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
+          <div className="w-8 h-8 bg-white flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
+            <img
+              src="/batchhub-icon.png"
+              alt={APP_NAME}
+              className="w-full h-full object-contain p-0.5"
+            />
           </div>
           <span className="font-display text-lg font-medium tracking-[-0.01em] text-[var(--color-text)] leading-none">
             {APP_NAME}
