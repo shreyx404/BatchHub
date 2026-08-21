@@ -23,6 +23,7 @@ export default function PostTable() {
   const statusParam = searchParams.get('status');
   const [statusFilter, setStatusFilter] = useState(statusParam || 'all');
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [archiveTarget, setArchiveTarget] = useState(null);
   const [sortBy, setSortBy] = useState('due_date');
   const [sortDirection, setSortDirection] = useState('asc');
 
@@ -80,10 +81,12 @@ export default function PostTable() {
     return sortDirection === 'asc' ? diff : -diff;
   });
 
-  const handleArchive = async (post) => {
+  const confirmArchive = async () => {
+    if (!archiveTarget) return;
     try {
-      await updatePost(post.id, { status: 'archived' });
+      await updatePost(archiveTarget.id, { status: 'archived' });
       toast.success('Post archived');
+      setArchiveTarget(null);
       loadPosts();
     } catch (err) {
       console.error('Error archiving post:', err);
@@ -127,7 +130,7 @@ export default function PostTable() {
         <h2 className="text-xl font-bold text-[var(--color-text)]">All Posts</h2>
 
         {/* Status filter */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           {['all', 'published', 'draft', 'archived'].map((s) => (
             <button
               key={s}
@@ -150,7 +153,7 @@ export default function PostTable() {
       </div>
 
       {/* Sort controls */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         <span className="text-[10px] uppercase tracking-[0.05em] font-medium text-[var(--color-text-dim)]">
           Sort by
         </span>
@@ -191,11 +194,11 @@ export default function PostTable() {
           {sortedPosts.map((post) => (
             <div
               key={post.id}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] transition-all group"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:px-4 sm:py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] transition-all group"
             >
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                   <Badge type={post.type} />
                   {post.subjects && <Badge subject={post.subjects} />}
                   <span
@@ -208,7 +211,7 @@ export default function PostTable() {
                     {POST_STATUSES[post.status]?.label || post.status}
                   </span>
                 </div>
-                <p className="text-sm font-medium text-[var(--color-text)] truncate">
+                <p className="text-sm font-medium text-[var(--color-text)] break-words sm:truncate">
                   {post.title}
                 </p>
                 <div className="flex items-center gap-3 text-xs text-[var(--color-text-dim)] mt-1 flex-wrap">
@@ -223,34 +226,34 @@ export default function PostTable() {
                 </div>
               </div>
 
-              {/* Actions */}
-              <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+              {/* Actions - Always visible on mobile, reveal on hover for desktop */}
+              <div className="flex items-center gap-1.5 shrink-0 pt-2.5 sm:pt-0 border-t border-[var(--color-border)]/50 sm:border-t-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                 <ActionButton
                   icon={Eye}
-                  label="View"
+                  label="View Post"
                   onClick={() => window.open(`/post/${post.id}`, '_blank')}
                 />
                 <ActionButton
                   icon={Edit2}
-                  label="Edit"
+                  label="Edit Post"
                   onClick={() => navigate(`/admin/edit/${post.id}`)}
                 />
                 {post.status !== 'archived' ? (
                   <ActionButton
                     icon={Archive}
-                    label="Archive"
-                    onClick={() => handleArchive(post)}
+                    label="Archive Post"
+                    onClick={() => setArchiveTarget(post)}
                   />
                 ) : (
                   <ActionButton
                     icon={ArchiveRestore}
-                    label="Restore / Unarchive"
+                    label="Restore Post"
                     onClick={() => handleRestore(post)}
                   />
                 )}
                 <ActionButton
                   icon={Trash2}
-                  label="Delete"
+                  label="Delete Post"
                   danger
                   onClick={() => setDeleteTarget(post)}
                 />
@@ -259,6 +262,31 @@ export default function PostTable() {
           ))}
         </div>
       )}
+
+      {/* Archive confirmation modal */}
+      <Modal
+        isOpen={!!archiveTarget}
+        onClose={() => setArchiveTarget(null)}
+        title="Archive Post"
+      >
+        <p className="text-sm text-[var(--color-text-muted)] mb-4">
+          Are you sure you want to archive <strong className="text-[var(--color-text)]">"{archiveTarget?.title}"</strong>? It will be hidden from the student feed and moved to the Archived section.
+        </p>
+        <div className="flex gap-3 justify-end">
+          <button
+            onClick={() => setArchiveTarget(null)}
+            className="px-4 py-2 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={confirmArchive}
+            className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-black font-semibold transition-colors"
+          >
+            Archive Post
+          </button>
+        </div>
+      </Modal>
 
       {/* Delete confirmation modal */}
       <Modal
@@ -291,15 +319,20 @@ export default function PostTable() {
 function ActionButton({ icon: Icon, label, onClick, danger = false }) {
   return (
     <button
-      onClick={onClick}
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick(e);
+      }}
       title={label}
-      className={`p-2 rounded-lg transition-colors ${
+      aria-label={label}
+      className={`p-2 rounded-lg transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center border sm:border-transparent ${
         danger
-          ? 'hover:bg-red-500/10 text-[var(--color-text-dim)] hover:text-red-400'
-          : 'hover:bg-[var(--color-surface-2)] text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
+          ? 'bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20 sm:bg-transparent sm:text-[var(--color-text-dim)] sm:hover:bg-red-500/10 sm:hover:text-red-400'
+          : 'bg-[var(--color-surface-2)] border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface-2)]/80 sm:bg-transparent sm:text-[var(--color-text-dim)] sm:hover:bg-[var(--color-surface-2)] sm:hover:text-[var(--color-text)]'
       }`}
     >
-      <Icon size={14} />
+      <Icon size={15} />
     </button>
   );
 }

@@ -144,22 +144,23 @@
 - [x] **T-062** — Implement secure admin query actions (`getAllPosts`, `getPost`) via `/api/admin` to bypass public read RLS, enabling full access to archived and draft posts
 - [x] **T-063** — Enhance admin dashboard overview with dedicated Archived stat card and deep-linking filter navigation
 - [x] **T-064** — Add 1-click unarchive / restore action button (`ArchiveRestore`) and URL search params sync in `PostTable`
+- [x] **T-065** — Fix mobile touch visibility for admin action buttons (`PostTable`, `SubjectManager`) and add explicit confirmation modal for archiving posts
 
 ---
 
 ## Future Tasks (Backlog)
 
-- [ ] **T-065** — Student authentication (Google OAuth via Supabase Auth)
-- [ ] **T-066** — Push notifications for new posts / approaching deadlines
-- [ ] **T-067** — Multi-batch support (use `batch_id` field, admin selects batch)
-- [ ] **T-068** — Admin analytics dashboard (post views, engagement metrics)
-- [ ] **T-069** — PWA support with offline caching (service worker)
-- [ ] **T-070** — Email digest for weekly summaries
-- [ ] **T-071** — Comments / reactions on posts
-- [ ] **T-072** — Calendar view for deadlines
-- [ ] **T-073** — Dark/Light theme toggle (currently dark-only)
-- [ ] **T-074** — Bulk post operations in admin (archive all, delete selected)
-- [ ] **T-075** — Post scheduling (publish at a future date)
-- [ ] **T-076** — Supabase Realtime subscriptions for live feed updates
-- [ ] **T-077** — Export posts as PDF or CSV from admin
-- [ ] **T-078** — Subject-wise archive / history page
+- [ ] **T-066** — Student authentication (Google OAuth via Supabase Auth)
+- [ ] **T-067** — Push notifications for new posts / approaching deadlines
+- [ ] **T-068** — Multi-batch support (use `batch_id` field, admin selects batch)
+- [ ] **T-069** — Admin analytics dashboard (post views, engagement metrics)
+- [ ] **T-070** — PWA support with offline caching (service worker)
+- [ ] **T-071** — Email digest for weekly summaries
+- [ ] **T-072** — Comments / reactions on posts
+- [ ] **T-073** — Calendar view for deadlines
+- [ ] **T-074** — Dark/Light theme toggle (currently dark-only)
+- [ ] **T-075** — Bulk post operations in admin (archive all, delete selected)
+- [ ] **T-076** — Post scheduling (publish at a future date)
+- [ ] **T-077** — Supabase Realtime subscriptions for live feed updates
+- [ ] **T-078** — Export posts as PDF or CSV from admin
+- [ ] **T-079** — Subject-wise archive / history page

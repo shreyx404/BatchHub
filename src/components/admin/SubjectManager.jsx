@@ -104,16 +104,22 @@ export default function SubjectManager() {
                   <p className="text-xs text-[var(--color-text-dim)]">{subject.code}</p>
                 )}
               </div>
-              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex items-center gap-1.5 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                 <button
+                  type="button"
                   onClick={() => openEdit(subject)}
-                  className="p-2 rounded-lg hover:bg-[var(--color-surface-2)] text-[var(--color-text-dim)] hover:text-[var(--color-text)] transition-colors"
+                  title="Edit Subject"
+                  aria-label="Edit Subject"
+                  className="p-2 rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] sm:border-transparent text-[var(--color-text)] hover:bg-[var(--color-surface-2)]/80 sm:bg-transparent sm:text-[var(--color-text-dim)] sm:hover:bg-[var(--color-surface-2)] sm:hover:text-[var(--color-text)] transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
                 >
                   <Edit2 size={14} />
                 </button>
                 <button
+                  type="button"
                   onClick={() => setDeleteTarget(subject)}
-                  className="p-2 rounded-lg hover:bg-red-500/10 text-[var(--color-text-dim)] hover:text-red-400 transition-colors"
+                  title="Delete Subject"
+                  aria-label="Delete Subject"
+                  className="p-2 rounded-lg bg-red-500/10 border border-red-500/20 sm:border-transparent text-red-400 hover:bg-red-500/20 sm:bg-transparent sm:text-[var(--color-text-dim)] sm:hover:bg-red-500/10 sm:hover:text-red-400 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
                 >
                   <Trash2 size={14} />
                 </button>
