@@ -153,6 +153,7 @@
 - [x] **T-071** — Add global `Ctrl + K` / `Cmd + K` search keyboard shortcut and ESC modal dismiss for keyboard accessibility
 - [x] **T-087** — Refine post share text template format (`*<Title>*\n\n_BatchHub :_ ->\n<Link>`) and establish mandatory system markdown documentation & Git push workflows
 - [x] **T-088** — Update BatchHub brand icon and favicon assets across Header, Admin Sidebar, Admin Login, and HTML document metadata using custom graduate batch illustration
+- [x] **T-089** — Float posts without deadlines to the very top in admin `PostTable` when sorting by Due Date (with secondary sorting by newest created date)
 
 ---
 
