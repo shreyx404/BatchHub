@@ -1,4 +1,4 @@
-import { CONTENT_TYPES, CONTENT_TYPE_LIST } from '../../lib/constants';
+import { CONTENT_TYPE_LIST } from '../../lib/constants';
 
 export default function FilterBar({
   selectedType,
@@ -8,18 +8,19 @@ export default function FilterBar({
   subjects = [],
 }) {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2.5">
       {/* Type filters */}
-      <div className="flex gap-2 overflow-x-auto sm:flex-wrap scrollbar-hide pb-1">
+      <div className="flex gap-1.5 overflow-x-auto sm:flex-wrap scrollbar-hide pb-1">
         <FilterChip
           label="All"
           active={!selectedType}
           onClick={() => onTypeChange(null)}
         />
-        {CONTENT_TYPE_LIST.map(({ value, emoji, label }) => (
+        {CONTENT_TYPE_LIST.map(({ value, label, icon: Icon }) => (
           <FilterChip
             key={value}
-            label={`${emoji} ${label}`}
+            label={label}
+            icon={Icon}
             active={selectedType === value}
             onClick={() => onTypeChange(selectedType === value ? null : value)}
           />
@@ -28,7 +29,7 @@ export default function FilterBar({
 
       {/* Subject filters */}
       {subjects.length > 0 && (
-        <div className="flex gap-2 overflow-x-auto sm:flex-wrap scrollbar-hide pb-1">
+        <div className="flex gap-1.5 overflow-x-auto sm:flex-wrap scrollbar-hide pb-1">
           <FilterChip
             label="All Subjects"
             active={!selectedSubject}
@@ -43,7 +44,6 @@ export default function FilterBar({
               onClick={() =>
                 onSubjectChange(selectedSubject === subject.id ? null : subject.id)
               }
-              color={subject.color}
               small
             />
           ))}
@@ -53,18 +53,19 @@ export default function FilterBar({
   );
 }
 
-function FilterChip({ label, active, onClick, color, small = false }) {
+function FilterChip({ label, icon: Icon, active, onClick, small = false }) {
   return (
     <button
       onClick={onClick}
-      className={`shrink-0 rounded-full border transition-all duration-300 whitespace-nowrap hover:scale-[1.02] active:scale-95
-        ${small ? 'px-2.5 py-1 text-[10px] tracking-[0.02em]' : 'px-3 py-1.5 text-[11px] tracking-[0.015em]'}
+      className={`shrink-0 flex items-center gap-1.5 border transition-all duration-200 whitespace-nowrap
+        ${small ? 'px-2.5 py-1 text-[10px] tracking-[0.03em] font-mono' : 'px-3 py-1.5 text-[11px] tracking-[0.02em] uppercase'}
         ${
           active
-            ? 'bg-[var(--color-text)] border-[var(--color-text)] text-black font-medium shadow-md'
+            ? 'bg-[var(--color-text)] border-[var(--color-text)] text-black font-semibold'
             : 'bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-muted)] font-normal hover:border-[var(--color-border-light)] hover:text-[var(--color-text)]'
         }`}
     >
+      {Icon && <Icon size={12} className="shrink-0" />}
       {label}
     </button>
   );

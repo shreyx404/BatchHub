@@ -1,7 +1,7 @@
 # BatchHub — Product Requirements Document (PRD)
 
-> **Version:** 1.0  
-> **Last Updated:** 2026-08-20  
+> **Version:** 1.1  
+> **Last Updated:** 2026-08-21  
 > **Status:** Living Document
 
 ---
@@ -28,7 +28,7 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 
 | Persona | Role | Goals |
 |---------|------|-------|
-| **Student** | Passive consumer | Browse updates, check deadlines, download attachments, share links with classmates |
+| **Student** | Passive consumer | Browse updates, check deadlines, access resource links/documents, share links with classmates |
 | **Batch Representative (BR)** | Admin / Content creator | Post assignments, notices, deadlines; manage subjects; keep information current |
 | **Discord-active BR** | Power user | Post updates directly from Discord without opening the web app |
 
@@ -43,9 +43,9 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 | F-01 | **Structured Feed** | Notices → Pinned → Deadline-sorted → General updates |
 | F-02 | **Deadline Banner** | Horizontal scrollable banner showing upcoming deadlines with countdown timers; urgent items (< 48h) are visually highlighted |
 | F-03 | **Dynamic Unpinning** | Posts with expired `due_date` automatically lose their pinned status client-side |
-| F-04 | **Search** | Debounced (300 ms) full-text search across title and content fields |
+| F-04 | **Search** | Debounced (300 ms) full-text search across title and content fields with `Ctrl + K` shortcut |
 | F-05 | **Filters** | Filter by content type (assignment, lab, notice, etc.) and by subject |
-| F-06 | **Post Detail Page** | Full Markdown rendering, tags, external links, file attachments with download, and formatted share button |
+| F-06 | **Post Detail Page** | Full Markdown rendering, tags, direct resource links & attachments, and formatted share button |
 | F-07 | **Deep Links & Sharing** | Every post has a unique URL (`/post/:id`) shareable via native Web Share API with rich formatted text (`*Title*\nBatchHub: url`) and robust clipboard fallback |
 | F-08 | **Demo Mode** | App runs with sample data when Supabase is not configured, allowing UI preview without a database |
 
@@ -53,20 +53,20 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 
 | # | Feature | Description |
 |---|---------|-------------|
-| F-09 | **Secure Login & Multi-Layer Defense** | Password validated server-side with `crypto.timingSafeEqual`; protected by 4 security layers: 10 attempts / 24-hour lockout per IP, per-device fingerprint tracking, Cloudflare Turnstile bot verification, and a 30 failed attempts / 24-hour global site-wide limit |
-| F-10 | **Dashboard Overview & Live Student View** | Stats cards (total posts, published, drafts, subjects), quick action buttons, and an embedded live "Student View" preview panel mirroring the homepage feed |
+| F-09 | **Secure Login & Multi-Layer Defense** | Password validated server-side with SHA-256 hashed `crypto.timingSafeEqual`; protected by 4 security layers: 10 attempts / 24-hour lockout per IP, per-device fingerprint tracking, Cloudflare Turnstile bot verification, and a 30 failed attempts / 24-hour global site-wide limit |
+| F-10 | **Dashboard Overview & Live Student View** | Stats cards (total posts, published, drafts, archived, subjects), quick action buttons, and an embedded live "Student View" preview panel mirroring the homepage feed |
 | F-11 | **Post CRUD & Management** | Create, edit, publish, archive, and delete posts with live Markdown preview; filter by status and sort by created date or due date |
 | F-12 | **Subject Manager** | Create, edit, delete subjects with color coding |
-| F-13 | **File Uploads** | Drag-and-drop file uploader; files stored in Supabase Storage (10 MB limit per file) |
+| F-13 | **Resource Links & Attachments** | Add labeled resource links (Google Drive, Classroom, PDFs, GitHub) without upload bottlenecks |
 | F-14 | **Metadata Management** | Tags (comma-separated), external links (label + URL pairs), due dates, pin toggle, status control |
 
 ### 3.3 Discord Bot Integration (Optional)
 
 | # | Feature | Description |
 |---|---------|-------------|
-| F-15 | **Full Post Management via `/post`** | Comprehensive slash subcommands: `/post create` (with file upload, subject autocomplete, links parsing), `/post update`, `/post delete`, `/post pin`, `/post unpin`, `/post list`, `/post view` (rich embed), `/post archive`, and `/post publish` |
+| F-15 | **Full Post Management via `/post`** | Comprehensive slash subcommands: `/post create` (with subject autocomplete, links parsing), `/post update`, `/post delete`, `/post pin`, `/post unpin`, `/post list`, `/post view` (rich embed), `/post archive`, and `/post publish` |
 | F-16 | **Signature Verification** | Cryptographic Ed25519 signature verification using `tweetnacl` to validate all incoming Discord interactions |
-| F-17 | **Subject Autocomplete & File Pipelines** | Live subject search on Discord `type: 4` interactions; direct attachment forwarding from Discord CDN to Supabase Storage |
+| F-17 | **Subject Autocomplete** | Live subject search on Discord `type: 4` interactions |
 
 ---
 

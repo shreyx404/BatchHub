@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { getDeviceFingerprint } from '../lib/fingerprint';
+import { isSupabaseConfigured } from '../lib/supabase';
 
 const ADMIN_TOKEN_KEY = 'batchhub_admin_token';
 const ATTEMPTS_STORAGE_KEY = 'batchhub_admin_login_attempts';
@@ -7,6 +8,9 @@ const MAX_ATTEMPTS = 10;
 const LOCKOUT_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 export function getLockoutInfo() {
+  if (!isSupabaseConfigured()) {
+    return { count: 0, isLocked: false, remainingAttempts: MAX_ATTEMPTS, remainingSeconds: 0 };
+  }
   try {
     const raw = localStorage.getItem(ATTEMPTS_STORAGE_KEY);
     if (!raw) {
@@ -98,6 +102,15 @@ export function useAdmin() {
       return { success: false, error: 'empty_password' };
     }
 
+    // Demo mode bypass: when running without Supabase credentials
+    if (!isSupabaseConfigured()) {
+      recordSuccessfulAttempt();
+      setLockoutInfo(getLockoutInfo());
+      sessionStorage.setItem(ADMIN_TOKEN_KEY, 'demo-admin-token');
+      setIsAuthenticated(true);
+      return { success: true, isDemo: true };
+    }
+
     const currentLock = getLockoutInfo();
     if (currentLock.isLocked) {
       setLockoutInfo(currentLock);
@@ -159,54 +172,24 @@ export function useAdmin() {
         };
       }
 
-      if (response.status === 404 || response.status === 500) {
-        // Fallback for dev / demo environments where serverless /api/admin is not running
-        const expected = import.meta.env.VITE_ADMIN_PASSWORD || 'admin';
-        if (password === expected) {
-          recordSuccessfulAttempt();
-          setLockoutInfo(getLockoutInfo());
-          sessionStorage.setItem(ADMIN_TOKEN_KEY, password);
-          setIsAuthenticated(true);
-          return { success: true };
-        } else {
-          const failed = recordFailedAttempt();
-          setLockoutInfo(failed);
-          return {
-            success: false,
-            error: failed.isLocked ? 'rate_limited' : 'invalid_password',
-            remainingAttempts: failed.remainingAttempts,
-            isLocked: failed.isLocked,
-            remainingSeconds: failed.remainingSeconds,
-          };
-        }
+      if (!response.ok) {
+        return {
+          success: false,
+          error: 'server_error',
+        };
       }
 
-      // Success (200 or 400 'Unknown action' means Bearer auth passed)
+      // Success (200 OK means Bearer auth passed)
       recordSuccessfulAttempt();
       setLockoutInfo(getLockoutInfo());
       sessionStorage.setItem(ADMIN_TOKEN_KEY, password);
       setIsAuthenticated(true);
       return { success: true };
     } catch {
-      // Network error fallback
-      const expected = import.meta.env.VITE_ADMIN_PASSWORD || 'admin';
-      if (password === expected) {
-        recordSuccessfulAttempt();
-        setLockoutInfo(getLockoutInfo());
-        sessionStorage.setItem(ADMIN_TOKEN_KEY, password);
-        setIsAuthenticated(true);
-        return { success: true };
-      } else {
-        const failed = recordFailedAttempt();
-        setLockoutInfo(failed);
-        return {
-          success: false,
-          error: failed.isLocked ? 'rate_limited' : 'invalid_password',
-          remainingAttempts: failed.remainingAttempts,
-          isLocked: failed.isLocked,
-          remainingSeconds: failed.remainingSeconds,
-        };
-      }
+      return {
+        success: false,
+        error: 'network_error',
+      };
     }
   }, []);
 

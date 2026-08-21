@@ -35,7 +35,7 @@ export async function fetchPosts({ type, subjectId, search, status = 'published'
 
   let query = supabase
     .from('posts')
-    .select('*, subjects(*), attachments(*)')
+    .select('*, subjects(*)')
     .eq('status', status)
     .order('is_pinned', { ascending: false })
     .order('created_at', { ascending: false });
@@ -112,8 +112,8 @@ export async function fetchAllPosts() {
     return DEMO_POSTS;
   }
 
-  // Fire auto-archive in the background before fetching (non-blocking)
-  await autoArchiveExpiredPosts();
+  // Fire auto-archive in the background without blocking the query
+  autoArchiveExpiredPosts().catch(() => {});
   return await adminRequest('getAllPosts');
 }
 
@@ -139,7 +139,7 @@ export async function fetchPost(id) {
 
   const { data, error } = await supabase
     .from('posts')
-    .select('*, subjects(*), attachments(*)')
+    .select('*, subjects(*)')
     .eq('id', id)
     .single();
 
@@ -181,7 +181,6 @@ export async function createPost(postData) {
       ...postData,
       created_at: postData.created_at || new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      attachments: [],
     };
     DEMO_POSTS.unshift(newPost);
     return newPost;
@@ -264,55 +263,6 @@ export async function deleteSubject(id) {
   }
 
   await adminRequest('deleteSubject', { id });
-}
-
-/* ============================================================
-   Attachments / Storage API
-   ============================================================ */
-
-export async function uploadFile(file) {
-  if (!isSupabaseConfigured()) {
-    return {
-      file_name: file.name,
-      file_url: URL.createObjectURL(file),
-      file_size: file.size,
-      file_type: file.type,
-    };
-  }
-
-  // Use crypto UUID + sanitized filename to prevent collisions and path traversal
-  const sanitizedName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-  const fileName = `${crypto.randomUUID()}-${sanitizedName}`;
-  const { error: uploadError } = await supabase.storage
-    .from('attachments')
-    .upload(fileName, file);
-
-  if (uploadError) throw uploadError;
-
-  const { data: { publicUrl } } = supabase.storage
-    .from('attachments')
-    .getPublicUrl(fileName);
-
-  return {
-    file_name: file.name,
-    file_url: publicUrl,
-    file_size: file.size,
-    file_type: file.type,
-  };
-}
-
-export async function createAttachment(attachmentData) {
-  if (!isSupabaseConfigured()) {
-    return { id: `demo-att-${Date.now()}`, ...attachmentData, created_at: new Date().toISOString() };
-  }
-
-  return await adminRequest('createAttachment', attachmentData);
-}
-
-export async function deleteAttachment(id) {
-  if (!isSupabaseConfigured()) return;
-
-  await adminRequest('deleteAttachment', { id });
 }
 
 /* ============================================================

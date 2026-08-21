@@ -4,12 +4,12 @@ export default function LoadingState({ count = 6 }) {
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 space-y-3"
+          className="border border-[var(--color-border)] bg-[var(--color-surface)] p-4 space-y-3"
           style={{ animationDelay: `${i * 80}ms` }}
         >
           <div className="flex gap-2">
-            <div className="skeleton w-20 h-5 rounded-full" />
-            <div className="skeleton w-14 h-5 rounded-full" />
+            <div className="skeleton w-20 h-5" />
+            <div className="skeleton w-14 h-5" />
           </div>
           <div className="skeleton w-full h-5" />
           <div className="skeleton w-3/4 h-5" />

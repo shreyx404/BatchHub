@@ -14,11 +14,13 @@ createRoot(document.getElementById('root')).render(
         toastOptions={{
           duration: 3000,
           style: {
-            background: '#1a1a2e',
-            color: '#e4e4ef',
-            border: '1px solid #2a2a3e',
-            borderRadius: '10px',
+            background: '#09090b',
+            color: '#f5f5f4',
+            border: '1px solid #27272a',
+            borderRadius: '0px',
             fontSize: '0.875rem',
+            fontFamily: 'var(--font-sans)',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)',
           },
         }}
       />

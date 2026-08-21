@@ -1,7 +1,7 @@
 # BatchHub — AI Agent Guidelines
 
-> **Version:** 1.0  
-> **Last Updated:** 2026-08-20
+> **Version:** 1.1  
+> **Last Updated:** 2026-08-21
 
 This file provides context and rules for AI coding agents working on the BatchHub codebase.
 
@@ -11,9 +11,9 @@ This file provides context and rules for AI coding agents working on the BatchHu
 
 **BatchHub** is a centralized academic information gallery for college batches. It replaces scattered WhatsApp messages with one organized, searchable web app.
 
-- **Frontend:** React 19 SPA with Vite 6, Tailwind CSS v4, React Router v7
-- **Backend:** Supabase (PostgreSQL + Storage) with Vercel Serverless Functions
-- **Design:** Dark editorial aesthetic — Playfair Display headings, Inter body, monochromatic palette, square corners
+- **Frontend:** React 19 SPA with Vite 6, Tailwind CSS v4, React Router v7 (with route code splitting)
+- **Backend:** Supabase (PostgreSQL) with Vercel Serverless Functions
+- **Design:** Dark editorial aesthetic — Playfair Display headings, Inter body, monochromatic palette, square corners (0px border-radius)
 
 ---
 
@@ -21,8 +21,8 @@ This file provides context and rules for AI coding agents working on the BatchHu
 
 ```
 src/
-├── main.jsx              # Entry point — BrowserRouter, Toaster
-├── App.jsx               # Route definitions only
+├── main.jsx              # Entry point — BrowserRouter, Toaster (custom dark theme)
+├── App.jsx               # Route definitions with lazy loading & Suspense
 ├── index.css             # Design system — @theme tokens, typography, animations, utilities
 ├── lib/
 │   ├── supabase.js       # Supabase client init (returns null if not configured)
@@ -34,16 +34,16 @@ src/
 │   ├── usePosts.js       # usePosts(filters), useUpcomingDeadlines()
 │   ├── usePost.js        # usePost(id)
 │   ├── useSubjects.js    # useSubjects()
-│   └── useAdmin.js       # useAdmin() — auth state + login/logout + 24h lockout
+│   └── useAdmin.js       # useAdmin() — auth state + login/logout + 24h lockout (instant demo bypass)
 ├── components/
 │   ├── layout/           # Header, Footer
 │   ├── ui/               # Badge, SearchBar, FilterBar, Modal, LoadingState, ErrorState, EmptyState
 │   ├── posts/            # PostCard, PostGrid, DeadlineBanner, PinnedSection, NoticesSection
-│   └── admin/            # AdminLogin, AdminSidebar, PostForm, PostTable, FileUploader, SubjectManager
+│   └── admin/            # AdminLogin, AdminSidebar, PostForm, PostTable, SubjectManager
 └── pages/
     ├── HomePage.jsx      # Student feed with structured sections
     ├── PostPage.jsx      # Full post detail view
-    ├── AdminPage.jsx     # Admin dashboard with nested routes
+    ├── AdminPage.jsx     # Admin dashboard with nested routes & live student preview
     └── NotFoundPage.jsx  # 404 page
 
 api/
@@ -119,9 +119,9 @@ All write operations (create, update, delete) and privileged queries (`fetchAllP
 
 **Never** write directly to Supabase from the client, and do not rely on client `anon` key queries for admin views of drafts or archived posts. The anon key has read-only access strictly limited to `status = 'published'` via RLS.
 
-### 4.3 File Uploads
+### 4.3 Resource Links & Documents
 
-File uploads are the **one exception** — they go directly from the client to Supabase Storage using the anon key, because Storage has its own access policies. The resulting public URL is then attached to the post via the admin API.
+BatchHub unifies attachments and resource references into standard `{ label, url }` pairs stored in the `links` JSONB field on posts. This allows attaching Google Drive folders, Classroom links, GitHub repos, or direct PDF links cleanly without object storage egress or upload size bottlenecks.
 
 ---
 
@@ -133,9 +133,9 @@ File uploads are the **one exception** — they go directly from the client to S
 | **No VITE_ prefix for secrets** | `ADMIN_PASSWORD`, `SUPABASE_SERVICE_ROLE_KEY`, `TURNSTILE_SECRET_KEY`, `DISCORD_PUBLIC_KEY` must NOT have `VITE_` prefix |
 | **VITE_ prefix for client keys** | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_TURNSTILE_SITE_KEY` require `VITE_` prefix |
 | **4-Tier Admin Protection** | IP rate limit (10/24h), Device fingerprint limit (10/24h), Cloudflare Turnstile bot verification, and Global Supabase limit (30/24h) |
+| **SHA-256 Timing-Safe Compares** | String comparisons use `crypto.createHash('sha256')` + `crypto.timingSafeEqual` to eliminate length leakage |
 | **Payload whitelisting** | Always use `pick()` to extract only allowed fields before database operations |
 | **Sanitise user input** | Escape search queries for PostgREST wildcards; disallow dangerous Markdown elements |
-| **UUID filenames** | Always prefix uploaded filenames with `crypto.randomUUID()` |
 | **Never expose service role key** | It goes only in Vercel env vars (runtime), never in client bundle |
 
 ---

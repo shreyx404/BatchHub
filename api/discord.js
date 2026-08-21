@@ -101,18 +101,13 @@ function formatPostEmbed(post, { detailed = false } = {}) {
     fields.push({ name: 'Links', value: linksText, inline: false });
   }
 
-  if (detailed && post.attachments && post.attachments.length > 0) {
-    const attachText = post.attachments.map(a => `📎 [${a.file_name}](${a.file_url})`).join('\n');
-    fields.push({ name: 'Attachments', value: attachText, inline: false });
-  }
-
   if (detailed) {
     fields.push({ name: 'ID', value: `\`${post.id}\``, inline: false });
   }
 
   const embed = {
     title: post.title,
-    color: 0x1a1a2e, // Dark monochromatic — matches BatchHub aesthetic
+    color: 0x09090b, // Dark monochromatic — matches BatchHub aesthetic
     fields,
     timestamp: post.created_at,
     footer: { text: `Created by ${post.created_by || 'admin'}` },
@@ -126,44 +121,6 @@ function formatPostEmbed(post, { detailed = false } = {}) {
   }
 
   return embed;
-}
-
-// ── Helper: Download file from URL and upload to Supabase Storage ──
-async function downloadAndUploadFile(fileUrl, fileName, supabase) {
-  const response = await fetch(fileUrl);
-  if (!response.ok) {
-    throw new Error(`Failed to download file: ${response.status}`);
-  }
-
-  const arrayBuffer = await response.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
-  const contentType = response.headers.get('content-type') || 'application/octet-stream';
-
-  // UUID-prefix the filename for uniqueness (security rule from AGENTS.md)
-  const storagePath = `${crypto.randomUUID()}-${fileName}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from('post-attachments')
-    .upload(storagePath, buffer, {
-      contentType,
-      upsert: false,
-    });
-
-  if (uploadError) {
-    throw new Error(`Storage upload failed: ${uploadError.message}`);
-  }
-
-  // Get the public URL
-  const { data: urlData } = supabase.storage
-    .from('post-attachments')
-    .getPublicUrl(storagePath);
-
-  return {
-    file_name: fileName,
-    file_url: urlData.publicUrl,
-    file_size: buffer.length,
-    file_type: contentType,
-  };
 }
 
 // ── Helper: Init Supabase with service role key ────────────────
@@ -202,7 +159,6 @@ async function handleCreate(options, resolved, supabase) {
   const tagsRaw = getOption(options, 'tags');
   const subjectId = getOption(options, 'subject') || null;
   const linksRaw = getOption(options, 'links');
-  const fileId = getOption(options, 'file');
 
   const tags = tagsRaw ? parseTags(tagsRaw) : [];
   const links = linksRaw ? parseLinks(linksRaw) : [];
@@ -230,31 +186,11 @@ async function handleCreate(options, resolved, supabase) {
     return replyError('Failed to create post. Check the logs.');
   }
 
-  // Handle file attachment if provided
-  let attachmentInfo = '';
-  if (fileId && resolved?.attachments) {
-    const attachment = resolved.attachments[fileId];
-    if (attachment) {
-      try {
-        const fileData = await downloadAndUploadFile(attachment.url, attachment.filename, supabase);
-
-        await supabase.from('attachments').insert({
-          post_id: post.id,
-          ...fileData,
-        });
-
-        attachmentInfo = `\n📎 Attached: **${attachment.filename}**`;
-      } catch (err) {
-        console.error('Attachment upload error:', err);
-        attachmentInfo = `\n⚠️ Post created but file upload failed: ${err.message}`;
-      }
-    }
-  }
-
   const subjectText = post.subjects ? ` — ${post.subjects.name}` : '';
+  const linksCountText = links.length > 0 ? `\n🔗 ${links.length} Link(s) attached` : '';
   return reply(
-    `✅ Created ${typeEmoji(type)} **${type.toUpperCase()}**: **${title}**${subjectText}${attachmentInfo}\n` +
-    `🔗 ID: \`${post.id}\``
+    `✅ Created ${typeEmoji(type)} **${type.toUpperCase()}**: **${title}**${subjectText}${linksCountText}\n` +
+    `📌 ID: \`${post.id}\``
   );
 }
 
@@ -434,7 +370,7 @@ async function handleView(options, supabase) {
 
   const { data: post, error } = await supabase
     .from('posts')
-    .select('*, subjects(*), attachments(*)')
+    .select('*, subjects(*)')
     .eq('id', id)
     .single();
 

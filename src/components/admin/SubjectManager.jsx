@@ -76,7 +76,7 @@ export default function SubjectManager() {
         <h2 className="text-xl font-bold text-[var(--color-text)]">Subjects</h2>
         <button
           onClick={openCreate}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-black text-sm font-medium transition-colors"
+          className="flex items-center gap-1.5 px-3 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-black text-sm font-semibold transition-colors"
         >
           <Plus size={14} />
           Add Subject
@@ -90,7 +90,7 @@ export default function SubjectManager() {
           {subjects.map((subject) => (
             <div
               key={subject.id}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] transition-all group"
+              className="flex items-center gap-3 px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] transition-all group"
             >
               <div
                 className="w-3 h-3 rounded-full shrink-0"
@@ -101,7 +101,7 @@ export default function SubjectManager() {
                   {subject.name}
                 </p>
                 {subject.code && (
-                  <p className="text-xs text-[var(--color-text-dim)]">{subject.code}</p>
+                  <p className="text-xs text-[var(--color-text-dim)] font-mono">{subject.code}</p>
                 )}
               </div>
               <div className="flex items-center gap-1.5 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
@@ -110,7 +110,7 @@ export default function SubjectManager() {
                   onClick={() => openEdit(subject)}
                   title="Edit Subject"
                   aria-label="Edit Subject"
-                  className="p-2 rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border)] sm:border-transparent text-[var(--color-text)] hover:bg-[var(--color-surface-2)]/80 sm:bg-transparent sm:text-[var(--color-text-dim)] sm:hover:bg-[var(--color-surface-2)] sm:hover:text-[var(--color-text)] transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
+                  className="p-2 bg-[var(--color-surface-2)] border border-[var(--color-border)] sm:border-transparent text-[var(--color-text)] hover:bg-[var(--color-surface-2)]/80 sm:bg-transparent sm:text-[var(--color-text-dim)] sm:hover:bg-[var(--color-surface-2)] sm:hover:text-[var(--color-text)] transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
                 >
                   <Edit2 size={14} />
                 </button>
@@ -119,7 +119,7 @@ export default function SubjectManager() {
                   onClick={() => setDeleteTarget(subject)}
                   title="Delete Subject"
                   aria-label="Delete Subject"
-                  className="p-2 rounded-lg bg-red-500/10 border border-red-500/20 sm:border-transparent text-red-400 hover:bg-red-500/20 sm:bg-transparent sm:text-[var(--color-text-dim)] sm:hover:bg-red-500/10 sm:hover:text-red-400 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
+                  className="p-2 bg-red-500/10 border border-red-500/20 sm:border-transparent text-red-400 hover:bg-red-500/20 sm:bg-transparent sm:text-[var(--color-text-dim)] sm:hover:bg-red-500/10 sm:hover:text-red-400 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -186,14 +186,14 @@ export default function SubjectManager() {
           <div className="flex gap-3 justify-end pt-2">
             <button
               onClick={() => setShowForm(false)}
-              className="px-4 py-2 rounded-lg text-sm text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] transition-colors"
+              className="px-4 py-2 border border-[var(--color-border)] text-sm text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-60 text-black text-sm font-medium transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-60 text-black text-sm font-semibold transition-colors"
             >
               {saving ? (
                 <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
@@ -217,13 +217,13 @@ export default function SubjectManager() {
         <div className="flex gap-3 justify-end">
           <button
             onClick={() => setDeleteTarget(null)}
-            className="px-4 py-2 rounded-lg text-sm text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] transition-colors"
+            className="px-4 py-2 border border-[var(--color-border)] text-sm text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleDelete}
-            className="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm font-medium transition-colors"
+            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold transition-colors"
           >
             Delete
           </button>

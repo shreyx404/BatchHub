@@ -3,10 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Save, Plus, X, Link as LinkIcon, Eye, EyeOff } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import toast from 'react-hot-toast';
-import FileUploader from './FileUploader';
 import { CONTENT_TYPE_LIST } from '../../lib/constants';
 import { useSubjects } from '../../hooks/useSubjects';
-import { createPost, updatePost, uploadFile, createAttachment } from '../../lib/api';
+import { createPost, updatePost } from '../../lib/api';
 
 function toLocalISOString(date) {
   if (!date) return '';
@@ -26,7 +25,6 @@ export default function PostForm({ existingPost, onSaved }) {
   const { subjects } = useSubjects();
   const [saving, setSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-  const [files, setFiles] = useState([]);
 
   const [form, setForm] = useState({
     title: '',
@@ -113,20 +111,10 @@ export default function PostForm({ existingPost, onSaved }) {
         links: form.links.filter((l) => l.url.trim()),
       };
 
-      let savedPost;
       if (existingPost) {
-        savedPost = await updatePost(existingPost.id, postData);
+        await updatePost(existingPost.id, postData);
       } else {
-        savedPost = await createPost(postData);
-      }
-
-      // Upload files
-      for (const file of files) {
-        const uploaded = await uploadFile(file);
-        await createAttachment({
-          post_id: savedPost.id,
-          ...uploaded,
-        });
+        await createPost(postData);
       }
 
       toast.success(existingPost ? 'Post updated!' : 'Post created!');
@@ -208,7 +196,7 @@ export default function PostForm({ existingPost, onSaved }) {
         }
       >
         {showPreview ? (
-          <div className="min-h-[200px] p-4 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-border)] prose">
+          <div className="min-h-[200px] p-4 bg-[var(--color-surface-2)] border border-[var(--color-border)] prose">
             <ReactMarkdown
               disallowedElements={['script', 'iframe', 'object', 'embed']}
               unwrapDisallowed
@@ -267,12 +255,12 @@ export default function PostForm({ existingPost, onSaved }) {
         </Field>
 
         <Field label="Pin Post">
-          <label className="flex items-center gap-2 h-11 px-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] cursor-pointer">
+          <label className="flex items-center gap-2 h-11 px-3 bg-[var(--color-surface)] border border-[var(--color-border)] cursor-pointer">
             <input
               type="checkbox"
               checked={form.is_pinned}
               onChange={(e) => updateField('is_pinned', e.target.checked)}
-              className="w-4 h-4 rounded accent-[var(--color-accent)]"
+              className="w-4 h-4 accent-[var(--color-accent)]"
             />
             <span className="text-sm text-[var(--color-text)]">Pinned (Keep at top)</span>
           </label>
@@ -291,8 +279,8 @@ export default function PostForm({ existingPost, onSaved }) {
         />
       </Field>
 
-      {/* Links */}
-      <Field label="Links">
+      {/* Links & Attachments */}
+      <Field label="Resource Links / Attachments" hint="Add Google Drive, Google Classroom, GitHub, or submission URLs">
         <div className="space-y-2">
           {form.links.map((link, i) => (
             <div key={i} className="flex gap-2">
@@ -300,7 +288,7 @@ export default function PostForm({ existingPost, onSaved }) {
                 type="text"
                 value={link.label}
                 onChange={(e) => updateLink(i, 'label', e.target.value)}
-                placeholder="Label"
+                placeholder="Label (e.g. Assignment PDF / G-Drive)"
                 className="input-field flex-1"
               />
               <input
@@ -314,7 +302,7 @@ export default function PostForm({ existingPost, onSaved }) {
                 <button
                   type="button"
                   onClick={() => removeLink(i)}
-                  className="p-2 rounded-lg hover:bg-red-500/10 text-[var(--color-text-dim)] hover:text-red-400 transition-colors"
+                  className="p-2 border border-[var(--color-border)] hover:bg-red-500/10 text-[var(--color-text-dim)] hover:text-red-400 transition-colors"
                 >
                   <X size={16} />
                 </button>
@@ -324,17 +312,12 @@ export default function PostForm({ existingPost, onSaved }) {
           <button
             type="button"
             onClick={addLink}
-            className="flex items-center gap-1.5 text-xs font-medium text-[var(--color-accent-hover)] hover:underline"
+            className="flex items-center gap-1.5 text-xs font-medium text-[var(--color-accent-hover)] hover:underline pt-1"
           >
             <Plus size={12} />
-            Add link
+            Add another link
           </button>
         </div>
-      </Field>
-
-      {/* Attachments */}
-      <Field label="Attachments">
-        <FileUploader files={files} onFilesChange={setFiles} />
       </Field>
 
       {/* Submit */}
@@ -342,7 +325,7 @@ export default function PostForm({ existingPost, onSaved }) {
         <button
           type="submit"
           disabled={saving}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-60 text-black text-sm font-semibold transition-colors"
+          className="flex items-center gap-2 px-5 py-2.5 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-60 text-black text-sm font-semibold transition-colors"
         >
           {saving ? (
             <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
@@ -355,7 +338,7 @@ export default function PostForm({ existingPost, onSaved }) {
         <button
           type="button"
           onClick={() => navigate('/admin/posts')}
-          className="px-4 py-2.5 rounded-xl text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] transition-colors"
+          className="px-4 py-2.5 border border-[var(--color-border)] text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] transition-colors"
         >
           Cancel
         </button>

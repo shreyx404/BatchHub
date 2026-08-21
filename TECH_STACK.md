@@ -1,13 +1,13 @@
 # BatchHub — Technology Stack
 
-> **Version:** 1.0  
-> **Last Updated:** 2026-08-20
+> **Version:** 1.1  
+> **Last Updated:** 2026-08-21
 
 ---
 
 ## Overview
 
-BatchHub is built with a modern JAMstack architecture: a React SPA frontend hosted on Vercel's CDN, serverless API functions for secure admin operations, and Supabase as the managed backend (PostgreSQL + object storage).
+BatchHub is built with a modern JAMstack architecture: a React SPA frontend hosted on Vercel's CDN (with lazy route splitting), serverless API functions for secure admin operations, and Supabase as the managed backend (PostgreSQL).
 
 ---
 
@@ -17,11 +17,11 @@ BatchHub is built with a modern JAMstack architecture: a React SPA frontend host
 |------------|---------|---------|------------|
 | **React** | 19.1 | UI component library | Industry standard, large ecosystem, hooks-based architecture |
 | **Vite** | 6.3 | Build tool & dev server | Instant HMR, fast builds, native ES modules support |
-| **React Router** | 7.6 | Client-side routing | SPA navigation with nested routes for admin dashboard |
+| **React Router** | 7.6 | Client-side routing | SPA navigation with `lazy()` route splitting and Suspense fallback |
 | **Tailwind CSS** | 4.1 | Utility-first CSS framework | Rapid styling with custom design tokens via `@theme` directive |
 | **Lucide React** | 0.511 | Icon library | Consistent, tree-shakeable SVG icons |
 | **React Markdown** | 10.1 | Markdown rendering | Safe rendering of user-authored content with element filtering |
-| **React Hot Toast** | 2.5 | Toast notifications | Lightweight, customisable notification system |
+| **React Hot Toast** | 2.5 | Toast notifications | Lightweight, customisable notification system styled with 0px sharp corners |
 | **date-fns** | 4.1 | Date utilities | Tree-shakeable date formatting, relative times, and comparisons |
 | **Cloudflare Turnstile** | v0 API | Invisible CAPTCHA / Anti-Bot | Free, privacy-focused bot defense loaded asynchronously without UX friction |
 | **Device Fingerprinting** | Internal | Hardware & Graphics Hashing | Zero-dependency canvas, WebGL, and hardware signals hashed via djb2 algorithm |
@@ -33,9 +33,8 @@ BatchHub is built with a modern JAMstack architecture: a React SPA frontend host
 
 | Technology | Purpose | Why Chosen |
 |------------|---------|------------|
-| **Supabase** | Managed PostgreSQL + Auth + Storage + Realtime | Zero server management; built-in RLS, RESTful API, and file storage |
-| **PostgreSQL** | Relational database | Strong typing, array columns (`TEXT[]`), JSONB support, full-text search (GIN indexes), triggers |
-| **Supabase Storage** | File/attachment hosting | Integrated with the DB; public bucket with direct upload from client |
+| **Supabase** | Managed PostgreSQL + Auth + Realtime | Zero server management; built-in RLS, RESTful API |
+| **PostgreSQL** | Relational database | Strong typing, array columns (`TEXT[]`), JSONB support (`links`), full-text search (GIN indexes), triggers |
 | **Supabase JS Client** | 2.49 | Official SDK for both client (anon key) and server (service role key) access |
 | **admin_login_attempts** | Database Table | Persistent site-wide login attempt logging for 24-hour rate limiting & audit |
 
@@ -46,7 +45,7 @@ BatchHub is built with a modern JAMstack architecture: a React SPA frontend host
 | Technology | Purpose | Why Chosen |
 |------------|---------|------------|
 | **Vercel Serverless Functions** | Backend API endpoints | Zero-config deployment alongside the frontend; scales automatically |
-| **Node.js (crypto)** | Timing-safe password comparison | Built-in `crypto.timingSafeEqual` prevents timing side-channel attacks |
+| **Node.js (crypto)** | SHA-256 Timing-safe comparison | `crypto.createHash('sha256')` + `crypto.timingSafeEqual` prevents timing & length side-channel attacks |
 | **Cloudflare Siteverify API** | Server-side bot verification | Validates client Turnstile tokens with Cloudflare |
 | **tweetnacl** | 1.0.3 | Ed25519 signature verification for Discord webhook security |
 

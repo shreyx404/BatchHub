@@ -7,13 +7,14 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 ## Features
 
 ### Students
-- 🔍 Browse, search, and filter updates
+- 🔍 Browse, search (`Ctrl + K`), and filter updates
 - 📋 View detailed posts with markdown content
-- 📎 Download attachments
+- 🔗 Direct access to resource links & document attachments (Google Drive, Classroom, PDFs, GitHub)
 - 📅 See upcoming deadlines (automatically unpinned when passed)
 - 📌 Pinned important updates
 - 📢 Highlighted Notices & Important section at the top of the feed
 - 🗂️ Structured feed: Notices → Pinned → Deadline-sorted → General updates
+- ⚡ Fast route code splitting with React `Suspense` and `lazy`
 - 🔗 Deep links and native formatted post sharing with clipboard fallback
 
 ### Admin (BR)
@@ -24,8 +25,8 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 - 📊 Manage all posts with status filters (Published, Drafts, Archived), deep-linking stats cards, and Created Date / Due Date sorting (with no-deadline post priority)
 - 📘 Manage assignments, labs, notices, deadlines, resources
 - 📚 Manage subjects with color coding
-- 📎 Upload attachments (drag-and-drop)
-- 🏷️ Add tags and external links
+- 🔗 Add labeled resource links & attachments
+- 🏷️ Add tags with formatted preview
 - 🤖 Discord Bot Integration: Use slash commands to post instantly from Discord
 
 ## Content Types
@@ -41,9 +42,9 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 
 ## Tech Stack
 
-- **Frontend:** React 19 + Vite 6
-- **Styling:** Tailwind CSS v4
-- **Backend:** Supabase (PostgreSQL + Storage)
+- **Frontend:** React 19 + Vite 6 + React Router v7 (Lazy routing)
+- **Styling:** Tailwind CSS v4 (Monochromatic sharp/editorial design)
+- **Backend:** Supabase (PostgreSQL) + Vercel Serverless Functions
 - **Icons:** Lucide React
 - **Hosting:** Vercel
 
@@ -77,8 +78,7 @@ DISCORD_PUBLIC_KEY=your-discord-public-key (Optional, for Discord Bot)
 1. Create a project at [supabase.com](https://supabase.com)
 2. Run `supabase/schema.sql` in the SQL Editor (creates tables including `admin_login_attempts`)
 3. Run `supabase/seed.sql` for sample data
-4. Create a storage bucket named `attachments` (set to Public)
-5. Copy your Project URL and Anon Key to `.env.local`
+4. Copy your Project URL and Anon Key to `.env.local`
 
 ### 4. Run development server
 ```bash
@@ -91,7 +91,7 @@ npm run dev
 
 ## Demo Mode
 
-If Supabase credentials are not configured, BatchHub runs in **demo mode** with sample data. Perfect for previewing the UI without setting up a database.
+If Supabase credentials are not configured, BatchHub runs in **demo mode** with sample data. Perfect for previewing the UI and admin dashboard without setting up a database.
 
 ## 🤖 Discord Bot Integration (Optional)
 
@@ -101,7 +101,7 @@ BatchHub includes a built-in serverless function (`api/discord.js`) providing fu
 
 | Subcommand | Description | Key Options |
 |------------|-------------|-------------|
-| `/post create` | Create a new post | `title`*, `type`*, `content`, `due_date`, `is_pinned`, `tags`, `subject`, `links`, `file` |
+| `/post create` | Create a new post | `title`*, `type`*, `content`, `due_date`, `is_pinned`, `tags`, `subject`, `links` |
 | `/post update` | Update an existing post | `id`*, `title`, `type`, `content`, `due_date`, `is_pinned`, `status`, `tags`, `subject`, `links` |
 | `/post delete` | Delete a post permanently | `id`* |
 | `/post pin` | Pin a post to the top | `id`* |
@@ -115,8 +115,7 @@ BatchHub includes a built-in serverless function (`api/discord.js`) providing fu
 
 ### Key Features
 - 📚 **Subject Autocomplete:** Start typing a subject name in `subject` to search and select from registered subjects.
-- 📎 **File Attachments:** Attach files directly in `/post create` — automatically downloaded and saved to Supabase Storage.
-- 🔗 **Links Parsing:** Pass links in `"Label | https://example.com, Slides | https://slides.com"` format.
+- 🔗 **Links & Resources:** Pass links in `"Label | https://example.com, Slides | https://slides.com"` format.
 - 🧹 **Field Clearing:** On `/post update`, pass `"clear"` to remove `due_date`, `tags`, `subject`, or `links`.
 
 ### Setup Instructions
@@ -153,7 +152,7 @@ The `vercel.json` handles SPA routing and CSP automatically.
 ```
 src/
 ├── main.jsx              # Entry point
-├── App.jsx               # Router
+├── App.jsx               # Router (lazy route splitting)
 ├── index.css             # Design system
 ├── lib/                  # API, constants, Supabase client, fingerprint.js
 ├── hooks/                # Custom React hooks (usePosts, usePost, useSubjects, useAdmin)
@@ -162,7 +161,7 @@ src/
 │   ├── ui/               # Badges, search, filters, modals
 │   ├── posts/            # Post cards, grid, deadlines, notices section
 │   └── admin/            # Admin forms, tables, sidebar, login with Turnstile
-└── pages/                # Route pages
+└── pages/                # Route pages (HomePage, PostPage, AdminPage, NotFoundPage)
 
 api/                      # Vercel Serverless Functions
 ├── admin.js              # Secure backend for admin dashboard (4-tier security)

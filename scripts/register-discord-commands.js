@@ -99,12 +99,6 @@ const commands = [
             type: 3, // STRING
             required: false,
           },
-          {
-            name: 'file',
-            description: 'Attach a file to the post',
-            type: 11, // ATTACHMENT
-            required: false,
-          },
         ],
       },
 

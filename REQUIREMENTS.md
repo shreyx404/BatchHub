@@ -1,7 +1,7 @@
 # BatchHub — Requirements Specification
 
-> **Version:** 1.0  
-> **Last Updated:** 2026-08-20
+> **Version:** 1.1  
+> **Last Updated:** 2026-08-21
 
 ---
 
@@ -15,7 +15,7 @@
 | FR-002 | Show an upcoming deadlines banner with countdown timers at the top of the feed | P0 | ✅ Implemented |
 | FR-003 | Visually highlight urgent deadlines (< 48 hours remaining) with inverted styling | P0 | ✅ Implemented |
 | FR-004 | Automatically unpin posts whose `due_date` has passed (client-side dynamic unpinning) | P1 | ✅ Implemented |
-| FR-005 | Provide debounced search (300 ms) across `title` and `content` fields | P0 | ✅ Implemented |
+| FR-005 | Provide debounced search (300 ms) across `title` and `content` fields with `Ctrl + K` shortcut | P0 | ✅ Implemented |
 | FR-006 | Allow filtering by content type (assignment, lab, notice, deadline, resource, important) | P0 | ✅ Implemented |
 | FR-007 | Allow filtering by subject | P0 | ✅ Implemented |
 | FR-008 | Collapse structured sections into a flat list when any filter or search is active | P1 | ✅ Implemented |
@@ -31,7 +31,7 @@
 | FR-013 | Display due date with formatted date and time when present | P0 | ✅ Implemented |
 | FR-014 | Render tags as styled chips | P1 | ✅ Implemented |
 | FR-015 | Display external links with label and URL in clickable cards | P1 | ✅ Implemented |
-| FR-016 | Display file attachments with file name, size, type icon, and download link | P0 | ✅ Implemented |
+| FR-016 | Display resource links and document attachments with direct external URL links (G-Drive, Classroom, PDFs) | P0 | ✅ Implemented |
 | FR-017 | Provide a "Share" button using native Web Share API with formatted text (`*Title*\nBatchHub: URL`) and robust clipboard fallback | P0 | ✅ Implemented |
 | FR-018 | Show a "Back to BatchHub" navigation bar at the top | P1 | ✅ Implemented |
 
@@ -39,7 +39,7 @@
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
 | FR-019 | Password-protected admin login screen at `/admin` | P0 | ✅ Implemented |
-| FR-020 | Password validated server-side only (never checked client-side) | P0 | ✅ Implemented |
+| FR-020 | Password validated server-side only (never checked client-side; instant demo bypass in dev) | P0 | ✅ Implemented |
 | FR-021 | Store authenticated session token in `sessionStorage` (cleared on tab close) | P0 | ✅ Implemented |
 | FR-022 | Support logout action that clears the session token | P0 | ✅ Implemented |
 | FR-023 | Enforce persistent 10-attempt, 24-hour lockout stored in `localStorage` with live UI countdown timer | P0 | ✅ Implemented |
@@ -51,7 +51,7 @@
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| FR-027 | Display dashboard with stat cards: Total Posts, Published, Drafts, Subjects | P0 | ✅ Implemented |
+| FR-027 | Display dashboard with stat cards: Total Posts, Published, Drafts, Archived, Subjects | P0 | ✅ Implemented |
 | FR-028 | Provide quick action buttons: "Create New Post" and "Manage Posts" | P1 | ✅ Implemented |
 | FR-029 | Sidebar navigation with links to Dashboard, Create Post, Manage Posts, and Subjects | P0 | ✅ Implemented |
 | FR-030 | Responsive sidebar that collapses to a hamburger menu on mobile | P1 | ✅ Implemented |
@@ -61,12 +61,12 @@
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| FR-031 | Create new posts with: title (required), content (Markdown), type, subject, due date, status, pin toggle, tags, links, and file attachments | P0 | ✅ Implemented |
+| FR-031 | Create new posts with: title (required), content (Markdown), type, subject, due date, status, pin toggle, tags, and resource links | P0 | ✅ Implemented |
 | FR-032 | Edit existing posts with all fields pre-populated | P0 | ✅ Implemented |
 | FR-033 | Delete posts with confirmation | P0 | ✅ Implemented |
 | FR-034 | Change post status between published, draft, and archived | P0 | ✅ Implemented |
 | FR-035 | Live Markdown preview toggle in the content editor | P1 | ✅ Implemented |
-| FR-036 | Drag-and-drop file upload with 10 MB per file size limit | P1 | ✅ Implemented |
+| FR-036 | Labeled resource links / document attachments (Drive, Classroom, PDF, GitHub) without storage bottlenecks | P1 | ✅ Implemented |
 | FR-037 | Multiple link entries per post with label + URL pairs | P1 | ✅ Implemented |
 | FR-038 | Comma-separated tag input | P2 | ✅ Implemented |
 | FR-038a | Sort all posts by Due Date (default, Ascending) or Created Date with Asc/Desc toggle; posts without deadlines float to top in Due Date sort | P1 | ✅ Implemented |
@@ -85,15 +85,14 @@
 |----|-------------|----------|--------|
 | FR-042 | Handle Discord interaction webhook with Ed25519 signature verification via `tweetnacl` | P1 | ✅ Implemented |
 | FR-043 | Respond to Discord PING (type 1) for endpoint verification | P1 | ✅ Implemented |
-| FR-044 | Support `/post create` with title, type, content, due date, pin, tags, links, subject, and file attachments | P1 | ✅ Implemented |
+| FR-044 | Support `/post create` with title, type, content, due date, pin, tags, links, and subject | P1 | ✅ Implemented |
 | FR-045 | Support `/post update` to edit existing posts by ID, including clearing fields via `"clear"` | P1 | ✅ Implemented |
-| FR-046 | Support `/post delete` to permanently remove posts and cascade-delete attachments | P1 | ✅ Implemented |
+| FR-046 | Support `/post delete` to permanently remove posts | P1 | ✅ Implemented |
 | FR-047 | Support `/post pin` and `/post unpin` to toggle pinned status directly from Discord | P1 | ✅ Implemented |
 | FR-048 | Support `/post list` with optional filters (type, status) and count limit | P1 | ✅ Implemented |
 | FR-049 | Support `/post view` rendering full post details as a dark-aesthetic rich Discord embed | P1 | ✅ Implemented |
 | FR-050 | Support `/post archive` and `/post publish` for post visibility control | P1 | ✅ Implemented |
 | FR-051 | Handle Discord Autocomplete (`type: 4`) for live subject searching by name/code | P1 | ✅ Implemented |
-| FR-052 | Automatically download Discord attachments and persist to Supabase Storage with UUID prefix | P1 | ✅ Implemented |
 | FR-053 | Provide a registration script (`scripts/register-discord-commands.js`) deploying all 9 subcommands | P2 | ✅ Implemented |
 
 ### 1.8 Demo Mode
@@ -113,7 +112,7 @@
 | ID | Requirement | Target |
 |----|-------------|--------|
 | NFR-001 | First Contentful Paint | < 1.5s on 4G |
-| NFR-002 | Bundle size (gzipped) | < 150 KB |
+| NFR-002 | Bundle size (gzipped) | < 150 KB (with route code splitting) |
 | NFR-003 | Search debounce latency | 300 ms |
 | NFR-004 | Serverless function cold start | < 500 ms |
 
@@ -122,14 +121,13 @@
 | ID | Requirement | Implementation |
 |----|-------------|----------------|
 | NFR-005 | Server-side password validation | Admin password sent as Bearer token, verified by serverless function |
-| NFR-006 | Timing-safe password comparison | `crypto.timingSafeEqual` prevents timing attacks |
+| NFR-006 | Timing-safe password comparison | `crypto.timingSafeEqual` with SHA-256 hashes prevents timing & length attacks |
 | NFR-007 | 4-Tier Brute Force Protection | (1) 10 attempts/24h per IP, (2) 10 attempts/24h per device fingerprint, (3) Cloudflare Turnstile anti-bot challenge, (4) 30 failed attempts/24h global limit via Supabase |
-| NFR-008 | Payload field whitelisting | Only allowed fields (`POST_FIELDS`, `SUBJECT_FIELDS`, `ATTACHMENT_FIELDS`) are extracted from request payloads |
+| NFR-008 | Payload field whitelisting | Only allowed fields (`POST_FIELDS`, `SUBJECT_FIELDS`) are extracted from request payloads |
 | NFR-009 | Search input sanitisation | PostgREST/SQL wildcard characters (`%`, `_`, `\`) escaped before query |
 | NFR-010 | Markdown sanitisation | `script`, `iframe`, `object`, `embed` elements are disallowed in rendered Markdown |
 | NFR-011 | Row Level Security (RLS) | All Supabase tables have RLS enabled; anon can only SELECT published posts |
 | NFR-012 | Content Security Policy | CSP headers configured in `vercel.json` with Turnstile domains allowed |
-| NFR-013 | File upload path safety | Filenames sanitised and prefixed with `crypto.randomUUID()` to prevent collisions and path traversal |
 | NFR-014 | CORS configuration | Configurable `ALLOWED_ORIGIN` env var; defaults to `*` |
 
 ### 2.3 Usability

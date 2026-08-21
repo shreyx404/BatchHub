@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Edit2, Trash2, Archive, ArchiveRestore, Eye, Search, MoreVertical, ArrowUpDown, Calendar, Clock } from 'lucide-react';
+import { Edit2, Trash2, Archive, ArchiveRestore, Eye, ArrowUpDown, Calendar, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 import Badge from '../ui/Badge';
@@ -11,8 +11,8 @@ import { fetchAllPosts, updatePost, deletePost } from '../../lib/api';
 import { POST_STATUSES } from '../../lib/constants';
 
 const SORT_OPTIONS = [
-  { key: 'created_at', label: 'Created Date', icon: Clock },
   { key: 'due_date', label: 'Due Date', icon: Calendar },
+  { key: 'created_at', label: 'Created Date', icon: Clock },
 ];
 
 export default function PostTable() {
@@ -67,10 +67,10 @@ export default function PostTable() {
       const aHas = !!a.due_date;
       const bHas = !!b.due_date;
 
-      // Posts with no deadline always float to the top
+      // Posts with deadlines appear first; dateless posts at bottom
       if (!aHas && !bHas) return 0;
-      if (!aHas) return -1;
-      if (!bHas) return 1;
+      if (!aHas) return 1;
+      if (!bHas) return -1;
 
       const diff = new Date(a.due_date) - new Date(b.due_date);
       return sortDirection === 'asc' ? diff : -diff;
@@ -85,9 +85,11 @@ export default function PostTable() {
     if (!archiveTarget) return;
     try {
       await updatePost(archiveTarget.id, { status: 'archived' });
+      setPosts((prev) =>
+        prev.map((p) => (p.id === archiveTarget.id ? { ...p, status: 'archived' } : p))
+      );
       toast.success('Post archived');
       setArchiveTarget(null);
-      loadPosts();
     } catch (err) {
       console.error('Error archiving post:', err);
       toast.error(err.message || 'Failed to archive post');
@@ -97,8 +99,10 @@ export default function PostTable() {
   const handleRestore = async (post) => {
     try {
       await updatePost(post.id, { status: 'published' });
+      setPosts((prev) =>
+        prev.map((p) => (p.id === post.id ? { ...p, status: 'published' } : p))
+      );
       toast.success('Post restored to published');
-      loadPosts();
     } catch (err) {
       console.error('Error restoring post:', err);
       toast.error(err.message || 'Failed to restore post');
@@ -109,9 +113,9 @@ export default function PostTable() {
     if (!deleteTarget) return;
     try {
       await deletePost(deleteTarget.id);
+      setPosts((prev) => prev.filter((p) => p.id !== deleteTarget.id));
       toast.success('Post deleted');
       setDeleteTarget(null);
-      loadPosts();
     } catch (err) {
       console.error('Error deleting post:', err);
       toast.error(err.message || 'Failed to delete post');
@@ -135,7 +139,7 @@ export default function PostTable() {
             <button
               key={s}
               onClick={() => handleStatusFilterChange(s)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`px-3 py-1.5 text-xs font-medium transition-all ${
                 statusFilter === s
                   ? 'bg-[var(--color-accent)] text-black'
                   : 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
@@ -161,7 +165,7 @@ export default function PostTable() {
           <button
             key={key}
             onClick={() => setSortBy(key)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-all ${
               sortBy === key
                 ? 'bg-[var(--color-accent)] text-black'
                 : 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
@@ -173,8 +177,8 @@ export default function PostTable() {
         ))}
         <button
           onClick={toggleSortDirection}
-          title={sortDirection === 'asc' ? 'Oldest first' : 'Newest first'}
-          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)] transition-all"
+          title={sortDirection === 'asc' ? 'Earliest first' : 'Latest first'}
+          className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)] transition-all"
         >
           <ArrowUpDown size={12} />
           {sortDirection === 'asc' ? '↑ Asc' : '↓ Desc'}
@@ -182,7 +186,7 @@ export default function PostTable() {
 
         {sortBy === 'due_date' && (
           <span className="text-[10px] text-[var(--color-text-dim)] italic ml-1">
-            Posts without deadlines appear first
+            Posts with deadlines appear first
           </span>
         )}
       </div>
@@ -194,7 +198,7 @@ export default function PostTable() {
           {sortedPosts.map((post) => (
             <div
               key={post.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:px-4 sm:py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] transition-all group"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:px-4 sm:py-3 bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] transition-all group"
             >
               {/* Info */}
               <div className="flex-1 min-w-0">
@@ -202,7 +206,7 @@ export default function PostTable() {
                   <Badge type={post.type} />
                   {post.subjects && <Badge subject={post.subjects} />}
                   <span
-                    className="text-[10px] font-medium px-1.5 py-0.5 rounded-md"
+                    className="text-[10px] font-medium px-1.5 py-0.5"
                     style={{
                       background: (POST_STATUSES[post.status]?.color || '#888') + '15',
                       color: POST_STATUSES[post.status]?.color || '#888',
@@ -275,13 +279,13 @@ export default function PostTable() {
         <div className="flex gap-3 justify-end">
           <button
             onClick={() => setArchiveTarget(null)}
-            className="px-4 py-2 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] transition-colors"
+            className="px-4 py-2 text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={confirmArchive}
-            className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-black font-semibold transition-colors"
+            className="px-4 py-2 text-sm font-medium bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-black font-semibold transition-colors"
           >
             Archive Post
           </button>
@@ -300,13 +304,13 @@ export default function PostTable() {
         <div className="flex gap-3 justify-end">
           <button
             onClick={() => setDeleteTarget(null)}
-            className="px-4 py-2 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] transition-colors"
+            className="px-4 py-2 text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleDelete}
-            className="px-4 py-2 rounded-lg text-sm font-medium bg-red-500 hover:bg-red-600 text-white transition-colors"
+            className="px-4 py-2 text-sm font-medium bg-red-500 hover:bg-red-600 text-white transition-colors"
           >
             Delete
           </button>
@@ -326,7 +330,7 @@ function ActionButton({ icon: Icon, label, onClick, danger = false }) {
       }}
       title={label}
       aria-label={label}
-      className={`p-2 rounded-lg transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center border sm:border-transparent ${
+      className={`p-2 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center border sm:border-transparent ${
         danger
           ? 'bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20 sm:bg-transparent sm:text-[var(--color-text-dim)] sm:hover:bg-red-500/10 sm:hover:text-red-400'
           : 'bg-[var(--color-surface-2)] border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface-2)]/80 sm:bg-transparent sm:text-[var(--color-text-dim)] sm:hover:bg-[var(--color-surface-2)] sm:hover:text-[var(--color-text)]'

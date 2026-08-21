@@ -5,11 +5,18 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = 'ma
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e) => {
+        if (e.key === 'Escape') onClose?.();
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = '';
+        window.removeEventListener('keydown', handleKeyDown);
+      };
     } else {
       document.body.style.overflow = '';
     }
-    return () => { document.body.style.overflow = ''; };
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -17,13 +24,13 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = 'ma
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/75 backdrop-blur-sm"
         onClick={onClose}
       />
 
       {/* Dialog */}
       <div
-        className={`relative w-full ${maxWidth} bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl shadow-[var(--shadow-modal)] animate-fade-in-up overflow-hidden`}
+        className={`relative w-full ${maxWidth} bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-modal)] animate-fade-in-up overflow-hidden`}
       >
         {/* Header */}
         {title && (
@@ -31,7 +38,7 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = 'ma
             <h2 className="text-lg font-display font-medium text-[var(--color-text)] tracking-[-0.01em]">{title}</h2>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg hover:bg-[var(--color-surface-2)] transition-colors text-[var(--color-text-muted)]"
+              className="p-1.5 hover:bg-[var(--color-surface-2)] transition-colors text-[var(--color-text-muted)]"
             >
               <X size={18} />
             </button>

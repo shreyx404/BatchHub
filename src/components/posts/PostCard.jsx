@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Clock, Paperclip, ArrowUpRight, Pin } from 'lucide-react';
+import { Clock, Link as LinkIcon, ArrowUpRight, Pin } from 'lucide-react';
 import { formatDistanceToNow, format, isPast, differenceInHours } from 'date-fns';
 import Badge from '../ui/Badge';
 import { CONTENT_TYPES } from '../../lib/constants';
@@ -10,10 +10,20 @@ export default function PostCard({ post }) {
   const dueDate = hasDueDate ? new Date(post.due_date) : null;
   const isOverdue = dueDate && isPast(dueDate);
   const isUrgent = dueDate && !isOverdue && differenceInHours(dueDate, new Date()) < 48;
-  const attachmentCount = post.attachments?.length || 0;
+  const linkCount = post.links?.length || 0;
 
   // Determine ledger line color based on type
   const typeColorVar = `var(--color-${post.type})`;
+
+  const cleanPreview = post.content
+    ? post.content
+        .replace(/!\[.*?\]\(.*?\)/g, '')
+        .replace(/\[(.*?)\]\(.*?\)/g, '$1')
+        .replace(/[#*`_~>|\-]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .substring(0, 150)
+    : '';
 
   return (
     <Link
@@ -54,9 +64,9 @@ export default function PostCard({ post }) {
         </h3>
 
         {/* Content preview — Inter light, relaxed reading */}
-        {post.content && (
+        {cleanPreview && (
           <p className="text-[var(--text-sm)] font-light text-[var(--color-text-muted)] line-clamp-2 leading-[1.7] tracking-[0.005em]">
-            {post.content.replace(/[#*>\-|`\[\]]/g, '').substring(0, 150)}
+            {cleanPreview}
           </p>
         )}
 
@@ -79,11 +89,11 @@ export default function PostCard({ post }) {
               </span>
             )}
 
-            {/* Attachments */}
-            {attachmentCount > 0 && (
-              <span className="flex items-center gap-1.5">
-                <Paperclip size={11} />
-                {attachmentCount} File{attachmentCount > 1 ? 's' : ''}
+            {/* Links count */}
+            {linkCount > 0 && (
+              <span className="flex items-center gap-1.5 text-[var(--color-text-muted)]">
+                <LinkIcon size={11} />
+                {linkCount} Link{linkCount > 1 ? 's' : ''}
               </span>
             )}
           </div>

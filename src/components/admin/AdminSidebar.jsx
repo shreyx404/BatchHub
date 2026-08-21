@@ -32,19 +32,19 @@ export default function AdminSidebar({ isOpen, onClose, onLogout }) {
         {/* Header */}
         <div className="flex items-center justify-between px-4 h-14 border-b border-[var(--color-border)]">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-[var(--color-text)] flex items-center justify-center">
+            <div className="w-7 h-7 bg-[var(--color-text)] flex items-center justify-center">
               <GraduationCap size={14} className="text-black" />
             </div>
             <span className="font-display text-lg font-medium leading-none mt-1 text-[var(--color-text)] tracking-[-0.01em]">
               {APP_NAME}
             </span>
-            <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-[var(--color-surface-2)] text-[var(--color-text)] font-medium border border-[var(--color-border)] tracking-[0.06em] uppercase">
+            <span className="text-[9px] px-1.5 py-0.5 bg-[var(--color-surface-2)] text-[var(--color-text)] font-medium border border-[var(--color-border)] tracking-[0.06em] uppercase">
               Admin
             </span>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-[var(--color-surface-2)] lg:hidden text-[var(--color-text-muted)]"
+            className="p-1.5 hover:bg-[var(--color-surface-2)] lg:hidden text-[var(--color-text-muted)]"
           >
             <X size={18} />
           </button>
@@ -59,7 +59,7 @@ export default function AdminSidebar({ isOpen, onClose, onLogout }) {
               end={end}
               onClick={onClose}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-xl text-[var(--text-sm)] font-medium transition-all duration-300 tracking-[0.005em] ${
+                `flex items-center gap-3 px-3 py-2.5 text-[var(--text-sm)] font-medium transition-all duration-300 tracking-[0.005em] ${
                   isActive
                     ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent-hover)] border border-[var(--color-accent)]/20'
                     : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text)] border border-transparent'
@@ -76,7 +76,7 @@ export default function AdminSidebar({ isOpen, onClose, onLogout }) {
         <div className="px-3 py-4 border-t border-[var(--color-border)]">
           <button
             onClick={onLogout}
-            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-[var(--text-sm)] font-medium text-red-400 hover:bg-red-500/10 transition-colors duration-300 tracking-[0.005em]"
+            className="flex items-center gap-3 w-full px-3 py-2.5 text-[var(--text-sm)] font-medium text-red-400 hover:bg-red-500/10 transition-colors duration-300 tracking-[0.005em]"
           >
             <LogOut size={16} />
             Sign Out

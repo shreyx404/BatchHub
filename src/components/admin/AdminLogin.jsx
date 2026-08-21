@@ -157,6 +157,10 @@ export default function AdminLogin({ onLogin }) {
         setRemainingSeconds(result.remainingSeconds || 86400);
         setRemainingAttempts(0);
         setError(`Too many failed attempts (10/10). Account locked for 24 hours.`);
+      } else if (result?.error === 'server_error') {
+        setError('Server configuration error. Check ADMIN_PASSWORD environment variable.');
+      } else if (result?.error === 'network_error') {
+        setError('Unable to reach server. Please check your internet connection.');
       } else if (result?.error === 'invalid_password' || !result) {
         const remaining = result?.remainingAttempts !== undefined ? result.remainingAttempts : 10;
         setRemainingAttempts(remaining);
@@ -181,7 +185,7 @@ export default function AdminLogin({ onLogin }) {
       <div className="w-full max-w-sm animate-fade-in-up">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-12 h-12 rounded-2xl bg-[var(--color-text)] flex items-center justify-center mb-3 shadow-lg">
+          <div className="w-12 h-12 bg-[var(--color-text)] flex items-center justify-center mb-3 shadow-lg">
             <GraduationCap size={24} className="text-black" />
           </div>
           <h1 className="text-[1.75rem] font-display font-medium text-[var(--color-text)] tracking-[-0.015em]">
@@ -194,7 +198,7 @@ export default function AdminLogin({ onLogin }) {
 
         {/* Lockout Warning Banner */}
         {isLocked && (
-          <div className="mb-4 p-3.5 rounded-xl bg-red-950/40 border border-red-800/60 text-red-200 animate-fade-in">
+          <div className="mb-4 p-3.5 bg-red-950/40 border border-red-800/60 text-red-200 animate-fade-in">
             <div className="flex items-start gap-2.5">
               <ShieldAlert size={18} className="text-red-400 shrink-0 mt-0.5" />
               <div className="text-xs space-y-1">
@@ -217,7 +221,7 @@ export default function AdminLogin({ onLogin }) {
             <div className="relative">
               <Lock
                 size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-dim)]"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-text-dim)]"
               />
               <input
                 id="admin-password"
@@ -230,11 +234,11 @@ export default function AdminLogin({ onLogin }) {
                 }}
                 placeholder={isLocked ? 'Account locked (24 hours)' : 'Admin password'}
                 autoFocus={!isLocked}
-                className="w-full h-11 pl-10 pr-4 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--text-sm)] text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] focus:outline-none focus:border-[var(--color-border-light)] focus:ring-1 focus:ring-[var(--color-border-light)] disabled:opacity-50 disabled:cursor-not-allowed transition-all tracking-[0.005em]"
+                className="w-full h-11 pl-10 pr-4 bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--text-sm)] text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] focus:outline-none focus:border-[var(--color-border-light)] focus:ring-1 focus:ring-[var(--color-border-light)] disabled:opacity-50 disabled:cursor-not-allowed transition-all tracking-[0.005em]"
               />
             </div>
             {error && !isLocked && (
-              <p className="mt-2 text-[10px] text-red-400 flex items-center gap-1 animate-fade-in tracking-[0.01em]">
+              <p className="mt-2 text-[11px] text-red-400 flex items-center gap-1 animate-fade-in tracking-[0.01em]">
                 <AlertCircle size={12} />
                 {error}
               </p>
@@ -251,7 +255,7 @@ export default function AdminLogin({ onLogin }) {
           <button
             type="submit"
             disabled={loading || isLocked || (TURNSTILE_SITE_KEY && !turnstileReady)}
-            className="w-full h-11 rounded-xl bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-black text-[var(--text-sm)] font-semibold transition-colors duration-300 flex items-center justify-center gap-2 tracking-[0.005em]"
+            className="w-full h-11 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-black text-[var(--text-sm)] font-semibold transition-colors duration-300 flex items-center justify-center gap-2 tracking-[0.005em]"
           >
             {loading ? (
               <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />

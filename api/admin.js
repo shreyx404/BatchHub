@@ -132,19 +132,15 @@ async function cleanupOldAttempts(supabase) {
 
 // ── Timing-safe string comparison ──────────────────────────────
 function timingSafeCompare(a, b) {
-  const bufA = Buffer.from(a);
-  const bufB = Buffer.from(b);
-  if (bufA.length !== bufB.length) {
-    crypto.timingSafeEqual(bufA, bufA);
-    return false;
-  }
-  return crypto.timingSafeEqual(bufA, bufB);
+  if (!a || !b) return false;
+  const hashA = crypto.createHash('sha256').update(String(a)).digest();
+  const hashB = crypto.createHash('sha256').update(String(b)).digest();
+  return crypto.timingSafeEqual(hashA, hashB);
 }
 
 // ── Payload validators (whitelist allowed fields) ──────────────
 const POST_FIELDS = ['title', 'content', 'type', 'subject_id', 'is_pinned', 'status', 'due_date', 'created_at', 'tags', 'links'];
 const SUBJECT_FIELDS = ['name', 'code', 'color'];
-const ATTACHMENT_FIELDS = ['post_id', 'file_name', 'file_url', 'file_size', 'file_type'];
 
 function pick(obj, fields) {
   if (!obj || typeof obj !== 'object') return {};
@@ -201,7 +197,7 @@ export default async function handler(req, res) {
 
   // ── Layer 4: Verify Authorization ──
   const authHeader = req.headers.authorization;
-  const adminPassword = process.env.ADMIN_PASSWORD || process.env.VITE_ADMIN_PASSWORD;
+  const adminPassword = process.env.ADMIN_PASSWORD;
 
   if (!adminPassword) {
     console.error('ADMIN_PASSWORD environment variable is not set.');
@@ -279,25 +275,25 @@ export default async function handler(req, res) {
       case 'getAllPosts':
         result = await supabase
           .from('posts')
-          .select('*, subjects(*), attachments(*)')
+          .select('*, subjects(*)')
           .order('created_at', { ascending: false });
         break;
       case 'getPost': {
         if (!payload?.id) return res.status(400).json({ error: 'Missing post ID.' });
         result = await supabase
           .from('posts')
-          .select('*, subjects(*), attachments(*)')
+          .select('*, subjects(*)')
           .eq('id', payload.id)
           .single();
         break;
       }
       case 'createPost':
-        result = await supabase.from('posts').insert(pick(payload, POST_FIELDS)).select('*, subjects(*), attachments(*)').single();
+        result = await supabase.from('posts').insert(pick(payload, POST_FIELDS)).select('*, subjects(*)').single();
         break;
       case 'updatePost': {
         if (!payload?.id) return res.status(400).json({ error: 'Missing post ID.' });
         const updates = pick(payload.updates, POST_FIELDS);
-        result = await supabase.from('posts').update(updates).eq('id', payload.id).select('*, subjects(*), attachments(*)').single();
+        result = await supabase.from('posts').update(updates).eq('id', payload.id).select('*, subjects(*)').single();
         break;
       }
       case 'deletePost':
@@ -316,13 +312,6 @@ export default async function handler(req, res) {
       case 'deleteSubject':
         if (!payload?.id) return res.status(400).json({ error: 'Missing subject ID.' });
         result = await supabase.from('subjects').delete().eq('id', payload.id);
-        break;
-      case 'createAttachment':
-        result = await supabase.from('attachments').insert(pick(payload, ATTACHMENT_FIELDS)).select().single();
-        break;
-      case 'deleteAttachment':
-        if (!payload?.id) return res.status(400).json({ error: 'Missing attachment ID.' });
-        result = await supabase.from('attachments').delete().eq('id', payload.id);
         break;
       case 'autoArchiveExpired': {
         // Archive all published posts whose due_date is more than 24 hours in the past

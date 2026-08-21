@@ -21,12 +21,13 @@ export default function DeadlineBanner({ deadlines }) {
           const hoursLeft = differenceInHours(dueDate, new Date());
           const isUrgent = hoursLeft < 48;
           const typeConfig = CONTENT_TYPES[item.type];
+          const TypeIcon = typeConfig?.icon || CalendarClock;
 
           return (
             <Link
               key={item.id}
               to={`/post/${item.id}`}
-              className={`shrink-0 group flex items-center gap-3 px-4 py-3 rounded-xl border transition-all duration-200 hover:shadow-md
+              className={`shrink-0 group flex items-center gap-3 px-4 py-3 border transition-all duration-200 hover:shadow-md
                 ${
                   isUrgent
                     ? 'bg-[var(--color-text)] border-[var(--color-text)] hover:bg-[var(--color-accent-hover)]'
@@ -35,13 +36,13 @@ export default function DeadlineBanner({ deadlines }) {
               `}
             >
               <div
-                className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 text-lg ${isUrgent ? 'bg-[var(--color-bg)] text-[var(--color-text)]' : 'bg-[var(--color-surface-2)] text-[var(--color-text)]'}`}
+                className={`w-9 h-9 flex items-center justify-center shrink-0 border border-current/20 ${isUrgent ? 'bg-[var(--color-bg)] text-[var(--color-text)]' : 'bg-[var(--color-surface-2)] text-[var(--color-text)]'}`}
               >
-                {typeConfig?.emoji || '📅'}
+                <TypeIcon size={16} />
               </div>
 
               <div className="min-w-0">
-                <p className={`text-[var(--text-sm)] font-medium truncate max-w-[180px] transition-colors tracking-[-0.005em] ${isUrgent ? 'text-black' : 'text-[var(--color-text)]'}`}>
+                <p className={`text-[var(--text-sm)] font-medium truncate max-w-[200px] transition-colors tracking-[-0.005em] ${isUrgent ? 'text-black' : 'text-[var(--color-text)]'}`}>
                   {item.title}
                 </p>
                 <p className={`text-[10px] font-medium flex items-center gap-1 mt-0.5 tracking-[0.02em] ${

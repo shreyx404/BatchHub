@@ -1,7 +1,7 @@
 # BatchHub — Task Breakdown
 
-> **Version:** 1.0  
-> **Last Updated:** 2026-08-20  
+> **Version:** 1.1  
+> **Last Updated:** 2026-08-21  
 > **Status Legend:** ✅ Done · 🔲 Planned · 🚧 In Progress
 
 ---
@@ -146,22 +146,28 @@
 - [x] **T-064** — Add 1-click unarchive / restore action button (`ArchiveRestore`) and URL search params sync in `PostTable`
 - [x] **T-065** — Fix mobile touch visibility for admin action buttons (`PostTable`, `SubjectManager`) and add explicit confirmation modal for archiving posts
 - [x] **T-066** — Auto-archive expired posts: admin API action (`autoArchiveExpired`), Vercel hourly cron (`api/cron/auto-archive.js`), and client-side trigger on admin dashboard load — archives published posts 24h after their `due_date`
+- [x] **T-067** — Implement route-level code splitting using React `lazy()` and `Suspense` fallback in `App.jsx`
+- [x] **T-068** — Conduct strict 0px border-radius design system audit across all UI components (Modals, Badges, Chips, Inputs, Buttons, Toasts, Cards)
+- [x] **T-069** — Implement timing-safe SHA-256 password hash comparison in serverless `api/admin.js` to eliminate timing/length side-channel vulnerabilities
+- [x] **T-070** — Unify file attachments and external resources into high-contrast direct Resource Links (`links` array) across post creation and view pages
+- [x] **T-071** — Add global `Ctrl + K` / `Cmd + K` search keyboard shortcut and ESC modal dismiss for keyboard accessibility
+- [x] **T-072** — Add rich social sharing metadata (OpenGraph, Twitter Cards) and custom SVG favicon in `index.html`
 
 ---
 
 ## Future Tasks (Backlog)
 
-- [ ] **T-066** — Student authentication (Google OAuth via Supabase Auth)
-- [ ] **T-067** — Push notifications for new posts / approaching deadlines
-- [ ] **T-068** — Multi-batch support (use `batch_id` field, admin selects batch)
-- [ ] **T-069** — Admin analytics dashboard (post views, engagement metrics)
-- [ ] **T-070** — PWA support with offline caching (service worker)
-- [ ] **T-071** — Email digest for weekly summaries
-- [ ] **T-072** — Comments / reactions on posts
-- [ ] **T-073** — Calendar view for deadlines
-- [ ] **T-074** — Dark/Light theme toggle (currently dark-only)
-- [ ] **T-075** — Bulk post operations in admin (archive all, delete selected)
-- [ ] **T-076** — Post scheduling (publish at a future date)
-- [ ] **T-077** — Supabase Realtime subscriptions for live feed updates
-- [ ] **T-078** — Export posts as PDF or CSV from admin
-- [ ] **T-079** — Subject-wise archive / history page
+- [ ] **T-073** — Student authentication (Google OAuth via Supabase Auth)
+- [ ] **T-074** — Push notifications for new posts / approaching deadlines
+- [ ] **T-075** — Multi-batch support (use `batch_id` field, admin selects batch)
+- [ ] **T-076** — Admin analytics dashboard (post views, engagement metrics)
+- [ ] **T-077** — PWA support with offline caching (service worker)
+- [ ] **T-078** — Email digest for weekly summaries
+- [ ] **T-079** — Comments / reactions on posts
+- [ ] **T-080** — Calendar view for deadlines
+- [ ] **T-081** — Dark/Light theme toggle (currently dark-only)
+- [ ] **T-082** — Bulk post operations in admin (archive all, delete selected)
+- [ ] **T-083** — Post scheduling (publish at a future date)
+- [ ] **T-084** — Supabase Realtime subscriptions for live feed updates
+- [ ] **T-085** — Export posts as PDF or CSV from admin
+- [ ] **T-086** — Subject-wise archive / history page

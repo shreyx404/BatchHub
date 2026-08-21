@@ -101,13 +101,8 @@ export default function HomePage() {
           <DeadlineBanner deadlines={deadlines} />
         )}
 
-        {/* Search (mobile — always visible on large screens via header) */}
-        <div className="sm:hidden">
-          <SearchBar value={search} onChange={handleSearch} />
-        </div>
-
-        {/* Desktop search */}
-        <div className="hidden sm:block max-w-md">
+        {/* Search */}
+        <div className="w-full sm:max-w-md">
           <SearchBar value={search} onChange={handleSearch} />
         </div>
 
@@ -140,10 +135,10 @@ export default function HomePage() {
             )}
 
             {/* 1. Notices & Important — highlighted section */}
-            <NoticesSection posts={posts} />
+            <NoticesSection posts={noticePosts} />
 
             {/* 2. Pinned posts */}
-            <PinnedSection posts={posts} />
+            <PinnedSection posts={pinnedPosts} />
 
             {/* 3. Posts with due dates — ascending by deadline */}
             {withDeadline.length > 0 && (

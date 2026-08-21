@@ -6,24 +6,39 @@ export function usePosts(filters = {}) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const load = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await fetchPosts(filters);
-      setPosts(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [filters.type, filters.subjectId, filters.search]);
+  const [fetchIndex, setFetchIndex] = useState(0);
+  const refetch = useCallback(() => setFetchIndex((prev) => prev + 1), []);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    let cancelled = false;
 
-  return { posts, loading, error, refetch: load };
+    async function load() {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await fetchPosts(filters);
+        if (!cancelled) {
+          setPosts(data || []);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err.message);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [filters.type, filters.subjectId, filters.search, filters.status, fetchIndex]);
+
+  return { posts, loading, error, refetch };
 }
 
 export function useUpcomingDeadlines() {

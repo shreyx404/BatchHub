@@ -1,7 +1,7 @@
 # BatchHub — Architecture Document
 
-> **Version:** 1.0  
-> **Last Updated:** 2026-08-20
+> **Version:** 1.1  
+> **Last Updated:** 2026-08-21
 
 ---
 
@@ -16,43 +16,16 @@
 │  │   (Vite + React SPA)  │    │                              │  │
 │  │                       │    │  ┌────────────┐              │  │
 │  │  • HomePage           │    │  │ admin.js   │ ← Admin CRUD │  │
-│  │  • PostPage           │    │  │            │   + Auth      │  │
-│  │  • AdminPage          │    │  └────────────┘              │  │
-│  │  • NotFoundPage       │    │  ┌────────────┐              │  │
+│  │  • PostPage (Lazy)    │    │  │            │   + Auth      │  │
+│  │  • AdminPage (Lazy)   │    │  └────────────┘              │  │
+│  │  • NotFoundPage (Lazy)│    │  ┌────────────┐              │  │
 │  │                       │    │  │ discord.js │ ← Webhook     │  │
 │  │  Reads via anon key ──┼───►│  │            │   + Sig       │  │
 │  │                       │    │  └────────────┘   Verify      │  │
 │  └───────────────────────┘    └──────────┬───────────────────┘  │
 │                                          │                      │
 └──────────────────────────────────────────┼──────────────────────┘
-                                           │ Service Role Key
-                                           ▼
-                            ┌──────────────────────────┐
-                            │      SUPABASE             │
-                            │                          │
-                            │  ┌────────────────────┐  │
-                            │  │   PostgreSQL        │  │
-                            │  │   • subjects        │  │
-                            │  │   • posts           │  │
-                            │  │   • attachments     │  │
-                            │  │   • admin_login_    │  │
-                            │  │     attempts        │  │
-                            │  │   (RLS enabled)     │  │
-                            │  └────────────────────┘  │
-                            │                          │
-                            │  ┌────────────────────┐  │
-                            │  │   Storage           │  │
-                            │  │   • attachments     │  │
-                            │  │     bucket (public)  │  │
-                            │  └────────────────────┘  │
-                            └──────────────────────────┘
-```
-
----
-
-## 2. Data Flow
-
-### 2.1 Student Reading Posts
+                                  ### 2.1 Student Reading Posts
 
 ```
 Student Browser
@@ -64,7 +37,7 @@ React App (client)
 Supabase PostgREST API
     │  RLS Policy: SELECT WHERE status = 'published'
     ▼
-PostgreSQL (posts + subjects + attachments joined)
+PostgreSQL (posts + subjects joined)
     │
     ▼
 Response → Client-side processing:
@@ -86,7 +59,7 @@ Vercel Serverless Function / Local Vite Dev Middleware (api/admin.js)
     │  2. Layer 2: Per-device fingerprint check (10 attempts / 24h lockout)
     │  3. Layer 3: Cloudflare Turnstile token validation on login (anti-bot)
     │  4. Layer 4: Global rate limit check (>30 failed attempts/24h site-wide)
-    │  5. Layer 5: Timing-safe password comparison (crypto.timingSafeEqual)
+    │  5. Layer 5: Timing-safe SHA-256 hash comparison (crypto.timingSafeEqual)
     │  6. Logs attempt to Supabase (admin_login_attempts table)
     │  7. Returns session authorization confirmation
     ▼
@@ -122,37 +95,30 @@ Vercel Serverless Function (api/discord.js)
     │  3. If PING (type 1) → Return PONG (type 1)
     │  4. If Autocomplete (type 4) → Query Supabase subjects table with ilike search → Return choices
     │  5. If Command (type 2) → Route to subcommand handler:
-    │     ├── create: Insert post + parse links + download & upload attachment to Storage
+    │     ├── create: Insert post + parse links
     │     ├── update: Update post fields + parse links (support "clear" reset keyword)
-    │     ├── delete: Delete post from Supabase (attachments cascade-deleted)
+    │     ├── delete: Delete post from Supabase
     │     ├── pin / unpin: Update is_pinned boolean
     │     ├── list: Query recent posts with optional type/status filter → Return overview embed
-    │     ├── view: Query post with joins (subjects, attachments) → Return rich formatted embed
+    │     ├── view: Query post with joins (subjects) → Return rich formatted embed
     │     └── archive / publish: Update post status
     ▼
 Supabase (via Service Role Key)
-    │  Executes PostgreSQL / Storage operations
+    │  Executes PostgreSQL operations
     ▼
 Discord Client receives instant formatted response or rich embed
 ```
 
-### 2.4 File Upload Flow
+### 2.4 Resource Links Flow
 
 ```
-Admin selects file(s) in PostForm
+Admin configures labeled links in PostForm (e.g. G-Drive, Classroom, PDF, GitHub)
     │
     ▼
-FileUploader validates size (< 10 MB) and stores in local state
+Payload stored in posts.links (JSONB: [{ label, url }])
     │
     ▼
-On form submit:
-    │  1. Create/update the post via admin API
-    │  2. For each file:
-    │     a. uploadFile() → Supabase Storage (sanitised UUID filename)
-    │     b. Get public URL
-    │     c. createAttachment() → admin API → attachments table
-    ▼
-Attachment record linked to post via post_id FK
+Rendered on PostPage as high-contrast actionable link cards with external domain icons
 ```
 
 ---
@@ -163,10 +129,10 @@ Attachment record linked to post via post_id FK
 
 ```
 <BrowserRouter>
-└── <App>                          // Route definitions
+└── <App>                          // Route definitions (lazy routes + Suspense fallback)
     ├── <HomePage>                 // "/" — Main student feed
     │   ├── <Header>               // Sticky nav: logo, search toggle, admin link
-    │   ├── <SearchBar>            // Debounced text input
+    │   ├── <SearchBar>            // Debounced text input (Ctrl+K shortcut)
     │   ├── <FilterBar>            // Type + Subject pill buttons
     │   ├── <DeadlineBanner>       // Horizontal scrollable deadline cards
     │   ├── <NoticesSection>       // Notice & Important posts, highlighted
@@ -177,17 +143,16 @@ Attachment record linked to post via post_id FK
     │   │   └── <PostCard> × N
     │   └── <Footer>
     │
-    ├── <PostPage>                 // "/post/:id" — Full post detail
+    ├── <PostPage> (Lazy)          // "/post/:id" — Full post detail
     │   ├── <NavBar>               // Back navigation
     │   ├── <Badge> × N            // Type + Subject badges
     │   ├── <ReactMarkdown>        // Rendered content
-    │   ├── Attachments list
-    │   ├── Links list
+    │   ├── Links / Resources list
     │   ├── Share action           // Web Share API + clipboard fallback
     │   └── <Footer>
     │
-    ├── <AdminPage>                // "/admin/*" — Protected dashboard
-    │   ├── <AdminLogin>           // Password gate
+    ├── <AdminPage> (Lazy)         // "/admin/*" — Protected dashboard
+    │   ├── <AdminLogin>           // Password gate (Turnstile protected)
     │   ├── <AdminSidebar>         // Navigation sidebar
     │   └── Nested routes:
     │       ├── <AdminDashboard>   // "/admin" — Stats + quick actions + live Student View feed preview
@@ -197,9 +162,7 @@ Attachment record linked to post via post_id FK
     │       ├── <PostTable>        // "/admin/posts" — All posts list (status filter, created/due date sort)
     │       └── <SubjectManager>   // "/admin/subjects" — CRUD subjects
     │
-    └── <NotFoundPage>             // "*" — 404
-
-<Toaster>                          // Global toast notifications
+    └── <NotFoundPage> (Lazy)      // "*" — 404
 ```
 
 ### 3.2 State Management
@@ -212,7 +175,7 @@ BatchHub uses **local component state + custom hooks** — no global state libra
 | `useUpcomingDeadlines()` | `hooks/usePosts.js` | Fetches posts with future `due_date`, sorted ascending |
 | `usePost(id)` | `hooks/usePost.js` | Fetches a single post by UUID |
 | `useSubjects()` | `hooks/useSubjects.js` | Fetches all subjects sorted by name |
-| `useAdmin()` | `hooks/useAdmin.js` | Manages auth state: `isAuthenticated`, `login()`, `logout()` |
+| `useAdmin()` | `hooks/useAdmin.js` | Manages auth state: `isAuthenticated`, `login()`, `logout()` with instant demo bypass |
 
 ### 3.3 API Layer (`lib/api.js`)
 
@@ -220,7 +183,6 @@ All data fetching is centralised in a single API module that:
 - Checks `isSupabaseConfigured()` before every call
 - Falls back to in-memory `DEMO_POSTS` / `DEMO_SUBJECTS` arrays
 - Routes admin mutations and privileged reads (`fetchAllPosts`, admin `fetchPost`) through `adminRequest()` → `POST /api/admin` to bypass public read RLS restrictions
-- Handles file uploads directly to Supabase Storage (client-side with anon key)
 
 ---
 
@@ -248,8 +210,6 @@ The admin endpoint uses a single `POST` with an `action` field to route requests
 | `createSubject` | Subject fields | Insert + return |
 | `updateSubject` | `{id, updates}` | Update + return |
 | `deleteSubject` | `{id}` | Delete row |
-| `createAttachment` | Attachment fields | Insert + return |
-| `deleteAttachment` | `{id}` | Delete row |
 | `autoArchiveExpired` | _(none)_ | Archive published posts with `due_date` > 24h past |
 
 ### 4.3 Security Layers
@@ -262,7 +222,7 @@ Request arrives at /api/admin
     ├── 3. Layer 1: In-memory IP rate limiter (10 failed attempts / 24-hour lockout)
     ├── 4. Layer 2: In-memory device fingerprint limiter (10 failed attempts / 24-hour lockout)
     ├── 5. Layer 3: Cloudflare Turnstile token verification on login (__ping)
-    ├── 6. Layer 4: Timing-safe password comparison (crypto.timingSafeEqual against ADMIN_PASSWORD)
+    ├── 6. Layer 4: Timing-safe SHA-256 password comparison (crypto.timingSafeEqual against ADMIN_PASSWORD)
     ├── 7. Layer 5: Global rate limit check (>30 failed attempts/24h across all IPs via Supabase)
     ├── 8. Log attempt to Supabase (admin_login_attempts table)
     ├── 9. Clear IP and fingerprint failures on success + auto-cleanup old logs (>7 days)
@@ -278,18 +238,18 @@ Request arrives at /api/admin
 ### 5.1 Entity Relationship
 
 ```
-subjects (1) ──────────< (N) posts (1) ──────────< (N) attachments
-    │                         │                         │
-    │ id (PK, UUID)           │ id (PK, UUID)           │ id (PK, UUID)
-    │ name                    │ title                   │ post_id (FK)
-    │ code                    │ content                 │ file_name
-    │ color                   │ type                    │ file_url
-    │ created_at              │ subject_id (FK)         │ file_size
-    │                         │ is_pinned               │ file_type
-                              │ status                  │ created_at
+subjects (1) ──────────< (N) posts
+    │                         │
+    │ id (PK, UUID)           │ id (PK, UUID)
+    │ name                    │ title
+    │ code                    │ content
+    │ color                   │ type
+    │ created_at              │ subject_id (FK)
+                              │ is_pinned
+                              │ status
                               │ due_date
                               │ tags[]
-                              │ links (JSONB)
+                              │ links (JSONB: [{label, url}])
                               │ batch_id
                               │ created_by
                               │ created_at

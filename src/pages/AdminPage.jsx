@@ -150,7 +150,7 @@ function AdminDashboard() {
         <h2 className="text-xl font-display font-medium text-[var(--color-text)] tracking-[-0.01em]">Dashboard</h2>
         <button
           onClick={() => navigate('/admin/create')}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-black text-[var(--text-sm)] font-medium transition-colors duration-300 tracking-[0.005em]"
+          className="flex items-center gap-1.5 px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-black text-[var(--text-sm)] font-medium transition-colors duration-300 tracking-[0.005em]"
         >
           <Plus size={14} />
           New Post
@@ -162,10 +162,10 @@ function AdminDashboard() {
           <div
             key={label}
             onClick={() => to && navigate(to)}
-            className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 cursor-pointer hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]/40 transition-all group"
+            className="border border-[var(--color-border)] bg-[var(--color-surface)] p-4 cursor-pointer hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]/40 transition-all group"
           >
             <div
-              className="w-9 h-9 rounded-lg flex items-center justify-center mb-3"
+              className="w-9 h-9 flex items-center justify-center mb-3"
               style={{ background: bg + '15' }}
             >
               <Icon size={18} style={{ color }} />
@@ -193,7 +193,7 @@ function AdminDashboard() {
       </div>
 
       {/* ── Student View Preview ── */}
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] overflow-hidden">
+      <div className="border border-[var(--color-border)] bg-[var(--color-bg)] overflow-hidden">
         {/* Header */}
         <div className="flex items-center gap-2 px-5 py-3 border-b border-[var(--color-border)] bg-[var(--color-surface)]">
           <Eye size={14} className="text-[var(--color-accent)]" />
@@ -231,10 +231,10 @@ function AdminDashboard() {
               )}
 
               {/* 1. Notices & Important */}
-              <NoticesSection posts={posts} />
+              <NoticesSection posts={noticePosts} />
 
               {/* 2. Pinned posts */}
-              <PinnedSection posts={posts} />
+              <PinnedSection posts={pinnedPosts} />
 
               {/* 3. Posts with due dates — ascending by deadline */}
               {withDeadline.length > 0 && (
@@ -282,9 +282,9 @@ function QuickAction({ icon: Icon, label, description, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-4 px-5 py-4 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-accent)] text-left transition-all group"
+      className="flex items-center gap-4 px-5 py-4 bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-accent)] text-left transition-all group"
     >
-      <div className="w-10 h-10 rounded-xl bg-[var(--color-accent-glow)] flex items-center justify-center shrink-0 group-hover:bg-[var(--color-accent)]/20 transition-colors">
+      <div className="w-10 h-10 bg-[var(--color-accent-glow)] flex items-center justify-center shrink-0 group-hover:bg-[var(--color-accent)]/20 transition-colors">
         <Icon size={18} className="text-[var(--color-accent)]" />
       </div>
       <div>

@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import {
-  ArrowLeft, Clock, CalendarClock, Paperclip, ExternalLink,
-  Share2, Download, FileText, Image as ImageIcon, File
+  ArrowLeft, Clock, CalendarClock, ExternalLink,
+  Share2
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
@@ -40,7 +40,6 @@ export default function PostPage() {
   const typeConfig = CONTENT_TYPES[post.type];
   const hasDueDate = !!post.due_date;
   const hasLinks = post.links && post.links.length > 0;
-  const hasAttachments = post.attachments && post.attachments.length > 0;
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -76,7 +75,7 @@ export default function PostPage() {
       <main className="flex-1 mx-auto w-full max-w-3xl px-4 py-6 animate-fade-in-up">
         {/* Type accent bar */}
         <div
-          className="h-0.5 w-16 rounded-full mb-6 bg-[var(--color-border-light)]"
+          className="h-0.5 w-16 mb-6 bg-[var(--color-border-light)]"
         />
 
         {/* Badges */}
@@ -127,7 +126,7 @@ export default function PostPage() {
             {post.tags.map((tag) => (
               <span
                 key={tag}
-                className="px-2.5 py-1 rounded-full text-[10px] font-medium tracking-[0.02em] bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-muted)]"
+                className="px-2.5 py-1 text-[10px] font-medium tracking-[0.02em] bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-muted)]"
               >
                 #{tag}
               </span>
@@ -135,12 +134,12 @@ export default function PostPage() {
           </div>
         )}
 
-        {/* Links */}
+        {/* Resource Links / Attachments */}
         {hasLinks && (
           <div className="mb-6">
             <h3 className="text-[10px] font-medium text-[var(--color-text)] mb-3 flex items-center gap-1.5 tracking-[0.08em] uppercase">
               <ExternalLink size={14} />
-              Links
+              Resource Links &amp; Attachments
             </h3>
             <div className="space-y-2">
               {post.links.map((link, i) => (
@@ -149,49 +148,11 @@ export default function PostPage() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] text-[var(--text-sm)] text-[var(--color-accent-hover)] font-medium transition-all duration-300 group tracking-[0.005em]"
+                  className="flex items-center gap-3 px-4 py-3.5 bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] text-[var(--text-sm)] text-[var(--color-accent-hover)] font-medium transition-all duration-300 group tracking-[0.005em]"
                 >
-                  <ExternalLink size={14} className="shrink-0" />
-                  <span className="truncate">{link.label || link.url}</span>
-                  <ArrowLeft size={12} className="ml-auto rotate-180 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Attachments */}
-        {hasAttachments && (
-          <div className="mb-6">
-            <h3 className="text-[10px] font-medium text-[var(--color-text)] mb-3 flex items-center gap-1.5 tracking-[0.08em] uppercase">
-              <Paperclip size={14} />
-              Attachments
-            </h3>
-            <div className="space-y-2">
-              {post.attachments.map((att) => (
-                <a
-                  key={att.id}
-                  href={att.file_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  download
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] text-[var(--text-sm)] transition-all duration-300 group"
-                >
-                  <FileIcon type={att.file_type} />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-[var(--color-text)] truncate">
-                      {att.file_name}
-                    </p>
-                    {att.file_size && (
-                      <p className="text-xs text-[var(--color-text-dim)]">
-                        {formatBytes(att.file_size)}
-                      </p>
-                    )}
-                  </div>
-                  <Download
-                    size={14}
-                    className="text-[var(--color-text-dim)] group-hover:text-[var(--color-accent)] transition-colors shrink-0"
-                  />
+                  <ExternalLink size={15} className="shrink-0 text-[var(--color-text-dim)] group-hover:text-[var(--color-accent-hover)] transition-colors" />
+                  <span className="truncate flex-1 font-mono text-xs">{link.label || link.url}</span>
+                  <ArrowLeft size={13} className="ml-auto rotate-180 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all shrink-0" />
                 </a>
               ))}
             </div>
@@ -202,10 +163,10 @@ export default function PostPage() {
         <div className="pt-6 border-t border-[var(--color-border)]">
           <button
             onClick={handleShare}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-black text-[var(--text-sm)] font-medium transition-colors duration-300 tracking-[0.005em]"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-black text-[var(--text-sm)] font-semibold transition-colors duration-300 tracking-[0.005em]"
           >
             <Share2 size={14} />
-            Share
+            Share Post
           </button>
         </div>
       </main>
@@ -219,7 +180,7 @@ export default function PostPage() {
 
 function NavBar() {
   return (
-    <nav className="sticky top-0 z-50 glass-strong">
+    <nav className="sticky top-0 z-50 glass-strong border-b border-[var(--color-border)]">
       <div className="mx-auto max-w-3xl px-4 h-14 flex items-center">
         <Link
           to="/"
@@ -231,36 +192,4 @@ function NavBar() {
       </div>
     </nav>
   );
-}
-
-function FileIcon({ type }) {
-  const iconClass = 'w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border border-[var(--color-border)]';
-
-  if (type?.startsWith('image/')) {
-    return (
-      <div className={`${iconClass} bg-[var(--color-surface)]`}>
-        <ImageIcon size={16} className="text-[var(--color-text)]" />
-      </div>
-    );
-  }
-  if (type === 'application/pdf') {
-    return (
-      <div className={`${iconClass} bg-[var(--color-surface)]`}>
-        <FileText size={16} className="text-[var(--color-text)]" />
-      </div>
-    );
-  }
-  return (
-    <div className={`${iconClass} bg-[var(--color-surface)]`}>
-      <File size={16} className="text-[var(--color-text)]" />
-    </div>
-  );
-}
-
-function formatBytes(bytes) {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 }

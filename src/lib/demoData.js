@@ -10,108 +10,119 @@ const DEMO_SUBJECTS = [
   { id: 'subj-biot', name: 'BIot', code: 'BIot', color: '#ec4899' },
 ];
 
-const now = new Date('2026-08-13T10:00:00Z'); // Fixed baseline for demo stability
-// Helper to get dates relative to 'now'
-const getRelativeDate = (offsetDays) => {
-  return new Date(now.getTime() + offsetDays * 24 * 60 * 60 * 1000).toISOString();
+// Helper to get dates relative to now
+const getRelativeDate = (offsetDays, offsetHours = 0) => {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  d.setHours(d.getHours() + offsetHours);
+  return d.toISOString();
 };
 
 const DEMO_POSTS = [
   {
     id: 'post-1',
-    title: 'Scan & Upload PDF of MDM assignment 2 on GCR',
-    content: `Please make sure to scan and upload the PDF of MDM assignment 2 on Google Classroom.`,
-    type: 'assignment',
-    subject_id: 'subj-mdm',
-    is_pinned: false,
+    title: '⚠️ Mid-Semester Exam Guidelines & Seating Arrangement',
+    content: `## Mid-Semester Examination Guidelines\n\nAll students are required to follow these instructions:\n\n1. Bring your **Physical College ID card**.\n2. Arrive at least **15 minutes** before the scheduled time.\n3. No smart watches, mobile phones, or programmable calculators permitted.\n\n_Check the seating allotment sheet linked below._`,
+    type: 'important',
+    subject_id: null,
+    is_pinned: true,
     status: 'published',
     due_date: null,
-    tags: ['assignment', 'mdm'],
-    links: [],
+    tags: ['exam', 'guidelines', 'urgent'],
+    links: [
+      { label: 'Seating Allotment Sheet (G-Drive)', url: 'https://drive.google.com' },
+      { label: 'Exam Timetable PDF', url: 'https://example.com/timetable.pdf' },
+    ],
     created_at: getRelativeDate(-1),
     updated_at: getRelativeDate(-1),
-    subjects: DEMO_SUBJECTS[0],
-    attachments: [],
+    subjects: null,
   },
   {
     id: 'post-2',
-    title: 'DT Problem statements',
-    content: `Prepare the DT Problem statements.`,
+    title: 'DT Problem Statements & Submission Portal',
+    content: `Prepare the DT Problem statements and submit your analysis.\n\nEnsure problem framing adheres to the rubric provided in class.`,
     type: 'assignment',
     subject_id: 'subj-dt',
     is_pinned: false,
     status: 'published',
-    due_date: getRelativeDate(1), // Tomorrow
+    due_date: getRelativeDate(1, 4), // Due tomorrow
     tags: ['dt', 'assignment'],
-    links: [],
+    links: [
+      { label: 'Submission Portal (GCR)', url: 'https://classroom.google.com' },
+      { label: 'Problem Statements PDF', url: 'https://example.com/dt-problems.pdf' },
+    ],
     created_at: getRelativeDate(-1),
     updated_at: getRelativeDate(-1),
     subjects: DEMO_SUBJECTS[1],
-    attachments: [],
   },
   {
     id: 'post-3',
-    title: 'MDM Statistics assignment 3',
-    content: `Complete MDM Statistics assignment 3.`,
+    title: 'MDM Statistics Assignment 3',
+    content: `Complete MDM Statistics assignment 3 questions 1 through 8 with step-by-step hypothesis tests.`,
     type: 'assignment',
     subject_id: 'subj-mdm',
     is_pinned: false,
     status: 'published',
-    due_date: getRelativeDate(1), // Tomorrow
+    due_date: getRelativeDate(2), // In 2 days
     tags: ['mdm', 'assignment'],
-    links: [],
+    links: [
+      { label: 'Assignment Questions (PDF)', url: 'https://example.com/mdm-a3.pdf' },
+    ],
     created_at: getRelativeDate(-2),
     updated_at: getRelativeDate(-2),
     subjects: DEMO_SUBJECTS[0],
-    attachments: [],
   },
   {
     id: 'post-4',
-    title: 'VIVA - FDS Lab codes',
-    content: `VIVA on Assignment 1,2,3 codes\n\nAlso checking of all codes & outputs`,
+    title: 'VIVA — FDS Lab Codes & Viva Checklist',
+    content: `VIVA on Assignment 1, 2, 3 codes.\n\nAlso checking of all codes, outputs, and GitHub repository commits.`,
     type: 'lab',
     subject_id: 'subj-fds',
     is_pinned: false,
     status: 'published',
-    due_date: '2026-08-19T23:59:59Z', // Wed, Aug 19
+    due_date: getRelativeDate(3), // In 3 days
     tags: ['viva', 'lab', 'fds'],
-    links: [],
+    links: [
+      { label: 'FDS Lab Manual & Rubric', url: 'https://example.com/fds-manual.pdf' },
+    ],
     created_at: getRelativeDate(-2),
     updated_at: getRelativeDate(-2),
     subjects: DEMO_SUBJECTS[2],
-    attachments: [],
   },
   {
     id: 'post-5',
-    title: 'DCN assignment 1 & 2',
-    content: `Corrections & remaining part`,
-    type: 'assignment',
+    title: 'DCN Reference Material — TCP/IP Protocol Stack Notes',
+    content: `Curated reference resources and lecture slides for Unit 3: Transport Layer & TCP Congestion Control.`,
+    type: 'resource',
     subject_id: 'subj-dcn',
     is_pinned: false,
     status: 'published',
-    due_date: '2026-08-20T23:59:59Z', // Thu, Aug 20
-    tags: ['dcn', 'assignment'],
-    links: [],
+    due_date: null,
+    tags: ['dcn', 'reference', 'notes'],
+    links: [
+      { label: 'Lecture Slides (G-Drive)', url: 'https://drive.google.com' },
+      { label: 'Wireshark Lab Handout', url: 'https://wireshark.org' },
+    ],
     created_at: getRelativeDate(-3),
     updated_at: getRelativeDate(-3),
     subjects: DEMO_SUBJECTS[3],
-    attachments: [],
   },
   {
     id: 'post-6',
-    title: 'BIot assignment 1, 2 & 3',
-    content: `Also, the Lab Notebook writeup part of A3`,
+    title: 'BIoT Lab Notebook Writeup & Sensor Interfacing',
+    content: `Complete the Lab Notebook writeup part of Assignment 3, including circuit schematic diagrams.`,
     type: 'assignment',
     subject_id: 'subj-biot',
     is_pinned: false,
     status: 'published',
-    due_date: '2026-08-22T23:59:59Z', // Sat, Aug 22
+    due_date: getRelativeDate(5),
     tags: ['biot', 'assignment', 'lab'],
-    links: [],
+    links: [
+      { label: 'Sensor Interfacing Guide', url: 'https://example.com/biot-guide.pdf' },
+    ],
     created_at: getRelativeDate(-4),
     updated_at: getRelativeDate(-4),
     subjects: DEMO_SUBJECTS[4],
-    attachments: [],
   },
 ];
 
