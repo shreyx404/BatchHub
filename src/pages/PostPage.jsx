@@ -44,7 +44,7 @@ export default function PostPage() {
 
   const handleShare = async () => {
     const url = window.location.href;
-    const shareText = `*${post.title}*\n${APP_NAME}: ${url}`;
+    const shareText = `- *${post.title}*\n\n_${APP_NAME}_  ->  ${url}`;
 
     if (navigator.share) {
       try {
