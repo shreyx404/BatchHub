@@ -32,7 +32,7 @@
 | FR-014 | Render tags as styled chips | P1 | ✅ Implemented |
 | FR-015 | Display external links with label and URL in clickable cards | P1 | ✅ Implemented |
 | FR-016 | Display resource links and document attachments with direct external URL links (G-Drive, Classroom, PDFs) | P0 | ✅ Implemented |
-| FR-017 | Provide a "Share" button using native Web Share API with formatted text (`*Title*\nBatchHub: URL`) and robust clipboard fallback | P0 | ✅ Implemented |
+| FR-017 | Provide a "Share" button using native Web Share API with formatted text (`*<Title>*\n\n_BatchHub :_ ->\n<Link>`) and robust clipboard fallback | P0 | ✅ Implemented |
 | FR-018 | Show a "Back to BatchHub" navigation bar at the top | P1 | ✅ Implemented |
 
 ### 1.3 Admin Authentication

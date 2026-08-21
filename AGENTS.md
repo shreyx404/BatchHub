@@ -164,6 +164,7 @@ When adding a new feature, follow this checklist:
 7. **Constants** → Add any new enums/config to `lib/constants.js`
 8. **Demo data** → Update `lib/demoData.js` to include sample data for the new feature
 9. **Design tokens** → Add CSS variables to `index.css` `@theme` block if new colours/sizes are needed
+10. **Documentation & Version Control** → Update system markdown files (`AGENTS.md`, `TASKS.md`, `ARCHITECTURE.md`, `PRD.md`, `REQUIREMENTS.md`, `TECH_STACK.md`, `README.md`) & push the code to GitHub
 
 ---
 
@@ -178,3 +179,12 @@ When adding a new feature, follow this checklist:
 | Hardcoding the app name | Use `APP_NAME` and `APP_TAGLINE` from `constants.js` |
 | Using `useEffect` for data fetching without cleanup | Follow the patterns in existing hooks |
 | Adding new npm dependencies without justification | Keep the bundle lean; prefer built-in/existing solutions |
+| Forgetting to sync docs & GitHub | Always update system markdown files & push the code to GitHub |
+
+---
+
+## 9. Workflow & Repository Synchronization
+
+- **Update System Markdown Files**: Whenever any features, fixes, architecture adjustments, or configuration changes are made, keep all corresponding system markdown files up-to-date (`AGENTS.md`, `TASKS.md`, `ARCHITECTURE.md`, `PRD.md`, `REQUIREMENTS.md`, `TECH_STACK.md`, `README.md`).
+- **Push Code to GitHub**: Upon completing and verifying implementation and documentation updates, stage, commit, and push the code directly to GitHub.
+

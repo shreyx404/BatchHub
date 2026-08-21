@@ -152,6 +152,7 @@
 - [x] **T-070** — Unify file attachments and external resources into high-contrast direct Resource Links (`links` array) across post creation and view pages
 - [x] **T-071** — Add global `Ctrl + K` / `Cmd + K` search keyboard shortcut and ESC modal dismiss for keyboard accessibility
 - [x] **T-072** — Add rich social sharing metadata (OpenGraph, Twitter Cards) and custom SVG favicon in `index.html`
+- [x] **T-087** — Refine post share text template format (`*<Title>*\n\n_BatchHub :_ ->\n<Link>`) and establish mandatory system markdown documentation & Git push workflows
 
 ---
 

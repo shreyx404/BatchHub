@@ -46,7 +46,7 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 | F-04 | **Search** | Debounced (300 ms) full-text search across title and content fields with `Ctrl + K` shortcut |
 | F-05 | **Filters** | Filter by content type (assignment, lab, notice, etc.) and by subject |
 | F-06 | **Post Detail Page** | Full Markdown rendering, tags, direct resource links & attachments, and formatted share button |
-| F-07 | **Deep Links & Sharing** | Every post has a unique URL (`/post/:id`) shareable via native Web Share API with rich formatted text (`*Title*\nBatchHub: url`) and robust clipboard fallback |
+| F-07 | **Deep Links & Sharing** | Every post has a unique URL (`/post/:id`) shareable via native Web Share API with rich formatted text (`*<Title>*\n\n_BatchHub :_ ->\n<Link>`) and robust clipboard fallback |
 | F-08 | **Demo Mode** | App runs with sample data when Supabase is not configured, allowing UI preview without a database |
 
 ### 3.2 Admin Dashboard (Password-Protected)
