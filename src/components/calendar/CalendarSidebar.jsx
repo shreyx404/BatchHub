@@ -172,7 +172,7 @@ function InspectorCard({ post, selectedDate, totalOnDate }) {
         </span>
         <Link
           to={`/post/${post.id}`}
-          className="px-3.5 py-2 min-h-[38px] flex items-center justify-center bg-[var(--color-text)] text-black font-medium text-[var(--text-xs)] hover:bg-[var(--color-accent-hover)] active:bg-[var(--color-text-muted)] transition-colors"
+          className="px-3.5 py-2 min-h-[38px] flex items-center justify-center bg-white text-black font-semibold text-[var(--text-xs)] hover:bg-[#e5e5e5] active:bg-[#cccccc] transition-colors"
         >
           View Post Details →
         </Link>

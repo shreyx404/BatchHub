@@ -107,7 +107,7 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
                 <span
                   className={`text-[10px] sm:text-[var(--text-xs)] font-mono ${
                     cell.isToday
-                      ? 'bg-[var(--color-text)] text-black px-1 sm:px-1.5 py-0.2 sm:py-0.5 font-bold'
+                      ? 'bg-white text-black px-1 sm:px-1.5 py-0.2 sm:py-0.5 font-bold'
                       : cell.isCurrentMonth
                         ? 'text-[var(--color-text-muted)]'
                         : 'text-[var(--color-text-dim)]'
@@ -194,11 +194,11 @@ function EventChip({ post }) {
 
   return (
     <div className={chipClass}>
-      <div className="flex items-center justify-between text-[7px] sm:text-[8px] font-mono">
-        <span className={isUrgent ? 'text-[#fca5a5] font-bold' : 'text-[var(--color-text-muted)]'}>
+      <div className="flex items-center justify-between text-[7px] sm:text-[8px] font-mono gap-1.5 min-w-0">
+        <span className={`truncate font-semibold shrink ${isUrgent ? 'text-[#fca5a5]' : 'text-[var(--color-text-muted)]'}`}>
           {subjectCode}
         </span>
-        <span className={isUrgent ? 'text-[#fca5a5]' : 'text-[var(--color-text-dim)]'}>
+        <span className={`shrink-0 ${isUrgent ? 'text-[#fca5a5]' : 'text-[var(--color-text-dim)]'}`}>
           {format(dueDate, 'h:mm a')}
         </span>
       </div>

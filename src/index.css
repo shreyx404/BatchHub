@@ -6,6 +6,9 @@
 
 @theme {
   /* ── Color Palette ── */
+  --color-black: #000000;
+  --color-white: #ffffff;
+
   --color-bg: #000000;
   --color-surface: #000000;
   --color-surface-2: #0f0f0f;
@@ -556,5 +559,23 @@ textarea.input-field {
 .event-chip:hover {
   transform: translateX(1px);
 }
+
+/* ── High-Contrast Utilities ── */
+.text-black {
+  color: #000000 !important;
+}
+
+.text-white {
+  color: #ffffff !important;
+}
+
+.bg-white {
+  background-color: #ffffff !important;
+}
+
+.bg-black {
+  background-color: #000000 !important;
+}
+
 
 

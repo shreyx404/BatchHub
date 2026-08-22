@@ -54,7 +54,7 @@ export default function CalendarControls({
 
           {/* View Mode — Month only for now */}
           <div className="flex items-center bg-[#0a0a0a] border border-[var(--color-border)]">
-            <button className="px-2.5 sm:px-3 py-2 min-h-[38px] text-[11px] sm:text-[var(--text-xs)] font-mono bg-[var(--color-text)] text-black font-semibold">
+            <button className="px-2.5 sm:px-3 py-2 min-h-[38px] text-[11px] sm:text-[var(--text-xs)] font-mono bg-white text-black font-semibold">
               MONTH
             </button>
             <button
@@ -82,7 +82,7 @@ export default function CalendarControls({
           onClick={() => onSubjectChange(null)}
           className={`px-2.5 sm:px-3 py-1 sm:py-1.5 min-h-[32px] sm:min-h-[34px] text-[11px] sm:text-[var(--text-xs)] font-medium whitespace-nowrap transition-colors ${
             !selectedSubject
-              ? 'bg-[var(--color-text)] text-black'
+              ? 'bg-white text-black font-semibold border border-white'
               : 'bg-[#0a0a0a] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-light)] hover:text-[var(--color-text)] active:bg-[var(--color-surface-2)]'
           }`}
         >
@@ -94,12 +94,12 @@ export default function CalendarControls({
             onClick={() => onSubjectChange(selectedSubject === subject.id ? null : subject.id)}
             className={`px-2.5 sm:px-3 py-1 sm:py-1.5 min-h-[32px] sm:min-h-[34px] text-[11px] sm:text-[var(--text-xs)] whitespace-nowrap transition-colors ${
               selectedSubject === subject.id
-                ? 'bg-[var(--color-text)] text-black font-medium'
+                ? 'bg-white text-black font-semibold border border-white'
                 : 'bg-[#0a0a0a] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-light)] hover:text-[var(--color-text)] active:bg-[var(--color-surface-2)]'
             }`}
           >
             {subject.code || subject.name}
-            <span className={`ml-1 ${selectedSubject === subject.id ? 'text-black/60' : 'text-[var(--color-text-dim)]'}`}>
+            <span className={`ml-1 ${selectedSubject === subject.id ? 'text-black/80 font-bold' : 'text-[var(--color-text-dim)]'}`}>
               ({postCountBySubject[subject.id] || 0})
             </span>
           </button>

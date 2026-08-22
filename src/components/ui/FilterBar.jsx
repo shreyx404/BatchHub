@@ -61,7 +61,7 @@ function FilterChip({ label, icon: Icon, active, onClick, small = false }) {
         ${small ? 'px-2.5 py-1 text-[10px] tracking-[0.03em] font-mono' : 'px-3 py-1.5 text-[11px] tracking-[0.02em] uppercase'}
         ${
           active
-            ? 'bg-[var(--color-text)] border-[var(--color-text)] text-black font-semibold'
+            ? 'bg-white border-white text-black font-semibold'
             : 'bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-muted)] font-normal hover:border-[var(--color-border-light)] hover:text-[var(--color-text)]'
         }`}
     >
