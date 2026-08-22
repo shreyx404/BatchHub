@@ -26,9 +26,9 @@ export default function CalendarWeekView({
 
   return (
     <div className="border border-[var(--color-border)] flex flex-col bg-[#050505] animate-fade-in overflow-hidden">
-      {/* Scrollable Container for Mobile / Tablet responsiveness */}
-      <div className="overflow-x-auto scrollbar-hide">
-        <div className="min-w-[700px] sm:min-w-0">
+      {/* Scrollable Container for Mobile / Tablet responsiveness with touch momentum */}
+      <div className="overflow-x-auto scrollbar-hide touch-pan-x">
+        <div className="min-w-[840px] md:min-w-0">
           {/* Week Day Header */}
           <div className="grid grid-cols-7 bg-[var(--color-surface-2)] border-b border-[var(--color-border)] text-center divide-x divide-[var(--color-border)]">
             {weekDays.map((day) => {
@@ -141,7 +141,7 @@ export default function CalendarWeekView({
         </div>
       </div>
 
-      {/* Week Footer / Legend */}
+      {/* Week Footer / Legend & Touch Scroll Helper */}
       <div className="px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0a0a0a] border-t border-[var(--color-border)] flex flex-wrap items-center justify-between gap-2 sm:gap-3">
         <div className="flex items-center gap-3 sm:gap-4 text-[var(--color-text-muted)] text-[9px] sm:text-[10px] font-mono">
           <div className="flex items-center gap-1.5">
@@ -153,9 +153,10 @@ export default function CalendarWeekView({
             <span>Upcoming</span>
           </div>
         </div>
-        <span className="text-[9px] sm:text-[10px] font-mono text-[var(--color-text-dim)]">
-          Mon – Sun · 7-Day View
-        </span>
+        <div className="flex items-center gap-2 text-[9px] sm:text-[10px] font-mono text-[var(--color-text-dim)]">
+          <span className="md:hidden">← Swipe week →</span>
+          <span className="hidden md:inline">Mon – Sun · 7-Day Timetable</span>
+        </div>
       </div>
     </div>
   );
@@ -171,10 +172,10 @@ function WeekEventCard({ post, onClick }) {
   const links = post.links || [];
 
   const cardClass = isUrgent
-    ? 'p-2 bg-[#1e1414] border border-[#6b2121] hover:border-[#ef4444] transition-all shadow-sm'
+    ? 'p-2 sm:p-2.5 bg-[#1e1414] border border-[#6b2121] hover:border-[#ef4444] transition-all shadow-sm'
     : isOverdue
-      ? 'p-2 bg-[#101010] border border-[var(--color-border)] opacity-60 hover:opacity-100 transition-all'
-      : 'p-2 bg-[#121214] border border-[var(--color-border)] hover:border-[var(--color-border-light)] transition-all';
+      ? 'p-2 sm:p-2.5 bg-[#101010] border border-[var(--color-border)] opacity-60 hover:opacity-100 transition-all'
+      : 'p-2 sm:p-2.5 bg-[#121214] border border-[var(--color-border)] hover:border-[var(--color-border-light)] transition-all';
 
   return (
     <div
@@ -190,7 +191,7 @@ function WeekEventCard({ post, onClick }) {
       }}
     >
       {/* Top row: Subject & Time */}
-      <div className="flex items-center justify-between text-[8px] sm:text-[9px] font-mono gap-1 mb-1">
+      <div className="flex items-center justify-between text-[8.5px] sm:text-[9px] font-mono gap-1 mb-1">
         <span
           className={`truncate font-semibold ${
             isUrgent ? 'text-[#fca5a5]' : 'text-[var(--color-text-muted)]'
@@ -209,7 +210,7 @@ function WeekEventCard({ post, onClick }) {
 
       {/* Title */}
       <h4
-        className={`text-[10px] sm:text-[11px] font-medium leading-snug line-clamp-2 ${
+        className={`text-[10.5px] sm:text-[11px] font-medium leading-snug line-clamp-2 ${
           isUrgent ? 'text-white' : 'text-[var(--color-text)]'
         }`}
       >
@@ -226,14 +227,14 @@ function WeekEventCard({ post, onClick }) {
 
       {/* Attached Links count indicator */}
       {links.length > 0 && (
-        <div className="mt-1.5 pt-1 border-t border-[var(--color-border)]/50 flex items-center justify-between text-[8px] font-mono text-[var(--color-text-dim)]">
+        <div className="mt-2 pt-1 border-t border-[var(--color-border)]/50 flex items-center justify-between text-[8px] sm:text-[8.5px] font-mono text-[var(--color-text-dim)]">
           <span>↗ {links.length} link{links.length > 1 ? 's' : ''}</span>
           <Link
             to={`/post/${post.id}`}
             onClick={(e) => e.stopPropagation()}
-            className="hover:text-white underline underline-offset-2 transition-colors"
+            className="hover:text-white underline underline-offset-2 transition-colors px-1"
           >
-            Details
+            Details →
           </Link>
         </div>
       )}
