@@ -29,14 +29,15 @@ export default function Header({ searchOpen, onToggleSearch, onSearchChange, sea
           {!isAdmin && (
             <Link
               to="/calendar"
-              className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-[var(--text-xs)] font-medium tracking-[0.01em] transition-colors ${
+              className={`flex items-center gap-1.5 px-2 py-1 sm:px-2.5 sm:py-1.5 text-[var(--text-xs)] font-medium tracking-[0.01em] transition-colors ${
                 isCalendar
                   ? 'text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border-light)]'
-                  : 'text-[var(--color-text-dim)] hover:text-[var(--color-text-muted)]'
+                  : 'text-[var(--color-text-dim)] hover:text-[var(--color-text-muted)] border border-transparent hover:border-[var(--color-border)]'
               }`}
+              aria-label="Academic Calendar"
             >
               <CalendarClock size={13} />
-              Calendar
+              <span className="inline">Calendar</span>
             </Link>
           )}
         </div>

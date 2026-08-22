@@ -2,7 +2,15 @@ import { useMemo } from 'react';
 import { format, differenceInHours, isPast } from 'date-fns';
 import { CONTENT_TYPES } from '../../lib/constants';
 
-const DAY_NAMES = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+const DAY_NAMES = [
+  { short: 'MO', full: 'MON' },
+  { short: 'TU', full: 'TUE' },
+  { short: 'WE', full: 'WED' },
+  { short: 'TH', full: 'THU' },
+  { short: 'FR', full: 'FRI' },
+  { short: 'SA', full: 'SAT' },
+  { short: 'SU', full: 'SUN' },
+];
 
 /**
  * Build a 7×N grid of day cells for a given month.
@@ -53,10 +61,11 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
   return (
     <div className="border border-[var(--color-border)] flex flex-col">
       {/* Day Names Header */}
-      <div className="grid grid-cols-7 bg-[var(--color-surface-2)] border-b border-[var(--color-border)] text-center text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider py-2.5">
-        {DAY_NAMES.map((name, i) => (
-          <div key={name} className={i >= 5 ? 'text-[var(--color-text-dim)]' : ''}>
-            {name}
+      <div className="grid grid-cols-7 bg-[var(--color-surface-2)] border-b border-[var(--color-border)] text-center text-[9px] sm:text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider py-2 sm:py-2.5">
+        {DAY_NAMES.map(({ short, full }, i) => (
+          <div key={full} className={i >= 5 ? 'text-[var(--color-text-dim)]' : ''}>
+            <span className="sm:hidden">{short}</span>
+            <span className="hidden sm:inline">{full}</span>
           </div>
         ))}
       </div>
@@ -66,9 +75,13 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
         {days.map((cell) => {
           const events = postsByDate[cell.dateKey] || [];
           const isSelected = selectedDate === cell.dateKey;
+          const hasUrgent = events.some((post) => {
+            const d = new Date(post.due_date);
+            return !isPast(d) && differenceInHours(d, new Date()) < 24;
+          });
 
           const cellClasses = [
-            'day-cell p-2 flex flex-col cursor-pointer',
+            'day-cell p-1.5 sm:p-2 flex flex-col justify-between sm:justify-start cursor-pointer active:scale-[0.98] sm:active:scale-100',
             !cell.isCurrentMonth && 'day-cell-other',
             cell.isToday && 'day-cell-today',
             isSelected && 'day-cell-selected',
@@ -79,13 +92,22 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
               key={cell.dateKey}
               className={cellClasses}
               onClick={() => onSelectDate(cell.dateKey)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onSelectDate(cell.dateKey);
+                }
+              }}
+              aria-label={`${cell.dateKey}, ${events.length} deadlines`}
             >
               {/* Date number */}
-              <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center justify-between">
                 <span
-                  className={`text-[var(--text-xs)] font-mono ${
+                  className={`text-[10px] sm:text-[var(--text-xs)] font-mono ${
                     cell.isToday
-                      ? 'bg-[var(--color-text)] text-black px-1.5 py-0.5 font-bold'
+                      ? 'bg-[var(--color-text)] text-black px-1 sm:px-1.5 py-0.2 sm:py-0.5 font-bold'
                       : cell.isCurrentMonth
                         ? 'text-[var(--color-text-muted)]'
                         : 'text-[var(--color-text-dim)]'
@@ -94,14 +116,37 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
                   {String(cell.day).padStart(2, '0')}
                 </span>
                 {cell.isToday && (
-                  <span className="text-[8px] font-mono uppercase tracking-wider text-[var(--color-text)] font-bold">
+                  <span className="hidden sm:inline text-[8px] font-mono uppercase tracking-wider text-[var(--color-text)] font-bold">
                     TODAY
                   </span>
                 )}
               </div>
 
-              {/* Event chips (max 2 visible + overflow count) */}
-              <div className="flex flex-col gap-1 flex-1 min-w-0">
+              {/* Mobile View: Event indicators (dots / compact count) */}
+              <div className="flex sm:hidden items-center justify-center gap-1 mt-1 flex-wrap">
+                {events.slice(0, 3).map((post, idx) => {
+                  const d = new Date(post.due_date);
+                  const isPostUrgent = !isPast(d) && differenceInHours(d, new Date()) < 24;
+                  return (
+                    <span
+                      key={idx}
+                      className={`w-1.5 h-1.5 inline-block ${
+                        isPostUrgent
+                          ? 'bg-[#ef4444] shadow-[0_0_4px_#ef4444]'
+                          : 'bg-[var(--color-text-muted)]'
+                      }`}
+                    />
+                  );
+                })}
+                {events.length > 3 && (
+                  <span className="text-[7px] font-mono text-[var(--color-text-dim)] font-bold leading-none">
+                    +{events.length - 3}
+                  </span>
+                )}
+              </div>
+
+              {/* Tablet & Desktop View: Rich Event chips */}
+              <div className="hidden sm:flex flex-col gap-1 flex-1 min-w-0 mt-1">
                 {events.slice(0, 2).map((post) => (
                   <EventChip key={post.id} post={post} />
                 ))}
@@ -117,14 +162,14 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
       </div>
 
       {/* Calendar Footer / Legend */}
-      <div className="px-4 py-2.5 bg-[#0a0a0a] border-t border-[var(--color-border)] flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-4 text-[var(--color-text-muted)] text-[10px] font-mono">
+      <div className="px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0a0a0a] border-t border-[var(--color-border)] flex flex-wrap items-center justify-between gap-2 sm:gap-3">
+        <div className="flex items-center gap-3 sm:gap-4 text-[var(--color-text-muted)] text-[9px] sm:text-[10px] font-mono">
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 bg-[#3b1515] border border-[#f87171]" />
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#3b1515] border border-[#f87171]" />
             <span>Due &lt; 24h</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 bg-[#121212] border border-[var(--color-border-light)]" />
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#121212] border border-[var(--color-border-light)]" />
             <span>Upcoming</span>
           </div>
         </div>
@@ -140,17 +185,16 @@ function EventChip({ post }) {
   const isOverdue = isPast(dueDate);
   const isUrgent = !isOverdue && hoursLeft < 24;
   const subjectCode = post.subjects?.code || post.subjects?.name || '';
-  const typeConfig = CONTENT_TYPES[post.type];
 
   const chipClass = isUrgent
-    ? 'event-chip p-1.5 bg-[#1e1414] border border-[#6b2121] hover:border-[#b91c1c]'
+    ? 'event-chip p-1 sm:p-1.5 bg-[#1e1414] border border-[#6b2121] hover:border-[#b91c1c]'
     : isOverdue
-      ? 'event-chip p-1.5 bg-[#111] border border-[var(--color-border)] opacity-50'
-      : 'event-chip p-1.5 bg-[#121212] border border-[var(--color-border)] hover:border-[var(--color-border-light)]';
+      ? 'event-chip p-1 sm:p-1.5 bg-[#111] border border-[var(--color-border)] opacity-50'
+      : 'event-chip p-1 sm:p-1.5 bg-[#121212] border border-[var(--color-border)] hover:border-[var(--color-border-light)]';
 
   return (
     <div className={chipClass}>
-      <div className="flex items-center justify-between text-[8px] font-mono">
+      <div className="flex items-center justify-between text-[7px] sm:text-[8px] font-mono">
         <span className={isUrgent ? 'text-[#fca5a5] font-bold' : 'text-[var(--color-text-muted)]'}>
           {subjectCode}
         </span>
@@ -158,14 +202,15 @@ function EventChip({ post }) {
           {format(dueDate, 'h:mm a')}
         </span>
       </div>
-      <p className={`text-[10px] font-medium truncate mt-0.5 ${isUrgent ? 'text-white' : 'text-[var(--color-text)]'}`}>
+      <p className={`text-[9px] sm:text-[10px] font-medium truncate mt-0.5 ${isUrgent ? 'text-white' : 'text-[var(--color-text)]'}`}>
         {post.title}
       </p>
       {isUrgent && (
-        <div className="mt-0.5 text-[8px] font-mono text-[#f87171]">
+        <div className="mt-0.5 text-[7px] sm:text-[8px] font-mono text-[#f87171]">
           ⏳ In {hoursLeft}h
         </div>
       )}
     </div>
   );
 }
+

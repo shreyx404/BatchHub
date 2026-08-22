@@ -492,16 +492,35 @@ textarea.input-field {
   grid-template-columns: repeat(7, minmax(0, 1fr));
   background-color: var(--color-border);
   gap: 1px;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .day-cell {
   background-color: #050505;
-  min-height: 110px;
-  transition: background-color 0.15s ease;
+  min-height: 54px;
+  transition: background-color 0.15s ease, outline-color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (min-width: 640px) {
+  .day-cell {
+    min-height: 80px;
+  }
+}
+
+@media (min-width: 768px) {
+  .day-cell {
+    min-height: 105px;
+  }
 }
 
 .day-cell:hover {
   background-color: #0d0d0d;
+}
+
+.day-cell:active {
+  background-color: #141414;
 }
 
 .day-cell-other {
@@ -525,9 +544,9 @@ textarea.input-field {
 }
 
 .day-cell-selected {
-  background-color: #0f0f14;
-  outline: 1px solid var(--color-border-light);
-  outline-offset: -1px;
+  background-color: #121218;
+  outline: 1.5px solid var(--color-text);
+  outline-offset: -1.5px;
 }
 
 .event-chip {
@@ -537,4 +556,5 @@ textarea.input-field {
 .event-chip:hover {
   transform: translateX(1px);
 }
+
 

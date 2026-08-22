@@ -81,16 +81,28 @@ export default function AdminCalendar() {
     setSelectedDate(key);
   }, []);
 
+  const handleSelectDate = useCallback((dateKey) => {
+    setSelectedDate(dateKey);
+    if (window.innerWidth < 1280) {
+      setTimeout(() => {
+        const el = document.getElementById('calendar-inspector-target');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 50);
+    }
+  }, []);
+
   return (
-    <div className="space-y-5 animate-fade-in">
+    <div className="space-y-4 sm:space-y-5 animate-fade-in">
       {/* Page Title & Controls */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-4 border-b border-[var(--color-border)]">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-3 sm:gap-4 pb-3 sm:pb-4 border-b border-[var(--color-border)]">
         <div>
-          <div className="flex items-center gap-2 text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-widest mb-1">
+          <div className="flex items-center gap-1.5 text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-widest mb-1">
             <CalendarClock size={12} />
             <span>DEADLINE CALENDAR</span>
           </div>
-          <h2 className="text-xl font-display font-medium text-[var(--color-text)] tracking-[-0.01em]">
+          <h2 className="text-xl sm:text-2xl font-display font-medium text-[var(--color-text)] tracking-[-0.01em]">
             Deadlines & Schedule
           </h2>
         </div>
@@ -115,7 +127,7 @@ export default function AdminCalendar() {
       ) : loading ? (
         <LoadingState />
       ) : (
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5 items-start">
           {/* Calendar Grid */}
           <div className="xl:col-span-8">
             <CalendarGrid
@@ -123,7 +135,7 @@ export default function AdminCalendar() {
               month={month}
               postsByDate={postsByDate}
               selectedDate={selectedDate}
-              onSelectDate={setSelectedDate}
+              onSelectDate={handleSelectDate}
             />
           </div>
 
@@ -140,3 +152,4 @@ export default function AdminCalendar() {
     </div>
   );
 }
+

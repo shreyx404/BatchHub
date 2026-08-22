@@ -88,6 +88,18 @@ export default function CalendarPage() {
     setSelectedDate(key);
   }, []);
 
+  const handleSelectDate = useCallback((dateKey) => {
+    setSelectedDate(dateKey);
+    if (window.innerWidth < 1024) {
+      setTimeout(() => {
+        const el = document.getElementById('calendar-inspector-target');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 50);
+    }
+  }, []);
+
   return (
     <div className="min-h-dvh flex flex-col bg-[var(--color-bg)]">
       <Header
@@ -100,15 +112,15 @@ export default function CalendarPage() {
         onSearchChange={setSearch}
       />
 
-      <main className="flex-1 mx-auto w-full max-w-[1400px] px-4 sm:px-6 py-6 space-y-5">
-        {/* Page Title */}
-        <div className="animate-fade-in flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-[var(--color-border)]">
+      <main className="flex-1 mx-auto w-full max-w-[1400px] px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-5">
+        {/* Page Title & Controls */}
+        <div className="animate-fade-in flex flex-col lg:flex-row lg:items-end justify-between gap-3 sm:gap-4 pb-3 sm:pb-4 border-b border-[var(--color-border)]">
           <div>
-            <div className="flex items-center gap-2 text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-widest mb-1">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-widest mb-1">
               <CalendarClock size={12} />
               <span>ACADEMIC TIMETABLE</span>
             </div>
-            <h1 className="text-[2rem] sm:text-[2.75rem] font-display font-semibold text-[var(--color-text)] tracking-[-0.025em] leading-[1.05]">
+            <h1 className="text-[1.75rem] sm:text-[2.25rem] md:text-[2.75rem] font-display font-semibold text-[var(--color-text)] tracking-[-0.025em] leading-[1.08]">
               Deadlines & Schedule
             </h1>
           </div>
@@ -133,7 +145,7 @@ export default function CalendarPage() {
         ) : loading ? (
           <LoadingState />
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start animate-fade-in">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-start animate-fade-in">
             {/* Calendar Grid (8 cols on large) */}
             <div className="lg:col-span-8">
               <CalendarGrid
@@ -141,7 +153,7 @@ export default function CalendarPage() {
                 month={month}
                 postsByDate={postsByDate}
                 selectedDate={selectedDate}
-                onSelectDate={setSelectedDate}
+                onSelectDate={handleSelectDate}
               />
             </div>
 
@@ -161,3 +173,4 @@ export default function CalendarPage() {
     </div>
   );
 }
+

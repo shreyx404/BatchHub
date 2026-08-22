@@ -19,19 +19,19 @@ export default function CalendarSidebar({ selectedDate, selectedPosts, allPosts 
   const inspectedPost = selectedPosts?.[0] || null;
 
   return (
-    <div className="flex flex-col gap-5">
+    <div id="calendar-inspector-target" className="flex flex-col gap-4 sm:gap-5 scroll-mt-20">
       {/* Focus Card — Selected Deadline Details */}
       {inspectedPost ? (
         <InspectorCard post={inspectedPost} selectedDate={selectedDate} totalOnDate={selectedPosts.length} />
       ) : (
-        <div className="bg-[var(--color-surface-2)] border border-[var(--color-border)] p-5">
-          <div className="flex flex-col items-center justify-center py-6 text-center">
-            <CalendarClock size={28} className="text-[var(--color-text-dim)] mb-3" />
+        <div className="bg-[var(--color-surface-2)] border border-[var(--color-border)] p-4 sm:p-5">
+          <div className="flex flex-col items-center justify-center py-5 sm:py-6 text-center">
+            <CalendarClock size={26} className="text-[var(--color-text-dim)] mb-2.5" />
             <p className="text-[var(--text-sm)] font-medium text-[var(--color-text-muted)]">
               Select a date
             </p>
             <p className="text-[10px] text-[var(--color-text-dim)] mt-1 font-mono tracking-wider">
-              Click a date with deadlines to view details
+              Tap a date with deadlines to view details
             </p>
           </div>
         </div>
@@ -39,7 +39,7 @@ export default function CalendarSidebar({ selectedDate, selectedPosts, allPosts 
 
       {/* Additional posts on selected date */}
       {selectedPosts && selectedPosts.length > 1 && (
-        <div className="bg-[#050505] border border-[var(--color-border)] p-5">
+        <div className="bg-[#050505] border border-[var(--color-border)] p-4 sm:p-5">
           <div className="flex items-center justify-between pb-3 mb-3 border-b border-[var(--color-border)]">
             <h3 className="font-display text-[var(--text-sm)] font-semibold text-[var(--color-text)]">
               Also on this date
@@ -58,7 +58,7 @@ export default function CalendarSidebar({ selectedDate, selectedPosts, allPosts 
 
       {/* Upcoming in 7 Days Queue */}
       {upcomingPosts.length > 0 && (
-        <div className="bg-[#050505] border border-[var(--color-border)] p-5">
+        <div className="bg-[#050505] border border-[var(--color-border)] p-4 sm:p-5">
           <div className="flex items-center justify-between pb-3 mb-3 border-b border-[var(--color-border)]">
             <h3 className="font-display text-[var(--text-sm)] font-semibold text-[var(--color-text)]">
               Upcoming in 7 Days
@@ -102,10 +102,10 @@ function InspectorCard({ post, selectedDate, totalOnDate }) {
   }
 
   return (
-    <div className="bg-[#0c0c0e] border border-[var(--color-border-light)] p-5">
+    <div className="bg-[#0c0c0e] border border-[var(--color-border-light)] p-4 sm:p-5 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 mb-3 border-b border-[var(--color-border)]">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between pb-3 mb-3 border-b border-[var(--color-border)] flex-wrap gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {isUrgent && (
             <span className="px-2 py-0.5 bg-red-950/60 border border-red-800/80 text-red-300 text-[9px] font-mono font-semibold uppercase tracking-wider">
               URGENT
@@ -126,13 +126,13 @@ function InspectorCard({ post, selectedDate, totalOnDate }) {
       </div>
 
       {/* Content */}
-      <div className="mb-3">
+      <div className="mb-3.5">
         {(subjectCode || subjectName) && (
           <span className="text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-wider">
             {subjectCode}{subjectName && subjectCode ? ' · ' : ''}{subjectName}
           </span>
         )}
-        <h3 className="font-display text-xl font-bold text-[var(--color-text)] mt-1 leading-snug">
+        <h3 className="font-display text-lg sm:text-xl font-bold text-[var(--color-text)] mt-1 leading-snug">
           {post.title}
         </h3>
         {post.content && (
@@ -154,7 +154,7 @@ function InspectorCard({ post, selectedDate, totalOnDate }) {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between p-2.5 bg-[var(--color-surface-3)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] text-[var(--text-xs)] text-[var(--color-text)] transition-colors"
+              className="flex items-center justify-between p-3 min-h-[44px] bg-[var(--color-surface-3)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] active:bg-[var(--color-surface-2)] text-[var(--text-xs)] text-[var(--color-text)] transition-colors"
             >
               <div className="flex items-center gap-2 truncate">
                 <span className="text-[10px] font-mono text-[var(--color-text-dim)]">↗</span>
@@ -166,13 +166,13 @@ function InspectorCard({ post, selectedDate, totalOnDate }) {
       )}
 
       {/* Footer */}
-      <div className="mt-4 pt-3 border-t border-[var(--color-border)] flex items-center justify-between">
+      <div className="mt-4 pt-3 border-t border-[var(--color-border)] flex items-center justify-between gap-3">
         <span className="text-[10px] font-mono text-[var(--color-text-dim)]">
           {typeConfig?.label || post.type}
         </span>
         <Link
           to={`/post/${post.id}`}
-          className="px-3 py-1.5 bg-[var(--color-text)] text-black font-medium text-[var(--text-xs)] hover:bg-[var(--color-accent-hover)] transition-colors"
+          className="px-3.5 py-2 min-h-[38px] flex items-center justify-center bg-[var(--color-text)] text-black font-medium text-[var(--text-xs)] hover:bg-[var(--color-accent-hover)] active:bg-[var(--color-text-muted)] transition-colors"
         >
           View Post Details →
         </Link>
@@ -187,7 +187,7 @@ function UpcomingItem({ post }) {
   const typeConfig = CONTENT_TYPES[post.type];
 
   return (
-    <Link to={`/post/${post.id}`} className="py-3 first:pt-0 last:pb-0 block hover:bg-[var(--color-surface-2)]/30 transition-colors">
+    <Link to={`/post/${post.id}`} className="py-3 first:pt-0 last:pb-0 block hover:bg-[var(--color-surface-2)]/30 active:bg-[var(--color-surface-2)]/60 transition-colors">
       <div className="flex items-center justify-between text-[9px] font-mono mb-1">
         <span className="text-[var(--color-text-muted)]">
           {subjectCode}{subjectCode && ' · '}{typeConfig?.label || post.type}
@@ -205,3 +205,4 @@ function UpcomingItem({ post }) {
     </Link>
   );
 }
+
