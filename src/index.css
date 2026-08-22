@@ -482,3 +482,59 @@ textarea.input-field {
   font-family: var(--font-sans);
   font-size: var(--text-base);
 }
+
+/* ============================================================
+   Calendar View
+   ============================================================ */
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  background-color: var(--color-border);
+  gap: 1px;
+}
+
+.day-cell {
+  background-color: #050505;
+  min-height: 110px;
+  transition: background-color 0.15s ease;
+}
+
+.day-cell:hover {
+  background-color: #0d0d0d;
+}
+
+.day-cell-other {
+  background-color: #000000;
+  opacity: 0.3;
+}
+
+.day-cell-today {
+  background-color: #0c0c0e;
+  position: relative;
+}
+
+.day-cell-today::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-text);
+}
+
+.day-cell-selected {
+  background-color: #0f0f14;
+  outline: 1px solid var(--color-border-light);
+  outline-offset: -1px;
+}
+
+.event-chip {
+  transition: transform 0.1s ease, border-color 0.15s ease;
+}
+
+.event-chip:hover {
+  transform: translateX(1px);
+}
+

@@ -7,6 +7,7 @@ import AdminSidebar from '../components/admin/AdminSidebar';
 import PostForm from '../components/admin/PostForm';
 import PostTable from '../components/admin/PostTable';
 import SubjectManager from '../components/admin/SubjectManager';
+import AdminCalendar from '../components/admin/AdminCalendar';
 import DeadlineBanner from '../components/posts/DeadlineBanner';
 import NoticesSection from '../components/posts/NoticesSection';
 import PinnedSection from '../components/posts/PinnedSection';
@@ -62,6 +63,7 @@ export default function AdminPage() {
             <Route path="/edit/:id" element={<EditPostWrapper />} />
             <Route path="/posts" element={<PostTable />} />
             <Route path="/subjects" element={<SubjectManager />} />
+            <Route path="/calendar" element={<AdminCalendar />} />
           </Routes>
         </main>
       </div>

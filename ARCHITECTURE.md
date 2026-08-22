@@ -131,7 +131,7 @@ Rendered on PostPage as high-contrast actionable link cards with external domain
 <BrowserRouter>
 └── <App>                          // Route definitions (lazy routes + Suspense fallback)
     ├── <HomePage>                 // "/" — Main student feed
-    │   ├── <Header>               // Sticky nav: logo, search toggle, admin link
+    │   ├── <Header>               // Sticky nav: logo, calendar nav link, search toggle, admin link
     │   ├── <SearchBar>            // Debounced text input (Ctrl+K shortcut)
     │   ├── <FilterBar>            // Type + Subject pill buttons
     │   ├── <DeadlineBanner>       // Horizontal scrollable deadline cards
@@ -141,6 +141,13 @@ Rendered on PostPage as high-contrast actionable link cards with external domain
     │   │   └── <PostCard> × N
     │   ├── <PostGrid>             // Grid of remaining posts
     │   │   └── <PostCard> × N
+    │   └── <Footer>
+    │
+    ├── <CalendarPage> (Lazy)      // "/calendar" — Full-page academic deadlines calendar
+    │   ├── <Header>               // Sticky nav with active Calendar link
+    │   ├── <CalendarControls>     // Month navigation (< August 2026 >), TODAY button, subject filter chips
+    │   ├── <CalendarGrid>         // 7-column monthly grid with urgency indicators (<24h red badges)
+    │   ├── <CalendarSidebar>      // Selected date inspector card + upcoming 7 days agenda
     │   └── <Footer>
     │
     ├── <PostPage> (Lazy)          // "/post/:id" — Full post detail
@@ -153,14 +160,15 @@ Rendered on PostPage as high-contrast actionable link cards with external domain
     │
     ├── <AdminPage> (Lazy)         // "/admin/*" — Protected dashboard
     │   ├── <AdminLogin>           // Password gate (Turnstile protected)
-    │   ├── <AdminSidebar>         // Navigation sidebar
+    │   ├── <AdminSidebar>         // Navigation sidebar (Dashboard, Create, Posts, Subjects, Calendar)
     │   └── Nested routes:
     │       ├── <AdminDashboard>   // "/admin" — Stats + quick actions + live Student View feed preview
     │       ├── <PostForm>         // "/admin/create" — New post
     │       ├── <EditPostWrapper>  // "/admin/edit/:id" — Edit post
     │       │   └── <PostForm>
     │       ├── <PostTable>        // "/admin/posts" — All posts list (status filter, created/due date sort)
-    │       └── <SubjectManager>   // "/admin/subjects" — CRUD subjects
+    │       ├── <SubjectManager>   // "/admin/subjects" — CRUD subjects
+    │       └── <AdminCalendar>    // "/admin/calendar" — Dedicated calendar view in admin
     │
     └── <NotFoundPage> (Lazy)      // "*" — 404
 ```
@@ -173,6 +181,7 @@ BatchHub uses **local component state + custom hooks** — no global state libra
 |------|--------|---------|
 | `usePosts(filters)` | `hooks/usePosts.js` | Fetches published posts with filters; provides `posts`, `loading`, `error`, `refetch` |
 | `useUpcomingDeadlines()` | `hooks/usePosts.js` | Fetches posts with future `due_date`, sorted ascending |
+| `useCalendarPosts(year, month)` | `hooks/useCalendar.js` | Fetches posts with `due_date` falling within the month for calendar grid views |
 | `usePost(id)` | `hooks/usePost.js` | Fetches a single post by UUID |
 | `useSubjects()` | `hooks/useSubjects.js` | Fetches all subjects sorted by name |
 | `useAdmin()` | `hooks/useAdmin.js` | Manages auth state: `isAuthenticated`, `login()`, `logout()` with instant demo bypass |

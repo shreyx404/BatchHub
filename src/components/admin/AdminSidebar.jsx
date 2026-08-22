@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, FilePlus, FileText, BookOpen,
-  LogOut, X
+  CalendarClock, LogOut, X
 } from 'lucide-react';
 import { APP_NAME } from '../../lib/constants';
 
@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { to: '/admin/create', icon: FilePlus, label: 'Create Post' },
   { to: '/admin/posts', icon: FileText, label: 'All Posts' },
   { to: '/admin/subjects', icon: BookOpen, label: 'Subjects' },
+  { to: '/admin/calendar', icon: CalendarClock, label: 'Calendar' },
 ];
 
 export default function AdminSidebar({ isOpen, onClose, onLogout }) {

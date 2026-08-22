@@ -156,6 +156,7 @@
 - [x] **T-089** — Float posts without deadlines to the very top in admin `PostTable` when sorting by Due Date (with secondary sorting by newest created date)
 - [x] **T-090** — Comprehensive security hardening: Fail-closed & timing-safe authentication in auto-archive cron (`api/cron/auto-archive.js`), persistent serverless per-IP rate limiting via Supabase `admin_login_attempts` in `api/admin.js`, restricted CORS origin handling, and strict URL scheme sanitization (`https?://`, `mailto:`) in `PostPage` & `PostForm`
 - [x] **T-091** — Set default status filter to 'published' in admin 'All Posts' section (`PostTable.jsx`) with URL parameter synchronization and explicit 'Total Posts' overview link (`/admin/posts?status=all`)
+- [x] **T-080** — Calendar view for deadlines: Full-page `/calendar` route with 7-column monthly grid, subject filter chips, today highlighting, urgency indicators (<24h red accents), selected-date inspector sidebar with resource links, upcoming-in-7-days agenda, month navigation, and `TODAY` snap-back. Admin dashboard calendar view at `/admin/calendar` with sidebar link. No new dependencies (uses existing `date-fns`).
 
 ---
 
@@ -168,7 +169,7 @@
 - [ ] **T-077** — PWA support with offline caching (service worker)
 - [ ] **T-078** — Email digest for weekly summaries
 - [ ] **T-079** — Comments / reactions on posts
-- [ ] **T-080** — Calendar view for deadlines
+
 - [ ] **T-081** — Dark/Light theme toggle (currently dark-only)
 - [ ] **T-082** — Bulk post operations in admin (archive all, delete selected)
 - [ ] **T-083** — Post scheduling (publish at a future date)

@@ -172,6 +172,40 @@ export async function fetchUpcomingDeadlines() {
 }
 
 /**
+ * Fetch posts with due_date in a given month (±6 days for calendar grid padding).
+ */
+export async function fetchCalendarDeadlines(year, month) {
+  // Build date range: start of month minus 6 days, end of month plus 6 days
+  const start = new Date(year, month, 1);
+  start.setDate(start.getDate() - 6);
+  const end = new Date(year, month + 1, 0);
+  end.setDate(end.getDate() + 6);
+  end.setHours(23, 59, 59, 999);
+
+  if (!isSupabaseConfigured()) {
+    return DEMO_POSTS
+      .filter((p) => {
+        if (!p.due_date || p.status !== 'published') return false;
+        const d = new Date(p.due_date);
+        return d >= start && d <= end;
+      })
+      .sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
+  }
+
+  const { data, error } = await supabase
+    .from('posts')
+    .select('*, subjects(*)')
+    .eq('status', 'published')
+    .not('due_date', 'is', null)
+    .gte('due_date', start.toISOString())
+    .lte('due_date', end.toISOString())
+    .order('due_date', { ascending: true });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
  * Create a new post.
  */
 export async function createPost(postData) {

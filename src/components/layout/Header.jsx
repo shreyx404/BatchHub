@@ -1,27 +1,45 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Search, X, Settings } from 'lucide-react';
+import { Search, X, Settings, CalendarClock } from 'lucide-react';
 import { APP_NAME } from '../../lib/constants';
 
 export default function Header({ searchOpen, onToggleSearch, onSearchChange, searchValue }) {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
+  const isCalendar = location.pathname === '/calendar';
 
   return (
     <header className="sticky top-0 z-50 glass-strong border-b border-[var(--color-border)]">
       <div className="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between gap-3">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
-          <div className="w-8 h-8 bg-white flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
-            <img
-              src="/batchhub-icon.png"
-              alt={APP_NAME}
-              className="w-full h-full object-contain p-0.5"
-            />
-          </div>
-          <span className="font-display text-lg font-medium tracking-[-0.01em] text-[var(--color-text)] leading-none">
-            {APP_NAME}
-          </span>
-        </Link>
+        <div className="flex items-center gap-4 shrink-0">
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="w-8 h-8 bg-white flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
+              <img
+                src="/batchhub-icon.png"
+                alt={APP_NAME}
+                className="w-full h-full object-contain p-0.5"
+              />
+            </div>
+            <span className="font-display text-lg font-medium tracking-[-0.01em] text-[var(--color-text)] leading-none">
+              {APP_NAME}
+            </span>
+          </Link>
+
+          {/* Calendar nav link */}
+          {!isAdmin && (
+            <Link
+              to="/calendar"
+              className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-[var(--text-xs)] font-medium tracking-[0.01em] transition-colors ${
+                isCalendar
+                  ? 'text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border-light)]'
+                  : 'text-[var(--color-text-dim)] hover:text-[var(--color-text-muted)]'
+              }`}
+            >
+              <CalendarClock size={13} />
+              Calendar
+            </Link>
+          )}
+        </div>
 
         {/* Right actions */}
         <div className="flex items-center gap-2">

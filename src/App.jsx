@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage';
 import { LoadingSpinner } from './components/ui/LoadingState';
 
 const PostPage = lazy(() => import('./pages/PostPage'));
+const CalendarPage = lazy(() => import('./pages/CalendarPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
@@ -18,6 +19,7 @@ export default function App() {
     >
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/calendar" element={<CalendarPage />} />
         <Route path="/post/:id" element={<PostPage />} />
         <Route path="/admin/*" element={<AdminPage />} />
         <Route path="*" element={<NotFoundPage />} />
