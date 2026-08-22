@@ -120,7 +120,7 @@ function AdminDashboard() {
     {
       label: 'Total Posts', value: stats.total, icon: FileText,
       color: 'var(--color-accent)', bg: 'var(--color-accent)',
-      to: '/admin/posts',
+      to: '/admin/posts?status=all',
     },
     {
       label: 'Published', value: stats.published, icon: TrendingUp,

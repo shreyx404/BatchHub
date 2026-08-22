@@ -21,7 +21,7 @@ export default function PostTable() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const statusParam = searchParams.get('status');
-  const [statusFilter, setStatusFilter] = useState(statusParam || 'all');
+  const [statusFilter, setStatusFilter] = useState(statusParam || 'published');
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [archiveTarget, setArchiveTarget] = useState(null);
   const [sortBy, setSortBy] = useState('due_date');
@@ -30,12 +30,14 @@ export default function PostTable() {
   useEffect(() => {
     if (statusParam && ['all', 'published', 'draft', 'archived'].includes(statusParam)) {
       setStatusFilter(statusParam);
+    } else if (!statusParam) {
+      setStatusFilter('published');
     }
   }, [statusParam]);
 
   const handleStatusFilterChange = (status) => {
     setStatusFilter(status);
-    if (status === 'all') {
+    if (status === 'published') {
       setSearchParams({});
     } else {
       setSearchParams({ status });
@@ -146,11 +148,9 @@ export default function PostTable() {
               }`}
             >
               {s === 'all' ? 'All' : POST_STATUSES[s]?.label || s}
-              {s !== 'all' && (
-                <span className="ml-1 opacity-60">
-                  ({posts.filter((p) => p.status === s).length})
-                </span>
-              )}
+              <span className="ml-1 opacity-60">
+                ({s === 'all' ? posts.length : posts.filter((p) => p.status === s).length})
+              </span>
             </button>
           ))}
         </div>

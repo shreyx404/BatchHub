@@ -155,6 +155,7 @@
 - [x] **T-088** — Update BatchHub brand icon and favicon assets across Header, Admin Sidebar, Admin Login, and HTML document metadata using custom graduate batch illustration
 - [x] **T-089** — Float posts without deadlines to the very top in admin `PostTable` when sorting by Due Date (with secondary sorting by newest created date)
 - [x] **T-090** — Comprehensive security hardening: Fail-closed & timing-safe authentication in auto-archive cron (`api/cron/auto-archive.js`), persistent serverless per-IP rate limiting via Supabase `admin_login_attempts` in `api/admin.js`, restricted CORS origin handling, and strict URL scheme sanitization (`https?://`, `mailto:`) in `PostPage` & `PostForm`
+- [x] **T-091** — Set default status filter to 'published' in admin 'All Posts' section (`PostTable.jsx`) with URL parameter synchronization and explicit 'Total Posts' overview link (`/admin/posts?status=all`)
 
 ---
 
