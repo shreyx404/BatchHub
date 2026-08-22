@@ -1,7 +1,7 @@
 # BatchHub — Task Breakdown
 
-> **Version:** 1.1  
-> **Last Updated:** 2026-08-21  
+> **Version:** 1.2  
+> **Last Updated:** 2026-08-22  
 > **Status Legend:** ✅ Done · 🔲 Planned · 🚧 In Progress
 
 ---
@@ -157,6 +157,10 @@
 - [x] **T-090** — Comprehensive security hardening: Fail-closed & timing-safe authentication in auto-archive cron (`api/cron/auto-archive.js`), persistent serverless per-IP rate limiting via Supabase `admin_login_attempts` in `api/admin.js`, restricted CORS origin handling, and strict URL scheme sanitization (`https?://`, `mailto:`) in `PostPage` & `PostForm`
 - [x] **T-091** — Set default status filter to 'published' in admin 'All Posts' section (`PostTable.jsx`) with URL parameter synchronization and explicit 'Total Posts' overview link (`/admin/posts?status=all`)
 - [x] **T-080** — Calendar view for deadlines: Full-page `/calendar` route with 7-column monthly grid, subject filter chips, today highlighting, urgency indicators (<24h red accents), selected-date inspector sidebar with resource links, upcoming-in-7-days agenda, month navigation, and `TODAY` snap-back. Admin dashboard calendar view at `/admin/calendar` with sidebar link. No new dependencies (uses existing `date-fns`).
+- [x] **T-092** — Mobile and tablet optimization for Calendar View: Adaptive cell heights (`54px` mobile, `80px` tablet, `105px` desktop), compact event indicator dots on small screens with `+N` badge, mobile auto-scroll to inspector card on date selection, and full-width touch-scrollable filter chips.
+- [x] **T-093** — High-contrast text resolution for active controls in Tailwind CSS v4: Added `--color-black` and `--color-white` tokens to `@theme` and explicit utility classes to ensure crisp black text on white backgrounds for active filter chips, `MONTH` view mode button, and today's date badge.
+- [x] **T-094** — Header layout refinement: Positioned the Calendar button on the top right between the Search icon and Admin Settings gear icon for ergonomic navigation.
+
 
 ---
 

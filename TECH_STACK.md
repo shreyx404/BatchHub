@@ -1,7 +1,7 @@
 # BatchHub — Technology Stack
 
-> **Version:** 1.1  
-> **Last Updated:** 2026-08-21
+> **Version:** 1.2  
+> **Last Updated:** 2026-08-22
 
 ---
 

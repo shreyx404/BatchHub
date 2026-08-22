@@ -1,7 +1,7 @@
 # BatchHub — Architecture Document
 
-> **Version:** 1.1  
-> **Last Updated:** 2026-08-21
+> **Version:** 1.2  
+> **Last Updated:** 2026-08-22
 
 ---
 
@@ -16,12 +16,13 @@
 │  │   (Vite + React SPA)  │    │                              │  │
 │  │                       │    │  ┌────────────┐              │  │
 │  │  • HomePage           │    │  │ admin.js   │ ← Admin CRUD │  │
-│  │  • PostPage (Lazy)    │    │  │            │   + Auth      │  │
-│  │  • AdminPage (Lazy)   │    │  └────────────┘              │  │
-│  │  • NotFoundPage (Lazy)│    │  ┌────────────┐              │  │
-│  │                       │    │  │ discord.js │ ← Webhook     │  │
-│  │  Reads via anon key ──┼───►│  │            │   + Sig       │  │
-│  │                       │    │  └────────────┘   Verify      │  │
+│  │  • CalendarPage (Lazy)│    │  │            │   + Auth      │  │
+│  │  • PostPage (Lazy)    │    │  └────────────┘              │  │
+│  │  • AdminPage (Lazy)   │    │  ┌────────────┐              │  │
+│  │  • NotFoundPage (Lazy)│    │  │ discord.js │ ← Webhook     │  │
+│  │                       │    │  │            │   + Sig       │  │
+│  │  Reads via anon key ──┼───►│  │            │   Verify      │  │
+│  │                       │    │  └────────────┘              │  │
 │  └───────────────────────┘    └──────────┬───────────────────┘  │
 │                                          │                      │
 └──────────────────────────────────────────┼──────────────────────┘

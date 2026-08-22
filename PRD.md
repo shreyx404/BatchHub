@@ -1,7 +1,7 @@
 # BatchHub — Product Requirements Document (PRD)
 
-> **Version:** 1.1  
-> **Last Updated:** 2026-08-21  
+> **Version:** 1.2  
+> **Last Updated:** 2026-08-22  
 > **Status:** Living Document
 
 ---
