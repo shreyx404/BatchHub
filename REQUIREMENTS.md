@@ -90,7 +90,7 @@
 | FR-041e | Date navigation (prev/next week or month) with fast `TODAY` return button | P1 | ✅ Implemented |
 | FR-041f | Subject filter chips dynamically filtering calendar events with count badges across all views | P1 | ✅ Implemented |
 | FR-041g | Visual urgency markers for deadlines due within 24 hours (red borders, countdown chips) | P1 | ✅ Implemented |
-| FR-041h | Date selection inspector card with complete post metadata and direct resource link buttons | P1 | ✅ Implemented |
+| FR-041h | Date selection inspector drawer displaying all deliverables on the selected date combined, highlighted, and sorted in ascending order by due time with direct resource links | P1 | ✅ Implemented |
 | FR-041i | Dedicated Admin Calendar view (`/admin/calendar`) integrated into Admin Sidebar supporting all three modes | P1 | ✅ Implemented |
 
 ### 1.8 Discord Bot Integration

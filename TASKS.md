@@ -160,6 +160,7 @@
 - [x] **T-092** — Mobile and tablet optimization for Calendar View: Adaptive cell heights (`54px` mobile, `80px` tablet, `105px` desktop), compact event indicator dots on small screens with `+N` badge, mobile auto-scroll to inspector card on date selection, horizontal touch-momentum scrolling for week view, and full-width touch-scrollable filter chips.
 - [x] **T-093** — High-contrast text resolution for active controls in Tailwind CSS v4: Added `--color-black` and `--color-white` tokens to `@theme` and explicit utility classes to ensure crisp black text on white backgrounds for active filter chips, `MONTH` / `WEEK` / `AGENDA` view mode buttons, and today's date badge.
 - [x] **T-094** — Header layout refinement: Positioned the Calendar button on the top right between the Search icon and Admin Settings gear icon for ergonomic navigation.
+- [x] **T-095** — Combined & due-time sorted selected date inspector in Calendar Sidebar: When a date is selected in Month or Week view, renders all deliverables for that day as full highlighted inspector cards sorted by due time (earliest to latest), with date banner and automatic de-duplication in the upcoming 7-day queue.
 
 
 ---
