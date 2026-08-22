@@ -83,12 +83,15 @@
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| FR-041a | Dedicated full-page interactive calendar view at `/calendar` with monthly 7-column layout | P1 | ✅ Implemented |
-| FR-041b | Month navigation (prev/next) with fast `TODAY` return button | P1 | ✅ Implemented |
-| FR-041c | Subject filter chips dynamically filtering calendar events with count badges | P1 | ✅ Implemented |
-| FR-041d | Visual urgency markers for deadlines due within 24 hours (red borders, countdown chips) | P1 | ✅ Implemented |
-| FR-041e | Date selection inspector card with complete post metadata and direct resource link buttons | P1 | ✅ Implemented |
-| FR-041f | Dedicated Admin Calendar view (`/admin/calendar`) integrated into Admin Sidebar | P1 | ✅ Implemented |
+| FR-041a | Dedicated full-page interactive calendar view at `/calendar` with multi-mode switcher (`MONTH`, `WEEK`, `AGENDA`) | P1 | ✅ Implemented |
+| FR-041b | Month View: 7-column monthly grid with previous/next month overflow, today highlight, and urgency indicators | P1 | ✅ Implemented |
+| FR-041c | Week View: 7-column weekly timetable (`CalendarWeekView`) with horizontal touch scrolling and day date badges | P1 | ✅ Implemented |
+| FR-041d | Agenda View: Chronological grouped timeline (`CalendarAgendaView`) with relative day badges, countdowns, and direct detail links | P1 | ✅ Implemented |
+| FR-041e | Date navigation (prev/next week or month) with fast `TODAY` return button | P1 | ✅ Implemented |
+| FR-041f | Subject filter chips dynamically filtering calendar events with count badges across all views | P1 | ✅ Implemented |
+| FR-041g | Visual urgency markers for deadlines due within 24 hours (red borders, countdown chips) | P1 | ✅ Implemented |
+| FR-041h | Date selection inspector card with complete post metadata and direct resource link buttons | P1 | ✅ Implemented |
+| FR-041i | Dedicated Admin Calendar view (`/admin/calendar`) integrated into Admin Sidebar supporting all three modes | P1 | ✅ Implemented |
 
 ### 1.8 Discord Bot Integration
 

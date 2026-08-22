@@ -146,8 +146,10 @@ Rendered on PostPage as high-contrast actionable link cards with external domain
     │
     ├── <CalendarPage> (Lazy)      // "/calendar" — Full-page academic deadlines calendar
     │   ├── <Header>               // Sticky nav with active Calendar link
-    │   ├── <CalendarControls>     // Month navigation (< August 2026 >), TODAY button, subject filter chips
-    │   ├── <CalendarGrid>         // 7-column monthly grid with urgency indicators (<24h red badges)
+    │   ├── <CalendarControls>     // Multi-mode switcher (MONTH/WEEK/AGENDA), dynamic date navigator, TODAY button, subject filter chips
+    │   ├── <CalendarGrid>         // 7-column monthly grid with urgency indicators (<24h red badges) [Month View]
+    │   ├── <CalendarWeekView>     // 7-column weekly timetable with horizontal touch scrolling [Week View]
+    │   ├── <CalendarAgendaView>   // Chronological timeline view grouped by date with countdowns [Agenda View]
     │   ├── <CalendarSidebar>      // Selected date inspector card + upcoming 7 days agenda
     │   └── <Footer>
     │
@@ -169,7 +171,7 @@ Rendered on PostPage as high-contrast actionable link cards with external domain
     │       │   └── <PostForm>
     │       ├── <PostTable>        // "/admin/posts" — All posts list (status filter, created/due date sort)
     │       ├── <SubjectManager>   // "/admin/subjects" — CRUD subjects
-    │       └── <AdminCalendar>    // "/admin/calendar" — Dedicated calendar view in admin
+    │       └── <AdminCalendar>    // "/admin/calendar" — Dedicated calendar view in admin (Month/Week/Agenda)
     │
     └── <NotFoundPage> (Lazy)      // "*" — 404
 ```

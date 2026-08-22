@@ -47,7 +47,7 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 | F-05 | **Filters** | Filter by content type (assignment, lab, notice, etc.) and by subject |
 | F-06 | **Post Detail Page** | Full Markdown rendering, tags, direct resource links & attachments, and formatted share button |
 | F-07 | **Deep Links & Sharing** | Every post has a unique URL (`/post/:id`) shareable via native Web Share API with rich formatted text (`*<Title>*\n\n_BatchHub :_ ->\n<Link>`) and robust clipboard fallback |
-| F-08 | **Academic Deadlines Calendar View** | Full-page interactive monthly calendar (`/calendar`) with subject filter chips, month navigation, today snap-back, urgency indicators (< 24h red badges), selected-date inspector drawer with direct resource links, and upcoming 7-day agenda list |
+| F-08 | **Academic Deadlines Calendar View** | Full-page interactive calendar (`/calendar`) supporting **Month**, **Week** (7-day timetable with touch scrolling), and **Agenda** (chronological grouped timeline with countdowns) views, complete with subject filter chips, date navigation, today snap-back, urgency indicators (< 24h red badges), selected-date inspector drawer with direct resource links, and upcoming 7-day queue |
 | F-08a | **Demo Mode** | App runs with sample data when Supabase is not configured, allowing UI preview without a database |
 
 ### 3.2 Admin Dashboard (Password-Protected)
@@ -60,7 +60,7 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 | F-12 | **Subject Manager** | Create, edit, delete subjects with color coding |
 | F-13 | **Resource Links & Attachments** | Add labeled resource links (Google Drive, Classroom, PDFs, GitHub) without upload bottlenecks |
 | F-14 | **Metadata Management** | Tags (comma-separated), external links (label + URL pairs), due dates, pin toggle, status control |
-| F-14a | **Admin Calendar View** | Dedicated calendar view in Admin Dashboard (`/admin/calendar`) accessible from sidebar navigation for managing and inspecting upcoming batch deadlines |
+| F-14a | **Admin Calendar View** | Dedicated multi-mode calendar view in Admin Dashboard (`/admin/calendar`) accessible from sidebar navigation for managing and inspecting upcoming batch deadlines in Month, Week, and Agenda modes |
 
 ### 3.3 Discord Bot Integration (Optional)
 

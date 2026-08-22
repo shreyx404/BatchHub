@@ -1,7 +1,9 @@
 import { useState, useMemo, useCallback } from 'react';
-import { format } from 'date-fns';
+import { format, addMonths, subMonths, addWeeks, subWeeks } from 'date-fns';
 import CalendarControls from '../calendar/CalendarControls';
 import CalendarGrid from '../calendar/CalendarGrid';
+import CalendarWeekView from '../calendar/CalendarWeekView';
+import CalendarAgendaView from '../calendar/CalendarAgendaView';
 import CalendarSidebar from '../calendar/CalendarSidebar';
 import LoadingState from '../ui/LoadingState';
 import ErrorState from '../ui/ErrorState';
@@ -10,11 +12,13 @@ import { useSubjects } from '../../hooks/useSubjects';
 import { CalendarClock } from 'lucide-react';
 
 export default function AdminCalendar() {
-  const now = new Date();
-  const [year, setYear] = useState(now.getFullYear());
-  const [month, setMonth] = useState(now.getMonth());
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [viewMode, setViewMode] = useState('month'); // 'month' | 'week' | 'agenda'
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
 
   const { posts, loading, error } = useCalendarPosts(year, month);
   const { subjects } = useSubjects();
@@ -29,6 +33,7 @@ export default function AdminCalendar() {
   const postsByDate = useMemo(() => {
     const grouped = {};
     for (const post of filteredPosts) {
+      if (!post.due_date) continue;
       const d = new Date(post.due_date);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       if (!grouped[key]) grouped[key] = [];
@@ -51,32 +56,30 @@ export default function AdminCalendar() {
   // Selected date posts
   const selectedPosts = selectedDate ? (postsByDate[selectedDate] || []) : [];
 
-  const handlePrevMonth = useCallback(() => {
-    setMonth((prev) => {
-      if (prev === 0) {
-        setYear((y) => y - 1);
-        return 11;
+  // Navigation Handlers adapting to current view mode
+  const handlePrev = useCallback(() => {
+    setCurrentDate((prev) => {
+      if (viewMode === 'week') {
+        return subWeeks(prev, 1);
       }
-      return prev - 1;
+      return subMonths(prev, 1);
     });
     setSelectedDate(null);
-  }, []);
+  }, [viewMode]);
 
-  const handleNextMonth = useCallback(() => {
-    setMonth((prev) => {
-      if (prev === 11) {
-        setYear((y) => y + 1);
-        return 0;
+  const handleNext = useCallback(() => {
+    setCurrentDate((prev) => {
+      if (viewMode === 'week') {
+        return addWeeks(prev, 1);
       }
-      return prev + 1;
+      return addMonths(prev, 1);
     });
     setSelectedDate(null);
-  }, []);
+  }, [viewMode]);
 
   const handleToday = useCallback(() => {
     const today = new Date();
-    setYear(today.getFullYear());
-    setMonth(today.getMonth());
+    setCurrentDate(today);
     const key = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
     setSelectedDate(key);
   }, []);
@@ -108,10 +111,11 @@ export default function AdminCalendar() {
         </div>
 
         <CalendarControls
-          year={year}
-          month={month}
-          onPrevMonth={handlePrevMonth}
-          onNextMonth={handleNextMonth}
+          currentDate={currentDate}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          onPrev={handlePrev}
+          onNext={handleNext}
           onToday={handleToday}
           subjects={subjects}
           selectedSubject={selectedSubject}
@@ -128,15 +132,34 @@ export default function AdminCalendar() {
         <LoadingState />
       ) : (
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5 items-start">
-          {/* Calendar Grid */}
+          {/* Primary Calendar View Area */}
           <div className="xl:col-span-8">
-            <CalendarGrid
-              year={year}
-              month={month}
-              postsByDate={postsByDate}
-              selectedDate={selectedDate}
-              onSelectDate={handleSelectDate}
-            />
+            {viewMode === 'month' && (
+              <CalendarGrid
+                year={year}
+                month={month}
+                postsByDate={postsByDate}
+                selectedDate={selectedDate}
+                onSelectDate={handleSelectDate}
+              />
+            )}
+
+            {viewMode === 'week' && (
+              <CalendarWeekView
+                currentDate={currentDate}
+                postsByDate={postsByDate}
+                selectedDate={selectedDate}
+                onSelectDate={handleSelectDate}
+              />
+            )}
+
+            {viewMode === 'agenda' && (
+              <CalendarAgendaView
+                posts={filteredPosts}
+                selectedSubject={selectedSubject}
+                onSubjectChange={setSelectedSubject}
+              />
+            )}
           </div>
 
           {/* Sidebar */}
@@ -152,4 +175,3 @@ export default function AdminCalendar() {
     </div>
   );
 }
-

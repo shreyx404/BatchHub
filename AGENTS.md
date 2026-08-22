@@ -40,11 +40,11 @@ src/
 │   ├── layout/           # Header, Footer
 │   ├── ui/               # Badge, SearchBar, FilterBar, Modal, LoadingState, ErrorState, EmptyState
 │   ├── posts/            # PostCard, PostGrid, DeadlineBanner, PinnedSection, NoticesSection
-│   ├── calendar/         # CalendarGrid, CalendarSidebar, CalendarControls
+│   ├── calendar/         # CalendarGrid, CalendarWeekView, CalendarAgendaView, CalendarSidebar, CalendarControls
 │   └── admin/            # AdminLogin, AdminSidebar, PostForm, PostTable, SubjectManager, AdminCalendar
 └── pages/
     ├── HomePage.jsx      # Student feed with structured sections
-    ├── CalendarPage.jsx  # Full-page deadlines calendar with monthly grid & sidebar
+    ├── CalendarPage.jsx  # Full-page deadlines calendar (Month, Week, Agenda) with sidebar inspector
     ├── PostPage.jsx      # Full post detail view
     ├── AdminPage.jsx     # Admin dashboard with nested routes & live student preview
     └── NotFoundPage.jsx  # 404 page
