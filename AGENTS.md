@@ -51,6 +51,7 @@ src/
 
 api/
 ├── admin.js              # Secure admin API (auth + 4-tier rate limit/Turnstile + CRUD)
+├── calendar.js           # Public serverless calendar deadlines API (service-role query for published + archived)
 ├── discord.js            # Discord interaction webhook
 └── cron/
     └── auto-archive.js   # Vercel Cron — daily auto-archive of expired posts (Hobby tier compliant)

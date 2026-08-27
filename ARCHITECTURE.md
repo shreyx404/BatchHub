@@ -19,10 +19,12 @@
 │  │  • CalendarPage (Lazy)│    │  │            │   + Auth      │  │
 │  │  • PostPage (Lazy)    │    │  └────────────┘              │  │
 │  │  • AdminPage (Lazy)   │    │  ┌────────────┐              │  │
-│  │  • NotFoundPage (Lazy)│    │  │ discord.js │ ← Webhook     │  │
+│  │  • NotFoundPage (Lazy)│    │  │ calendar.js│ ← Calendar   │  │
+│  │                       │    │  └────────────┘   Deadlines  │  │
+│  │  Reads via anon key / ┼───►│  ┌────────────┐              │  │
+│  │  public endpoints     │    │  │ discord.js │ ← Webhook     │  │
 │  │                       │    │  │            │   + Sig       │  │
-│  │  Reads via anon key ──┼───►│  │            │   Verify      │  │
-│  │                       │    │  └────────────┘              │  │
+│  │                       │    │  └────────────┘   Verify     │  │
 │  └───────────────────────┘    └──────────┬───────────────────┘  │
 │                                          │                      │
 └──────────────────────────────────────────┼──────────────────────┘
@@ -205,6 +207,7 @@ All data fetching is centralised in a single API module that:
 | Endpoint | File | Auth Method | Purpose |
 |----------|------|-------------|---------|
 | `POST /api/admin` | `api/admin.js` | Bearer token (timing-safe SHA-256) | All admin CRUD operations with 5-layer rate limiting (in-memory & persistent Supabase IP rate limit) |
+| `GET /api/calendar` | `api/calendar.js` | None (Public) | Fetch calendar deliverables with start/end date filters (published + archived) via service role |
 | `POST /api/discord` | `api/discord.js` | Ed25519 signature | Discord interaction webhook |
 | `GET /api/cron/auto-archive` | `api/cron/auto-archive.js` | `CRON_SECRET` Bearer token (timing-safe SHA-256) | Daily auto-archive of expired posts (fail-closed if unconfigured) |
 
@@ -216,6 +219,7 @@ The admin endpoint uses a single `POST` with an `action` field to route requests
 |--------|---------|--------|
 | `getAllPosts` | _(none)_ | Select all posts (bypassing public RLS) with joins |
 | `getPost` | `{id}` | Select single post by ID (bypassing public RLS) with joins |
+| `getCalendarDeadlines` | `{start, end}` | Select published & archived posts within date range with joins |
 | `createPost` | Post fields | Insert + return with joins |
 | `updatePost` | `{id, updates}` | Update + return with joins |
 | `deletePost` | `{id}` | Delete row |
