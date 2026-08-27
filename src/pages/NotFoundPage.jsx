@@ -10,7 +10,7 @@ export default function NotFoundPage() {
           <span className="text-8xl sm:text-9xl font-display font-semibold text-[var(--color-text)] tracking-[-0.03em]">
             404
           </span>
-          <div className="absolute inset-0 blur-3xl opacity-10 bg-[var(--color-text)] rounded-full" />
+          <div className="absolute inset-0 blur-3xl opacity-10 bg-[var(--color-text)]" />
         </div>
 
         <h1 className="text-[1.75rem] font-display font-medium text-[var(--color-text)] mb-2 tracking-[-0.015em]">

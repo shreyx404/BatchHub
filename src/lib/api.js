@@ -108,7 +108,7 @@ export async function autoArchiveExpiredPosts() {
 export async function fetchAllPosts() {
   if (!isSupabaseConfigured()) {
     // Run auto-archive before returning demo posts
-    autoArchiveExpiredPosts();
+    await autoArchiveExpiredPosts();
     return DEMO_POSTS;
   }
 

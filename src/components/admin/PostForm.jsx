@@ -184,9 +184,9 @@ export default function PostForm({ existingPost, onSaved }) {
             onChange={(e) => updateField('type', e.target.value)}
             className="input-field"
           >
-            {CONTENT_TYPE_LIST.map(({ value, emoji, label }) => (
+            {CONTENT_TYPE_LIST.map(({ value, label }) => (
               <option key={value} value={value}>
-                {emoji} {label}
+                {label}
               </option>
             ))}
           </select>

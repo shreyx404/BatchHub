@@ -303,7 +303,7 @@ h3 {
 .prose code {
   background: var(--color-surface-2);
   padding: 0.15em 0.4em;
-  border-radius: 3px;
+  border-radius: var(--radius-md);
   font-size: 0.85em;
   color: var(--color-text);
   font-family: var(--font-mono);

@@ -12,34 +12,45 @@ export default function PostCard({ post }) {
   const isUrgent = dueDate && !isOverdue && differenceInHours(dueDate, new Date()) < 48;
   const linkCount = post.links?.length || 0;
 
-  // Determine ledger line color based on type
-  const typeColorVar = `var(--color-${post.type})`;
+  const subjectColor = post.subjects?.color || null;
+  const hoverBorderColor = subjectColor || 'var(--color-text)';
+  const hoverGlowColor = subjectColor ? `${subjectColor}55` : 'rgba(245, 245, 244, 0.15)';
 
   const cleanPreview = post.content
     ? post.content
-        .replace(/!\[.*?\]\(.*?\)/g, '')
-        .replace(/\[(.*?)\]\(.*?\)/g, '$1')
-        .replace(/[#*`_~>|\-]/g, '')
+        .replace(/```[\s\S]*?```/g, '') // remove multi-line code blocks
+        .replace(/`([^`]+)`/g, '$1') // remove inline code formatting
+        .replace(/!\[.*?\]\(.*?\)/g, '') // remove images
+        .replace(/\[(.*?)\]\(.*?\)/g, '$1') // remove links keep text
+        .replace(/^[#>*_\-+]+\s+/gm, '') // remove heading/quote/bullet starts
+        .replace(/^\d+\.\s+/gm, '') // remove numbered list prefixes
+        .replace(/[*_~`#|]/g, '') // remove inline markdown symbols
         .replace(/\s+/g, ' ')
         .trim()
-        .substring(0, 150)
+        .substring(0, 160)
     : '';
 
   return (
     <Link
       to={`/post/${post.id}`}
-      className="group block relative pl-6 py-6 border-l border-[var(--color-border)] transition-all duration-500 hover:bg-[var(--color-surface-2)] hover:-translate-y-0.5 hover:translate-x-0.5"
-      style={{ '--hover-border-color': typeColorVar }}
+      className="group block relative pl-6 py-6 border-l border-[var(--color-border)] transition-all duration-300 hover:bg-[var(--color-surface-2)] hover:-translate-y-0.5 hover:translate-x-0.5"
+      style={{
+        '--hover-border-color': hoverBorderColor,
+        '--hover-glow-color': hoverGlowColor,
+      }}
     >
       {/* Ledger Node Marker */}
       <div 
-        className="absolute left-[-4px] top-[30px] w-[7px] h-[7px] bg-[var(--color-border-light)] transition-colors duration-500 group-hover:bg-[var(--hover-border-color)]"
+        className="absolute left-[-4px] top-[30px] w-[7px] h-[7px] bg-[var(--color-border-light)] transition-colors duration-300 group-hover:bg-[var(--hover-border-color)]"
         style={{ clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }}
       />
       {/* Ledger glowing line overlay */}
       <div 
-        className="absolute left-[-1px] top-0 bottom-0 w-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ backgroundColor: typeColorVar, boxShadow: `0 0 8px ${typeColorVar}` }}
+        className="absolute left-[-1px] top-0 bottom-0 w-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{
+          backgroundColor: hoverBorderColor,
+          boxShadow: subjectColor ? `0 0 8px ${subjectColor}` : '0 0 6px rgba(245, 245, 244, 0.3)',
+        }}
       />
 
       <div className="flex flex-col gap-3.5">

@@ -1,19 +1,28 @@
-export default function LoadingState({ count = 6 }) {
+export default function LoadingState({ count = 3 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="flex flex-col gap-6 max-w-3xl mx-auto w-full">
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="border border-[var(--color-border)] bg-[var(--color-surface)] p-4 space-y-3"
-          style={{ animationDelay: `${i * 80}ms` }}
+          className="relative pl-6 py-6 border-l border-[var(--color-border)] space-y-3.5"
+          style={{ animationDelay: `${i * 100}ms` }}
         >
-          <div className="flex gap-2">
-            <div className="skeleton w-20 h-5" />
-            <div className="skeleton w-14 h-5" />
+          <div
+            className="absolute left-[-4px] top-[30px] w-[7px] h-[7px] bg-[var(--color-border-light)]"
+            style={{ clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }}
+          />
+          <div className="flex items-center gap-3">
+            <div className="skeleton w-28 h-3" />
+            <div className="skeleton w-16 h-4" />
+            <div className="skeleton w-12 h-4" />
           </div>
-          <div className="skeleton w-full h-5" />
-          <div className="skeleton w-3/4 h-5" />
-          <div className="skeleton w-1/2 h-4 mt-2" />
+          <div className="skeleton w-3/4 h-7" />
+          <div className="skeleton w-full h-4" />
+          <div className="skeleton w-2/3 h-4" />
+          <div className="pt-2 border-t border-[var(--color-border)] border-dashed flex justify-between">
+            <div className="skeleton w-36 h-3" />
+            <div className="skeleton w-4 h-4" />
+          </div>
         </div>
       ))}
     </div>

@@ -29,11 +29,23 @@ export default function CalendarPage() {
   const { posts, loading, error } = useCalendarPosts(year, month);
   const { subjects } = useSubjects();
 
-  // Filter posts by subject
+  // Filter posts by subject and search query
   const filteredPosts = useMemo(() => {
-    if (!selectedSubject) return posts;
-    return posts.filter((p) => p.subject_id === selectedSubject);
-  }, [posts, selectedSubject]);
+    let result = posts;
+    if (selectedSubject) {
+      result = result.filter((p) => p.subject_id === selectedSubject);
+    }
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      result = result.filter(
+        (p) =>
+          p.title?.toLowerCase().includes(q) ||
+          p.content?.toLowerCase().includes(q) ||
+          p.tags?.some((t) => t.toLowerCase().includes(q))
+      );
+    }
+    return result;
+  }, [posts, selectedSubject, search]);
 
   // Group posts by date key (YYYY-MM-DD)
   const postsByDate = useMemo(() => {

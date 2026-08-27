@@ -46,7 +46,8 @@ export default function AdminPage() {
         <header className="h-14 border-b border-[var(--color-border)] flex items-center px-4 gap-3 shrink-0">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-lg hover:bg-[var(--color-surface-2)] lg:hidden text-[var(--color-text-muted)]"
+            className="p-2 hover:bg-[var(--color-surface-2)] lg:hidden text-[var(--color-text-muted)] transition-colors"
+            aria-label="Open sidebar"
           >
             <Menu size={18} />
           </button>
@@ -78,14 +79,25 @@ function AdminDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchAllPosts().then((posts) => {
-      setStats({
-        total: posts.length,
-        published: posts.filter((p) => p.status === 'published').length,
-        draft: posts.filter((p) => p.status === 'draft').length,
-        archived: posts.filter((p) => p.status === 'archived').length,
+    let cancelled = false;
+    fetchAllPosts()
+      .then((posts) => {
+        if (!cancelled && posts) {
+          setStats({
+            total: posts.length,
+            published: posts.filter((p) => p.status === 'published').length,
+            draft: posts.filter((p) => p.status === 'draft').length,
+            archived: posts.filter((p) => p.status === 'archived').length,
+          });
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to load dashboard stats:', err);
       });
-    });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   /* ── Student feed data (same hooks students use) ── */
@@ -307,10 +319,22 @@ function EditPostWrapper() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let cancelled = false;
+
     fetchPost(id)
-      .then(setPost)
-      .catch(() => navigate('/admin/posts'))
-      .finally(() => setLoading(false));
+      .then((data) => {
+        if (!cancelled) setPost(data);
+      })
+      .catch(() => {
+        if (!cancelled) navigate('/admin/posts');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [id, navigate]);
 
   if (loading) return <div className="flex justify-center py-16"><div className="w-6 h-6 rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-accent)] animate-spin" /></div>;

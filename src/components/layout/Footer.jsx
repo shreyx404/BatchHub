@@ -1,4 +1,4 @@
-import { APP_NAME } from '../../lib/constants';
+import { APP_NAME, APP_TAGLINE } from '../../lib/constants';
 
 export default function Footer() {
   return (
@@ -8,7 +8,7 @@ export default function Footer() {
           © {new Date().getFullYear()} {APP_NAME}
         </span>
         <span className="text-[10px] tracking-[0.03em]">
-          One organized place for everything your batch needs to know.
+          {APP_TAGLINE}
         </span>
       </div>
     </footer>

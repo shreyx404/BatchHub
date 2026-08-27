@@ -3,7 +3,7 @@ import {
   ArrowLeft, Clock, CalendarClock, ExternalLink,
   Share2
 } from 'lucide-react';
-import { format, formatDistanceToNow } from 'date-fns';
+import { format, formatDistanceToNow, isPast, differenceInHours } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
 import toast from 'react-hot-toast';
 import { usePost } from '../hooks/usePost';
@@ -51,7 +51,11 @@ export default function PostPage() {
 
   const typeConfig = CONTENT_TYPES[post.type];
   const hasDueDate = !!post.due_date;
+  const dueDate = hasDueDate ? new Date(post.due_date) : null;
+  const isOverdue = dueDate && isPast(dueDate);
+  const isUrgent = dueDate && !isOverdue && differenceInHours(dueDate, new Date()) < 48;
   const hasLinks = post.links && post.links.length > 0;
+  const subjectColor = post.subjects?.color || null;
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -85,9 +89,10 @@ export default function PostPage() {
       <NavBar />
 
       <main className="flex-1 mx-auto w-full max-w-3xl px-4 py-6 animate-fade-in-up">
-        {/* Type accent bar */}
+        {/* Type / Subject accent bar */}
         <div
-          className="h-0.5 w-16 mb-6 bg-[var(--color-border-light)]"
+          className="h-0.5 w-16 mb-6"
+          style={{ backgroundColor: subjectColor || 'var(--color-border-light)' }}
         />
 
         {/* Badges */}
@@ -113,9 +118,20 @@ export default function PostPage() {
             </span>
           )}
           {hasDueDate && (
-            <span className="flex items-center gap-1.5 text-red-400 font-medium tracking-[0.005em]">
+            <span
+              className={`flex items-center gap-1.5 font-medium tracking-[0.005em] ${
+                isOverdue
+                  ? 'text-red-400'
+                  : isUrgent
+                  ? 'text-amber-400'
+                  : 'text-[var(--color-text-muted)]'
+              }`}
+            >
               <CalendarClock size={14} />
-              Due {format(new Date(post.due_date), 'dd-MM-yyyy · h:mm a')}
+              {isOverdue ? 'Overdue' : 'Due'} {format(dueDate, 'dd-MM-yyyy · h:mm a')}
+              <span className="text-xs opacity-75">
+                ({formatDistanceToNow(dueDate, { addSuffix: true })})
+              </span>
             </span>
           )}
         </div>

@@ -1,17 +1,60 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 
 export default function Modal({ isOpen, onClose, title, children, maxWidth = 'max-w-lg' }) {
+  const modalRef = useRef(null);
+  const previousFocusRef = useRef(null);
+
   useEffect(() => {
     if (isOpen) {
+      previousFocusRef.current = document.activeElement;
       document.body.style.overflow = 'hidden';
+
       const handleKeyDown = (e) => {
-        if (e.key === 'Escape') onClose?.();
+        if (e.key === 'Escape') {
+          onClose?.();
+          return;
+        }
+
+        if (e.key === 'Tab' && modalRef.current) {
+          const focusableElements = modalRef.current.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          );
+          if (focusableElements.length === 0) return;
+
+          const firstElement = focusableElements[0];
+          const lastElement = focusableElements[focusableElements.length - 1];
+
+          if (e.shiftKey) {
+            if (document.activeElement === firstElement) {
+              lastElement.focus();
+              e.preventDefault();
+            }
+          } else {
+            if (document.activeElement === lastElement) {
+              firstElement.focus();
+              e.preventDefault();
+            }
+          }
+        }
       };
+
       window.addEventListener('keydown', handleKeyDown);
+
+      // Auto-focus first input or close button
+      setTimeout(() => {
+        if (modalRef.current) {
+          const autoFocusEl = modalRef.current.querySelector('[autofocus], input, button');
+          if (autoFocusEl) autoFocusEl.focus();
+        }
+      }, 50);
+
       return () => {
         document.body.style.overflow = '';
         window.removeEventListener('keydown', handleKeyDown);
+        if (previousFocusRef.current && typeof previousFocusRef.current.focus === 'function') {
+          previousFocusRef.current.focus();
+        }
       };
     } else {
       document.body.style.overflow = '';
@@ -30,6 +73,10 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = 'ma
 
       {/* Dialog */}
       <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title || 'Dialog'}
         className={`relative w-full ${maxWidth} bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-modal)] animate-fade-in-up overflow-hidden`}
       >
         {/* Header */}

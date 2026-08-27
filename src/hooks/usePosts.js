@@ -46,10 +46,23 @@ export function useUpcomingDeadlines() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
+
+    setLoading(true);
     fetchUpcomingDeadlines()
-      .then(setDeadlines)
-      .catch(() => setDeadlines([]))
-      .finally(() => setLoading(false));
+      .then((data) => {
+        if (!cancelled) setDeadlines(data || []);
+      })
+      .catch(() => {
+        if (!cancelled) setDeadlines([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return { deadlines, loading };

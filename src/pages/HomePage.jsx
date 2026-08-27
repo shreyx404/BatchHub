@@ -1,4 +1,5 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import SearchBar from '../components/ui/SearchBar';
@@ -14,19 +15,48 @@ import { useSubjects } from '../hooks/useSubjects';
 import { APP_NAME, APP_TAGLINE } from '../lib/constants';
 
 export default function HomePage() {
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [search, setSearch] = useState('');
-  const [selectedType, setSelectedType] = useState(null);
-  const [selectedSubject, setSelectedSubject] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  // Debounced search
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  // Read initial filter values from URL params
+  const initialType = searchParams.get('type') || null;
+  const initialSubject = searchParams.get('subject') || null;
+  const initialQuery = searchParams.get('q') || '';
+
+  const [searchOpen, setSearchOpen] = useState(Boolean(initialQuery));
+  const [search, setSearch] = useState(initialQuery);
+  const [debouncedSearch, setDebouncedSearch] = useState(initialQuery);
+  const [selectedType, setSelectedType] = useState(initialType);
+  const [selectedSubject, setSelectedSubject] = useState(initialSubject);
+
   const searchTimerRef = useRef(null);
+
+  // Helper to sync state to URL
+  const updateUrlParams = useCallback((type, subject, query) => {
+    const params = new URLSearchParams();
+    if (type) params.set('type', type);
+    if (subject) params.set('subject', subject);
+    if (query && query.trim()) params.set('q', query.trim());
+    setSearchParams(params, { replace: true });
+  }, [setSearchParams]);
+
+  const handleTypeChange = useCallback((newType) => {
+    setSelectedType(newType);
+    updateUrlParams(newType, selectedSubject, debouncedSearch);
+  }, [selectedSubject, debouncedSearch, updateUrlParams]);
+
+  const handleSubjectChange = useCallback((newSubject) => {
+    setSelectedSubject(newSubject);
+    updateUrlParams(selectedType, newSubject, debouncedSearch);
+  }, [selectedType, debouncedSearch, updateUrlParams]);
+
   const handleSearch = useCallback((val) => {
     setSearch(val);
     clearTimeout(searchTimerRef.current);
-    searchTimerRef.current = setTimeout(() => setDebouncedSearch(val), 300);
-  }, []);
+    searchTimerRef.current = setTimeout(() => {
+      setDebouncedSearch(val);
+      updateUrlParams(selectedType, selectedSubject, val);
+    }, 300);
+  }, [selectedType, selectedSubject, updateUrlParams]);
 
   const filters = useMemo(
     () => ({ type: selectedType, subjectId: selectedSubject, search: debouncedSearch }),
@@ -77,8 +107,7 @@ export default function HomePage() {
         onToggleSearch={() => {
           setSearchOpen(!searchOpen);
           if (searchOpen) {
-            setSearch('');
-            setDebouncedSearch('');
+            handleSearch('');
           }
         }}
         searchValue={search}
@@ -109,9 +138,9 @@ export default function HomePage() {
         {/* Filters */}
         <FilterBar
           selectedType={selectedType}
-          onTypeChange={setSelectedType}
+          onTypeChange={handleTypeChange}
           selectedSubject={selectedSubject}
-          onSubjectChange={setSelectedSubject}
+          onSubjectChange={handleSubjectChange}
           subjects={subjects}
         />
 

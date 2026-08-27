@@ -230,8 +230,8 @@ export default function PostTable() {
                 </div>
               </div>
 
-              {/* Actions - Always visible on mobile, reveal on hover for desktop */}
-              <div className="flex items-center gap-1.5 shrink-0 pt-2.5 sm:pt-0 border-t border-[var(--color-border)]/50 sm:border-t-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+              {/* Actions - Always visible */}
+              <div className="flex items-center gap-1.5 shrink-0 pt-2.5 sm:pt-0 border-t border-[var(--color-border)]/50 sm:border-t-0 opacity-100">
                 <ActionButton
                   icon={Eye}
                   label="View Post"
@@ -330,10 +330,10 @@ function ActionButton({ icon: Icon, label, onClick, danger = false }) {
       }}
       title={label}
       aria-label={label}
-      className={`p-2 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center border sm:border-transparent ${
+      className={`p-2 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center border ${
         danger
-          ? 'bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20 sm:bg-transparent sm:text-[var(--color-text-dim)] sm:hover:bg-red-500/10 sm:hover:text-red-400'
-          : 'bg-[var(--color-surface-2)] border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface-2)]/80 sm:bg-transparent sm:text-[var(--color-text-dim)] sm:hover:bg-[var(--color-surface-2)] sm:hover:text-[var(--color-text)]'
+          ? 'bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20'
+          : 'bg-[var(--color-surface-2)] border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface-3)] hover:border-[var(--color-border-light)]'
       }`}
     >
       <Icon size={15} />
