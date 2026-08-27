@@ -182,6 +182,9 @@ export async function fetchCalendarDeadlines(year, month) {
   end.setDate(end.getDate() + 6);
   end.setHours(23, 59, 59, 999);
 
+  const startIso = start.toISOString();
+  const endIso = end.toISOString();
+
   if (!isSupabaseConfigured()) {
     return DEMO_POSTS
       .filter((p) => {
@@ -192,13 +195,37 @@ export async function fetchCalendarDeadlines(year, month) {
       .sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
   }
 
+  // 1. If admin token is available, query through admin endpoint with service role
+  const token = sessionStorage.getItem('batchhub_admin_token');
+  if (token) {
+    try {
+      return await adminRequest('getCalendarDeadlines', { start: startIso, end: endIso });
+    } catch {
+      // Fallback to public fetch if admin request fails
+    }
+  }
+
+  // 2. Try fetching from public /api/calendar serverless endpoint (uses service role to ensure all archived deliverables are retrieved)
+  try {
+    const res = await fetch(`/api/calendar?start=${encodeURIComponent(startIso)}&end=${encodeURIComponent(endIso)}`);
+    if (res.ok) {
+      const json = await res.json();
+      if (Array.isArray(json.data)) {
+        return json.data;
+      }
+    }
+  } catch {
+    // Fallback to direct client query if serverless endpoint is not reachable
+  }
+
+  // 3. Fallback: Direct Supabase client query with anon key
   const { data, error } = await supabase
     .from('posts')
     .select('*, subjects(*)')
     .in('status', ['published', 'archived'])
     .not('due_date', 'is', null)
-    .gte('due_date', start.toISOString())
-    .lte('due_date', end.toISOString())
+    .gte('due_date', startIso)
+    .lte('due_date', endIso)
     .order('due_date', { ascending: true });
 
   if (error) throw error;

@@ -355,6 +355,17 @@ export default async function handler(req, res) {
         if (!payload?.id) return res.status(400).json({ error: 'Missing subject ID.' });
         result = await supabase.from('subjects').delete().eq('id', payload.id);
         break;
+      case 'getCalendarDeadlines': {
+        let query = supabase
+          .from('posts')
+          .select('*, subjects(*)')
+          .in('status', ['published', 'archived'])
+          .not('due_date', 'is', null);
+        if (payload?.start) query = query.gte('due_date', payload.start);
+        if (payload?.end) query = query.lte('due_date', payload.end);
+        result = await query.order('due_date', { ascending: true });
+        break;
+      }
       case 'autoArchiveExpired': {
         // Archive all published posts whose due_date is more than 24 hours in the past
         const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
