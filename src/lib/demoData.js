@@ -173,6 +173,57 @@ const DEMO_POSTS = [
     updated_at: getRelativeDate(-2),
     subjects: DEMO_SUBJECTS[4],
   },
+  {
+    id: 'post-10',
+    title: 'FDS Lab Assignment 1 Code Submission',
+    content: `Submit Python implementation for Pandas and NumPy exploratory data analysis tasks.`,
+    type: 'lab',
+    subject_id: 'subj-fds',
+    is_pinned: false,
+    status: 'archived',
+    due_date: getRelativeDate(-4),
+    tags: ['fds', 'lab', 'archived'],
+    links: [
+      { label: 'Archived Lab Problem Set', url: 'https://example.com/fds-a1.pdf' },
+    ],
+    created_at: getRelativeDate(-10),
+    updated_at: getRelativeDate(-4),
+    subjects: DEMO_SUBJECTS[2],
+  },
+  {
+    id: 'post-11',
+    title: 'DT Empathy Map & Persona Draft',
+    content: `Completed group submission for user interviews and persona synthesis sheets.`,
+    type: 'assignment',
+    subject_id: 'subj-dt',
+    is_pinned: false,
+    status: 'published',
+    due_date: getRelativeDate(-2, -3), // Past due
+    tags: ['dt', 'design-thinking'],
+    links: [
+      { label: 'Empathy Map Template', url: 'https://miro.com' },
+    ],
+    created_at: getRelativeDate(-8),
+    updated_at: getRelativeDate(-2),
+    subjects: DEMO_SUBJECTS[1],
+  },
+  {
+    id: 'post-12',
+    title: 'MDM Hypothesis Testing Practice Sheet',
+    content: `Archived practice problems set for two-sample t-tests and ANOVA distribution models.`,
+    type: 'assignment',
+    subject_id: 'subj-mdm',
+    is_pinned: false,
+    status: 'archived',
+    due_date: getRelativeDate(-7),
+    tags: ['mdm', 'statistics', 'archived'],
+    links: [
+      { label: 'Solution PDF', url: 'https://example.com/mdm-solutions.pdf' },
+    ],
+    created_at: getRelativeDate(-14),
+    updated_at: getRelativeDate(-7),
+    subjects: DEMO_SUBJECTS[0],
+  },
 ];
 
 export { DEMO_SUBJECTS, DEMO_POSTS };

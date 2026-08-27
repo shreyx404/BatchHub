@@ -92,6 +92,7 @@
 | FR-041g | Visual urgency markers for deadlines due within 24 hours (red borders, countdown chips) | P1 | ✅ Implemented |
 | FR-041h | Date selection inspector drawer displaying all deliverables on the selected date combined, highlighted, and sorted in ascending order by due time with direct resource links | P1 | ✅ Implemented |
 | FR-041i | Dedicated Admin Calendar view (`/admin/calendar`) integrated into Admin Sidebar supporting all three modes | P1 | ✅ Implemented |
+| FR-041j | Display past and archived events exclusively in Calendar views (Month, Week, Agenda, Sidebar) in an editorial faded-out theme with dedicated status badges (`ARCHIVED`, `PAST DUE`) and legend indicator, keeping the main student feed strictly filtered | P1 | ✅ Implemented |
 
 ### 1.8 Discord Bot Integration
 

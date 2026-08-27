@@ -36,7 +36,7 @@ React App (client)
     │  Uses VITE_SUPABASE_ANON_KEY
     ▼
 Supabase PostgREST API
-    │  RLS Policy: SELECT WHERE status = 'published'
+    │  RLS Policy: SELECT WHERE status IN ('published', 'archived')
     ▼
 PostgreSQL (posts + subjects joined)
     │

@@ -98,8 +98,10 @@ function InspectorCard({ post }) {
   const dueDate = new Date(post.due_date);
   const now = new Date();
   const hoursLeft = differenceInHours(dueDate, now);
+  const isArchived = post.status === 'archived';
   const isOverdue = isPast(dueDate);
-  const isUrgent = !isOverdue && hoursLeft < 24;
+  const isFaded = isArchived || isOverdue;
+  const isUrgent = !isFaded && hoursLeft < 24;
   const subjectName = post.subjects?.name || post.subjects?.code || '';
   const subjectCode = post.subjects?.code || '';
   const typeConfig = CONTENT_TYPES[post.type];
@@ -107,8 +109,10 @@ function InspectorCard({ post }) {
 
   // Countdown text
   let countdownText = '';
-  if (isOverdue) {
-    countdownText = 'Overdue';
+  if (isArchived) {
+    countdownText = 'Archived';
+  } else if (isOverdue) {
+    countdownText = 'Past Due';
   } else if (hoursLeft < 1) {
     countdownText = 'Due soon';
   } else if (hoursLeft < 24) {
@@ -127,8 +131,8 @@ function InspectorCard({ post }) {
       className={`border p-4 sm:p-5 animate-fade-in transition-all ${
         isUrgent
           ? 'bg-[#120a0a] border-[#6b2121] shadow-sm'
-          : isOverdue
-            ? 'bg-[#0a0a0a] border-[var(--color-border)] opacity-75 hover:opacity-100'
+          : isFaded
+            ? 'bg-[#0a0a0c]/85 border-[var(--color-border)]/40 opacity-70 hover:opacity-100'
             : 'bg-[#0c0c0e] border-[var(--color-border-light)]'
       }`}
     >
@@ -140,18 +144,23 @@ function InspectorCard({ post }) {
               URGENT
             </span>
           )}
-          {isOverdue && (
-            <span className="px-2 py-0.5 bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-dim)] text-[9px] font-mono font-semibold uppercase tracking-wider">
-              OVERDUE
+          {isArchived && (
+            <span className="px-2 py-0.5 bg-[var(--color-surface-2)] border border-[var(--color-border)]/50 text-[var(--color-text-dim)] text-[9px] font-mono font-semibold uppercase tracking-wider">
+              ARCHIVED
+            </span>
+          )}
+          {!isArchived && isOverdue && (
+            <span className="px-2 py-0.5 bg-[var(--color-surface-2)] border border-[var(--color-border)]/50 text-[var(--color-text-dim)] text-[9px] font-mono font-semibold uppercase tracking-wider">
+              PAST DUE
             </span>
           )}
           <span className="text-[10px] font-mono text-[var(--color-text-muted)] font-medium">
-            Due at {format(dueDate, 'h:mm a')}
+            {isArchived ? `Ended ${format(dueDate, 'h:mm a')}` : `Due at ${format(dueDate, 'h:mm a')}`}
           </span>
         </div>
         <span
           className={`text-[10px] font-mono font-bold ${
-            isUrgent ? 'text-red-400' : isOverdue ? 'text-[var(--color-text-dim)]' : 'text-[var(--color-text-muted)]'
+            isUrgent ? 'text-red-400' : isFaded ? 'text-[var(--color-text-dim)]' : 'text-[var(--color-text-muted)]'
           }`}
         >
           {countdownText}
@@ -165,7 +174,9 @@ function InspectorCard({ post }) {
             {subjectCode}{subjectName && subjectCode ? ' · ' : ''}{subjectName}
           </span>
         )}
-        <h3 className="font-display text-base sm:text-lg font-bold text-[var(--color-text)] mt-1 leading-snug">
+        <h3 className={`font-display text-base sm:text-lg leading-snug mt-1 ${
+          isFaded ? 'text-[var(--color-text-muted)] font-medium' : 'text-[var(--color-text)] font-bold'
+        }`}>
           {post.title}
         </h3>
         {cleanSnippet && (
@@ -205,7 +216,11 @@ function InspectorCard({ post }) {
         </span>
         <Link
           to={`/post/${post.id}`}
-          className="px-3.5 py-2 min-h-[38px] flex items-center justify-center bg-white text-black font-semibold text-[var(--text-xs)] hover:bg-[#e5e5e5] active:bg-[#cccccc] transition-colors"
+          className={`px-3.5 py-2 min-h-[38px] flex items-center justify-center font-semibold text-[var(--text-xs)] transition-colors ${
+            isFaded
+              ? 'bg-[var(--color-surface-3)] text-[var(--color-text-muted)] hover:text-white hover:bg-[var(--color-surface-2)] border border-[var(--color-border)]'
+              : 'bg-white text-black hover:bg-[#e5e5e5] active:bg-[#cccccc]'
+          }`}
         >
           View Post Details →
         </Link>

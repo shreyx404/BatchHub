@@ -126,14 +126,19 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
               <div className="flex sm:hidden items-center justify-center gap-1 mt-1 flex-wrap">
                 {events.slice(0, 3).map((post, idx) => {
                   const d = new Date(post.due_date);
-                  const isPostUrgent = !isPast(d) && differenceInHours(d, new Date()) < 24;
+                  const isPostArchived = post.status === 'archived';
+                  const isPostPast = isPast(d);
+                  const isPostUrgent = !isPostPast && !isPostArchived && differenceInHours(d, new Date()) < 24;
+                  const isPostFaded = isPostPast || isPostArchived;
                   return (
                     <span
                       key={idx}
                       className={`w-1.5 h-1.5 inline-block ${
                         isPostUrgent
                           ? 'bg-[#ef4444] shadow-[0_0_4px_#ef4444]'
-                          : 'bg-[var(--color-text-muted)]'
+                          : isPostFaded
+                            ? 'bg-[var(--color-text-dim)]/40'
+                            : 'bg-[var(--color-text-muted)]'
                       }`}
                     />
                   );
@@ -172,6 +177,10 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
             <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#121212] border border-[var(--color-border-light)]" />
             <span>Upcoming</span>
           </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#0a0a0c] border border-[var(--color-border)]/50 opacity-50" />
+            <span>Past / Archived</span>
+          </div>
         </div>
       </div>
     </div>
@@ -182,27 +191,29 @@ function EventChip({ post }) {
   const dueDate = new Date(post.due_date);
   const now = new Date();
   const hoursLeft = differenceInHours(dueDate, now);
+  const isArchived = post.status === 'archived';
   const isOverdue = isPast(dueDate);
-  const isUrgent = !isOverdue && hoursLeft < 24;
+  const isFaded = isArchived || isOverdue;
+  const isUrgent = !isFaded && hoursLeft < 24;
   const subjectCode = post.subjects?.code || post.subjects?.name || '';
 
   const chipClass = isUrgent
     ? 'event-chip p-1 sm:p-1.5 bg-[#1e1414] border border-[#6b2121] hover:border-[#b91c1c]'
-    : isOverdue
-      ? 'event-chip p-1 sm:p-1.5 bg-[#111] border border-[var(--color-border)] opacity-50'
+    : isFaded
+      ? 'event-chip p-1 sm:p-1.5 bg-[#0a0a0c]/80 border border-[var(--color-border)]/40 opacity-50 hover:opacity-90 transition-opacity'
       : 'event-chip p-1 sm:p-1.5 bg-[#121212] border border-[var(--color-border)] hover:border-[var(--color-border-light)]';
 
   return (
     <div className={chipClass}>
       <div className="flex items-center justify-between text-[7px] sm:text-[8px] font-mono gap-1.5 min-w-0">
-        <span className={`truncate font-semibold shrink ${isUrgent ? 'text-[#fca5a5]' : 'text-[var(--color-text-muted)]'}`}>
+        <span className={`truncate font-semibold shrink ${isUrgent ? 'text-[#fca5a5]' : isFaded ? 'text-[var(--color-text-dim)]' : 'text-[var(--color-text-muted)]'}`}>
           {subjectCode}
         </span>
         <span className={`shrink-0 ${isUrgent ? 'text-[#fca5a5]' : 'text-[var(--color-text-dim)]'}`}>
-          {format(dueDate, 'h:mm a')}
+          {isArchived ? 'Archived' : format(dueDate, 'h:mm a')}
         </span>
       </div>
-      <p className={`text-[9px] sm:text-[10px] font-medium truncate mt-0.5 ${isUrgent ? 'text-white' : 'text-[var(--color-text)]'}`}>
+      <p className={`text-[9px] sm:text-[10px] font-medium truncate mt-0.5 ${isUrgent ? 'text-white' : isFaded ? 'text-[var(--color-text-muted)]' : 'text-[var(--color-text)]'}`}>
         {post.title}
       </p>
       {isUrgent && (

@@ -185,7 +185,7 @@ export async function fetchCalendarDeadlines(year, month) {
   if (!isSupabaseConfigured()) {
     return DEMO_POSTS
       .filter((p) => {
-        if (!p.due_date || p.status !== 'published') return false;
+        if (!p.due_date || (p.status !== 'published' && p.status !== 'archived')) return false;
         const d = new Date(p.due_date);
         return d >= start && d <= end;
       })
@@ -195,7 +195,7 @@ export async function fetchCalendarDeadlines(year, month) {
   const { data, error } = await supabase
     .from('posts')
     .select('*, subjects(*)')
-    .eq('status', 'published')
+    .in('status', ['published', 'archived'])
     .not('due_date', 'is', null)
     .gte('due_date', start.toISOString())
     .lte('due_date', end.toISOString())

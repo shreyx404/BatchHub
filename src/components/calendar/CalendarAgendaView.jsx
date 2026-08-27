@@ -110,17 +110,21 @@ function AgendaPostCard({ post }) {
   const dueDate = new Date(post.due_date);
   const now = new Date();
   const hoursLeft = differenceInHours(dueDate, now);
+  const isArchived = post.status === 'archived';
   const isOverdue = isPast(dueDate);
-  const isUrgent = !isOverdue && hoursLeft < 24;
+  const isFaded = isArchived || isOverdue;
+  const isUrgent = !isFaded && hoursLeft < 24;
   const subjectName = post.subjects?.name || '';
   const subjectCode = post.subjects?.code || subjectName || '';
   const typeConfig = CONTENT_TYPES[post.type];
   const links = post.links || [];
 
-  // Countdown text
+  // Countdown text & badge style
   let countdownText = '';
-  if (isOverdue) {
-    countdownText = 'Overdue';
+  if (isArchived) {
+    countdownText = 'ARCHIVED';
+  } else if (isOverdue) {
+    countdownText = 'PAST DUE';
   } else if (hoursLeft < 1) {
     countdownText = 'Due soon';
   } else if (hoursLeft < 24) {
@@ -139,8 +143,8 @@ function AgendaPostCard({ post }) {
       className={`border p-4 sm:p-5 transition-all ${
         isUrgent
           ? 'bg-[#120a0a] border-[#6b2121] hover:border-[#b91c1c]'
-          : isOverdue
-            ? 'bg-[#0a0a0a] border-[var(--color-border)] opacity-70 hover:opacity-100'
+          : isFaded
+            ? 'bg-[#08080a]/90 border-[var(--color-border)]/40 opacity-65 hover:opacity-100'
             : 'bg-[#08080a] border-[var(--color-border)] hover:border-[var(--color-border-light)]'
       }`}
     >
@@ -150,7 +154,11 @@ function AgendaPostCard({ post }) {
           {/* Metadata Row */}
           <div className="flex flex-wrap items-center gap-2">
             {subjectCode && (
-              <span className="px-2 py-0.5 bg-[var(--color-surface-3)] border border-[var(--color-border)] text-[var(--color-text)] text-[10px] font-mono font-semibold uppercase tracking-wider">
+              <span className={`px-2 py-0.5 border text-[10px] font-mono uppercase tracking-wider ${
+                isFaded
+                  ? 'bg-[var(--color-surface-2)] border-[var(--color-border)]/40 text-[var(--color-text-dim)]'
+                  : 'bg-[var(--color-surface-3)] border-[var(--color-border)] text-[var(--color-text)] font-semibold'
+              }`}>
                 {subjectCode}
               </span>
             )}
@@ -162,14 +170,16 @@ function AgendaPostCard({ post }) {
               {format(dueDate, 'h:mm a')}
             </span>
 
-            {/* Countdown Badge */}
+            {/* Countdown / Status Badge */}
             <span
               className={`px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider ml-auto lg:ml-0 ${
                 isUrgent
                   ? 'bg-red-950/80 border border-red-800 text-red-300'
-                  : isOverdue
-                    ? 'bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-dim)]'
-                    : 'bg-[#141416] border border-[var(--color-border)] text-[var(--color-text-muted)]'
+                  : isArchived
+                    ? 'bg-[var(--color-surface-2)] border border-[var(--color-border)]/50 text-[var(--color-text-dim)]'
+                    : isOverdue
+                      ? 'bg-[var(--color-surface-2)] border border-[var(--color-border)]/50 text-[var(--color-text-dim)]'
+                      : 'bg-[#141416] border border-[var(--color-border)] text-[var(--color-text-muted)]'
               }`}
             >
               {countdownText}
@@ -177,7 +187,9 @@ function AgendaPostCard({ post }) {
           </div>
 
           {/* Title */}
-          <h3 className="font-display text-base sm:text-lg font-semibold text-[var(--color-text)] leading-snug">
+          <h3 className={`font-display text-base sm:text-lg leading-snug ${
+            isFaded ? 'text-[var(--color-text-muted)] font-medium' : 'text-[var(--color-text)] font-semibold'
+          }`}>
             {post.title}
           </h3>
 
@@ -211,7 +223,11 @@ function AgendaPostCard({ post }) {
         <div className="shrink-0 flex items-center lg:self-center pt-2 lg:pt-0 border-t lg:border-t-0 border-[var(--color-border)]">
           <Link
             to={`/post/${post.id}`}
-            className="w-full lg:w-auto px-4 py-2 min-h-[38px] flex items-center justify-center gap-1.5 bg-white text-black font-semibold text-[var(--text-xs)] hover:bg-[#e5e5e5] active:bg-[#cccccc] transition-colors"
+            className={`w-full lg:w-auto px-4 py-2 min-h-[38px] flex items-center justify-center gap-1.5 text-[var(--text-xs)] transition-colors ${
+              isFaded
+                ? 'bg-[var(--color-surface-3)] text-[var(--color-text-muted)] hover:text-white hover:bg-[var(--color-surface-2)] border border-[var(--color-border)]'
+                : 'bg-white text-black font-semibold hover:bg-[#e5e5e5] active:bg-[#cccccc]'
+            }`}
           >
             <span>View Details</span>
             <ArrowRight size={13} />

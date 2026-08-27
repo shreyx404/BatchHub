@@ -152,6 +152,10 @@ export default function CalendarWeekView({
             <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#121212] border border-[var(--color-border-light)]" />
             <span>Upcoming</span>
           </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#0a0a0c] border border-[var(--color-border)]/50 opacity-50" />
+            <span>Past / Archived</span>
+          </div>
         </div>
         <div className="flex items-center gap-2 text-[9px] sm:text-[10px] font-mono text-[var(--color-text-dim)]">
           <span className="md:hidden">← Swipe week →</span>
@@ -166,15 +170,17 @@ function WeekEventCard({ post, onClick }) {
   const dueDate = new Date(post.due_date);
   const now = new Date();
   const hoursLeft = differenceInHours(dueDate, now);
+  const isArchived = post.status === 'archived';
   const isOverdue = isPast(dueDate);
-  const isUrgent = !isOverdue && hoursLeft < 24;
+  const isFaded = isArchived || isOverdue;
+  const isUrgent = !isFaded && hoursLeft < 24;
   const subjectCode = post.subjects?.code || post.subjects?.name || '';
   const links = post.links || [];
 
   const cardClass = isUrgent
     ? 'p-2 sm:p-2.5 bg-[#1e1414] border border-[#6b2121] hover:border-[#ef4444] transition-all shadow-sm'
-    : isOverdue
-      ? 'p-2 sm:p-2.5 bg-[#101010] border border-[var(--color-border)] opacity-60 hover:opacity-100 transition-all'
+    : isFaded
+      ? 'p-2 sm:p-2.5 bg-[#0a0a0c]/80 border border-[var(--color-border)]/40 opacity-55 hover:opacity-95 transition-all'
       : 'p-2 sm:p-2.5 bg-[#121214] border border-[var(--color-border)] hover:border-[var(--color-border-light)] transition-all';
 
   return (
@@ -194,7 +200,7 @@ function WeekEventCard({ post, onClick }) {
       <div className="flex items-center justify-between text-[8.5px] sm:text-[9px] font-mono gap-1 mb-1">
         <span
           className={`truncate font-semibold ${
-            isUrgent ? 'text-[#fca5a5]' : 'text-[var(--color-text-muted)]'
+            isUrgent ? 'text-[#fca5a5]' : isFaded ? 'text-[var(--color-text-dim)]' : 'text-[var(--color-text-muted)]'
           }`}
         >
           {subjectCode}
@@ -204,14 +210,14 @@ function WeekEventCard({ post, onClick }) {
             isUrgent ? 'text-[#fca5a5]' : 'text-[var(--color-text-dim)]'
           }`}
         >
-          {format(dueDate, 'h:mm a')}
+          {isArchived ? 'Archived' : format(dueDate, 'h:mm a')}
         </span>
       </div>
 
       {/* Title */}
       <h4
         className={`text-[10.5px] sm:text-[11px] font-medium leading-snug line-clamp-2 ${
-          isUrgent ? 'text-white' : 'text-[var(--color-text)]'
+          isUrgent ? 'text-white' : isFaded ? 'text-[var(--color-text-muted)]' : 'text-[var(--color-text)]'
         }`}
       >
         {post.title}
