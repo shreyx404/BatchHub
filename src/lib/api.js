@@ -1,5 +1,5 @@
-import { supabase, isSupabaseConfigured } from './supabase';
-import { DEMO_POSTS, DEMO_SUBJECTS } from './demoData';
+import { supabase, isSupabaseConfigured } from './supabase.js';
+import { DEMO_POSTS, DEMO_SUBJECTS } from './demoData.js';
 
 async function adminRequest(action, payload) {
   const token = sessionStorage.getItem('batchhub_admin_token');
@@ -38,7 +38,8 @@ export async function fetchPosts({ type, subjectId, search, status = 'published'
     .select('*, subjects(*)')
     .eq('status', status)
     .order('is_pinned', { ascending: false })
-    .order('created_at', { ascending: false });
+    .order('due_date', { ascending: true, nullsFirst: false })
+    .order('created_at', { ascending: true });
 
   if (type) query = query.eq('type', type);
   if (subjectId) query = query.eq('subject_id', subjectId);
@@ -60,11 +61,17 @@ export async function fetchPosts({ type, subjectId, search, status = 'published'
     return post;
   });
 
-  // Since we modified is_pinned, we must re-sort the data client-side.
-  // Supabase already sorted it, but the DB still thinks the overdue ones are pinned.
+  // Client-side sort: Pinned first, then by due_date ascending (nulls at the very end), then created_at ascending
   processedData.sort((a, b) => {
     if (a.is_pinned !== b.is_pinned) return b.is_pinned ? 1 : -1;
-    return new Date(b.created_at) - new Date(a.created_at);
+    if (a.due_date && b.due_date) {
+      const diff = new Date(a.due_date) - new Date(b.due_date);
+      if (diff !== 0) return diff;
+      return new Date(a.created_at) - new Date(b.created_at);
+    }
+    if (a.due_date && !b.due_date) return -1;
+    if (!a.due_date && b.due_date) return 1;
+    return new Date(a.created_at) - new Date(b.created_at);
   });
 
   return processedData;
@@ -350,10 +357,17 @@ function filterDemoPosts({ type, subjectId, search, status }) {
     return post;
   });
 
-  // Pinned first, then by created_at desc
+  // Client-side sort: Pinned first, then by due_date ascending (nulls at the very end), then created_at ascending
   filtered.sort((a, b) => {
     if (a.is_pinned !== b.is_pinned) return b.is_pinned ? 1 : -1;
-    return new Date(b.created_at) - new Date(a.created_at);
+    if (a.due_date && b.due_date) {
+      const diff = new Date(a.due_date) - new Date(b.due_date);
+      if (diff !== 0) return diff;
+      return new Date(a.created_at) - new Date(b.created_at);
+    }
+    if (a.due_date && !b.due_date) return -1;
+    if (!a.due_date && b.due_date) return 1;
+    return new Date(a.created_at) - new Date(b.created_at);
   });
   return filtered;
 }

@@ -73,7 +73,19 @@ export default function HomePage() {
   // Categorise posts for structured "All Updates" view
   const { noticePosts, pinnedPosts, withDeadline, withoutDeadline, remainingPosts } = useMemo(() => {
     if (!showStructured) {
-      return { noticePosts: [], pinnedPosts: [], withDeadline: [], withoutDeadline: [], remainingPosts: posts };
+      // Filtered view: sort by due date ascending (soonest first), with no-due-date posts at the very last
+      const sorted = [...posts].sort((a, b) => {
+        if (a.is_pinned !== b.is_pinned) return b.is_pinned ? 1 : -1;
+        if (a.due_date && b.due_date) {
+          const diff = new Date(a.due_date) - new Date(b.due_date);
+          if (diff !== 0) return diff;
+          return new Date(a.created_at) - new Date(b.created_at);
+        }
+        if (a.due_date && !b.due_date) return -1;
+        if (!a.due_date && b.due_date) return 1;
+        return new Date(a.created_at) - new Date(b.created_at);
+      });
+      return { noticePosts: [], pinnedPosts: [], withDeadline: [], withoutDeadline: [], remainingPosts: sorted };
     }
 
     // 1. Notices & Important (highlighted at top)
