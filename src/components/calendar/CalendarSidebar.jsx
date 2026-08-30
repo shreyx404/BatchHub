@@ -1,8 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { format, formatDistanceToNow, differenceInHours, isPast, addDays } from 'date-fns';
 import { CONTENT_TYPES } from '../../lib/constants';
-import { CalendarClock, Archive, Clock, Edit3, ArrowRight, FileText } from 'lucide-react';
+import { CalendarClock, Clock, Edit3, ArrowRight } from 'lucide-react';
 
 export default function CalendarSidebar({
   selectedDate,
@@ -11,8 +11,6 @@ export default function CalendarSidebar({
   isAdmin = false,
   onSelectDate,
 }) {
-  const [activeTab, setActiveTab] = useState('upcoming'); // 'upcoming' | 'past' | 'drafts'
-
   // Sort selected date posts by due time ascending (earliest first)
   const sortedSelectedPosts = useMemo(() => {
     if (!selectedPosts || selectedPosts.length === 0) return [];
@@ -38,26 +36,6 @@ export default function CalendarSidebar({
       })
       .sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
   }, [allPosts, now, weekFromNow, selectedDateKey]);
-
-  // Past Due and Archived posts in the schedule (sorted most recent first)
-  const pastAndArchivedPosts = useMemo(() => {
-    return allPosts
-      .filter((p) => {
-        if (!p.due_date || p.status === 'draft') return false;
-        const d = new Date(p.due_date);
-        const isArchived = p.status === 'archived';
-        const isOverdue = d <= now;
-        return isArchived || isOverdue;
-      })
-      .sort((a, b) => new Date(b.due_date) - new Date(a.due_date));
-  }, [allPosts, now]);
-
-  // Drafts with due dates (for admin)
-  const draftPosts = useMemo(() => {
-    return allPosts
-      .filter((p) => p.status === 'draft' && p.due_date)
-      .sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
-  }, [allPosts]);
 
   return (
     <div id="calendar-inspector-target" className="flex flex-col gap-4 sm:gap-5 scroll-mt-20">
@@ -98,112 +76,33 @@ export default function CalendarSidebar({
         </div>
       )}
 
-      {/* Overview Queues: Tabs for Upcoming, Past & Archived, and Drafts */}
+      {/* Upcoming Deadlines (Next 7 Days) */}
       <div className="bg-[#050505] border border-[var(--color-border)] overflow-hidden">
-        {/* Tab Selector */}
-        <div className="flex items-center border-b border-[var(--color-border)] bg-[var(--color-surface-2)] divide-x divide-[var(--color-border)]">
-          <button
-            onClick={() => setActiveTab('upcoming')}
-            className={`flex-1 py-2.5 px-2 text-[10px] sm:text-[10.5px] font-mono uppercase tracking-wider text-center transition-colors flex items-center justify-center gap-1.5 ${
-              activeTab === 'upcoming'
-                ? 'bg-black text-white font-bold border-b border-b-white -mb-[1px]'
-                : 'text-[var(--color-text-muted)] hover:text-white hover:bg-[var(--color-surface-3)]'
-            }`}
-          >
-            <Clock size={12} className="shrink-0" />
-            <span>Upcoming ({upcomingPosts.length})</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('past')}
-            className={`flex-1 py-2.5 px-2 text-[10px] sm:text-[10.5px] font-mono uppercase tracking-wider text-center transition-colors flex items-center justify-center gap-1.5 ${
-              activeTab === 'past'
-                ? 'bg-black text-white font-bold border-b border-b-white -mb-[1px]'
-                : 'text-[var(--color-text-muted)] hover:text-white hover:bg-[var(--color-surface-3)]'
-            }`}
-          >
-            <Archive size={12} className="shrink-0" />
-            <span>Past/Archived ({pastAndArchivedPosts.length})</span>
-          </button>
-
-          {isAdmin && draftPosts.length > 0 && (
-            <button
-              onClick={() => setActiveTab('drafts')}
-              className={`py-2.5 px-2.5 text-[10px] font-mono uppercase tracking-wider text-center transition-colors flex items-center justify-center gap-1.5 ${
-                activeTab === 'drafts'
-                  ? 'bg-black text-amber-400 font-bold border-b border-b-amber-400 -mb-[1px]'
-                  : 'text-amber-400/80 hover:text-amber-300 hover:bg-[var(--color-surface-3)]'
-              }`}
-            >
-              <FileText size={12} className="shrink-0" />
-              <span>Drafts ({draftPosts.length})</span>
-            </button>
-          )}
+        <div className="px-3.5 sm:px-4 py-2.5 sm:py-3 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] flex items-center justify-between">
+          <div className="flex items-center gap-2 text-[10.5px] font-mono font-bold uppercase tracking-wider text-[var(--color-text)]">
+            <Clock size={13} className="text-[var(--color-text-muted)]" />
+            <span>Upcoming (Next 7 Days)</span>
+          </div>
+          <span className="text-[10px] font-mono text-[var(--color-text-dim)] font-semibold">
+            {upcomingPosts.length} {upcomingPosts.length === 1 ? 'item' : 'items'}
+          </span>
         </div>
 
-        {/* Tab Content */}
         <div className="p-3 sm:p-4">
-          {activeTab === 'upcoming' && (
-            <div>
-              {upcomingPosts.length > 0 ? (
-                <div className="flex flex-col divide-y divide-[#171717]">
-                  {upcomingPosts.map((post) => (
-                    <QueueItem
-                      key={post.id}
-                      post={post}
-                      isAdmin={isAdmin}
-                      onSelectDate={onSelectDate}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="py-6 text-center text-[var(--color-text-dim)] font-mono text-[11px]">
-                  No upcoming deadlines scheduled in the next 7 days.
-                </div>
-              )}
+          {upcomingPosts.length > 0 ? (
+            <div className="flex flex-col divide-y divide-[#171717]">
+              {upcomingPosts.map((post) => (
+                <QueueItem
+                  key={post.id}
+                  post={post}
+                  isAdmin={isAdmin}
+                  onSelectDate={onSelectDate}
+                />
+              ))}
             </div>
-          )}
-
-          {activeTab === 'past' && (
-            <div>
-              {pastAndArchivedPosts.length > 0 ? (
-                <div className="flex flex-col divide-y divide-[#171717]">
-                  {pastAndArchivedPosts.map((post) => (
-                    <QueueItem
-                      key={post.id}
-                      post={post}
-                      isAdmin={isAdmin}
-                      isPastOrArchived={true}
-                      onSelectDate={onSelectDate}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="py-6 text-center text-[var(--color-text-dim)] font-mono text-[11px]">
-                  No past or archived deadlines in this schedule period.
-                </div>
-              )}
-            </div>
-          )}
-
-          {activeTab === 'drafts' && (
-            <div>
-              {draftPosts.length > 0 ? (
-                <div className="flex flex-col divide-y divide-[#171717]">
-                  {draftPosts.map((post) => (
-                    <QueueItem
-                      key={post.id}
-                      post={post}
-                      isAdmin={isAdmin}
-                      onSelectDate={onSelectDate}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="py-6 text-center text-[var(--color-text-dim)] font-mono text-[11px]">
-                  No draft deliverables with due dates found.
-                </div>
-              )}
+          ) : (
+            <div className="py-6 text-center text-[var(--color-text-dim)] font-mono text-[11px]">
+              No upcoming deadlines scheduled in the next 7 days.
             </div>
           )}
         </div>
