@@ -11,22 +11,11 @@ function devApiPlugin() {
   return {
     name: 'dev-api-server',
     configureServer(server) {
-      server.middlewares.use('/api/admin', async (req, res) => {
-        if (req.method === 'OPTIONS') {
-          res.setHeader('Access-Control-Allow-Origin', '*');
-          res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-          res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-          res.statusCode = 204;
-          res.end();
-          return;
-        }
-
-        if (req.method !== 'POST') {
-          res.statusCode = 405;
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify({ error: 'Method Not Allowed' }));
-          return;
-        }
+      // Helper to execute serverless handler with polyfills
+      const handleServerless = async (modulePath, req, res) => {
+        const urlObj = new URL(req.url, 'http://localhost');
+        const query = Object.fromEntries(urlObj.searchParams.entries());
+        req.query = query;
 
         let body = '';
         req.on('data', (chunk) => {
@@ -52,16 +41,47 @@ function devApiPlugin() {
           };
 
           try {
-            const adminModule = await server.ssrLoadModule('/api/admin.js');
-            const handler = adminModule.default;
+            const mod = await server.ssrLoadModule(modulePath);
+            const handler = mod.default;
             await handler(req, res);
           } catch (err) {
-            console.error('Dev Admin API error:', err);
+            console.error(`Dev API (${modulePath}) error:`, err);
             res.statusCode = 500;
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ error: err.message || 'Internal Server Error' }));
           }
         });
+      };
+
+      // Admin API
+      server.middlewares.use('/api/admin', async (req, res) => {
+        if (req.method === 'OPTIONS') {
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+          res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+          res.statusCode = 204;
+          res.end();
+          return;
+        }
+        await handleServerless('/api/admin.js', req, res);
+      });
+
+      // Calendar API
+      server.middlewares.use('/api/calendar', async (req, res) => {
+        if (req.method === 'OPTIONS') {
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+          res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+          res.statusCode = 204;
+          res.end();
+          return;
+        }
+        await handleServerless('/api/calendar.js', req, res);
+      });
+
+      // Auto-archive Cron API
+      server.middlewares.use('/api/cron/auto-archive', async (req, res) => {
+        await handleServerless('/api/cron/auto-archive.js', req, res);
       });
     },
   };
@@ -77,6 +97,20 @@ export default defineConfig(({ mode }) => {
       tailwindcss(),
       devApiPlugin(),
     ],
+    build: {
+      chunkSizeWarningLimit: 600,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+            'vendor-supabase': ['@supabase/supabase-js'],
+            'vendor-markdown': ['react-markdown'],
+            'vendor-utils': ['date-fns', 'lucide-react', 'react-hot-toast'],
+          },
+        },
+      },
+    },
   };
 });
+
 

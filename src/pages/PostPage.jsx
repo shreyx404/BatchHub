@@ -63,7 +63,11 @@ export default function PostPage() {
 
     if (navigator.share) {
       try {
-        await navigator.share({ text: shareText });
+        await navigator.share({
+          title: post.title,
+          text: shareText,
+          url,
+        });
       } catch (err) {
         if (err.name !== 'AbortError') {
           try {

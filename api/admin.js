@@ -298,17 +298,34 @@ export default async function handler(req, res) {
     return res.status(200).json({ data: { authenticated: true } });
   }
 
+  // ── Process the action with validated payloads ──
+  if (!action || typeof action !== 'string') {
+    return res.status(400).json({ error: 'Missing or invalid action.' });
+  }
+
+  const VALID_ACTIONS = [
+    'getAllPosts',
+    'getPost',
+    'createPost',
+    'updatePost',
+    'deletePost',
+    'createSubject',
+    'updateSubject',
+    'deleteSubject',
+    'getCalendarDeadlines',
+    'autoArchiveExpired',
+  ];
+
+  if (!VALID_ACTIONS.includes(action)) {
+    return res.status(400).json({ error: 'Unknown action.' });
+  }
+
   if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
     return res.status(500).json({ error: 'Server missing Supabase keys.' });
   }
 
   if (!supabase) {
     supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
-  }
-
-  // ── Process the action with validated payloads ──
-  if (!action || typeof action !== 'string') {
-    return res.status(400).json({ error: 'Missing or invalid action.' });
   }
 
   try {

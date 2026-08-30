@@ -33,7 +33,7 @@ function getOption(options, name) {
 // ── Helper: Parse "Label | URL, Label2 | URL2" into JSONB ──────
 function parseLinks(str) {
   if (!str || str.trim().toLowerCase() === 'clear') return [];
-  return str.split(',').map(segment => {
+  return str.split(/,\s*(?=[^,]+(?:\||https?:\/\/))/i).map(segment => {
     const parts = segment.trim().split('|').map(p => p.trim());
     if (parts.length >= 2) {
       return { label: parts[0], url: parts.slice(1).join('|').trim() };

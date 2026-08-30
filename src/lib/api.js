@@ -13,6 +13,11 @@ async function adminRequest(action, payload) {
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      try {
+        sessionStorage.removeItem('batchhub_admin_token');
+      } catch {}
+    }
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.error || 'Admin request failed');
   }
@@ -217,7 +222,7 @@ export async function fetchCalendarDeadlines(year, month, options = {}) {
       return await adminRequest('getCalendarDeadlines', {
         start: startIso,
         end: endIso,
-        includeDrafts: includeDrafts || true,
+        includeDrafts: Boolean(includeDrafts),
         status: status && status !== 'all' ? status : undefined,
       });
     } catch {

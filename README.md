@@ -91,6 +91,12 @@ npm run dev
 - **Student view:** `http://localhost:5173`
 - **Admin dashboard:** `http://localhost:5173/admin`
 
+### 6. Run automated tests
+```bash
+npm test
+```
+Runs the full-stack automated test suite (Unit, Integration, Dual-Mode API, Security Penetration, Rate Limiting, Turnstile, Auto-Archive Cron, and Discord signature verification).
+
 ## Demo Mode
 
 If Supabase credentials are not configured, BatchHub runs in **demo mode** with sample data. Perfect for previewing the UI and admin dashboard without setting up a database.

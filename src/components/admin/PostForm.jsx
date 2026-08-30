@@ -124,6 +124,22 @@ export default function PostForm({ existingPost, onSaved }) {
 
     setSaving(true);
     try {
+      let parsedDueDate = null;
+      if (form.due_date) {
+        const d = new Date(form.due_date);
+        if (!isNaN(d.getTime())) {
+          parsedDueDate = d.toISOString();
+        }
+      }
+
+      let parsedCreatedAt = undefined;
+      if (form.created_at) {
+        const d = new Date(form.created_at);
+        if (!isNaN(d.getTime())) {
+          parsedCreatedAt = d.toISOString();
+        }
+      }
+
       const postData = {
         title: form.title.trim(),
         content: form.content.trim(),
@@ -131,8 +147,8 @@ export default function PostForm({ existingPost, onSaved }) {
         subject_id: form.subject_id || null,
         is_pinned: form.is_pinned,
         status: form.status,
-        due_date: form.due_date ? new Date(form.due_date).toISOString() : null,
-        ...(form.created_at && { created_at: new Date(form.created_at).toISOString() }),
+        due_date: parsedDueDate,
+        ...(parsedCreatedAt !== undefined && { created_at: parsedCreatedAt }),
         tags: form.tags
           ? form.tags.split(',').map((t) => t.trim()).filter(Boolean)
           : [],
