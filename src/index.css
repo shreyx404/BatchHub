@@ -577,5 +577,33 @@ textarea.input-field {
   background-color: #000000 !important;
 }
 
+/* ── Mobile & Tablet Ergonomics & Safe Areas ── */
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
 
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
 
+.pl-safe {
+  padding-left: env(safe-area-inset-left, 0px);
+}
+
+.pr-safe {
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+button, a, input, select, textarea {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.touch-scroll::-webkit-scrollbar {
+  display: none;
+}

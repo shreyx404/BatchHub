@@ -8,9 +8,9 @@ export default function FilterBar({
   subjects = [],
 }) {
   return (
-    <div className="flex flex-col gap-2.5">
+    <div className="flex flex-col gap-2">
       {/* Type filters */}
-      <div className="flex gap-1.5 overflow-x-auto sm:flex-wrap scrollbar-hide pb-1">
+      <div className="flex gap-1.5 overflow-x-auto sm:flex-wrap touch-scroll py-0.5 -mx-4 px-4 sm:mx-0 sm:px-0">
         <FilterChip
           label="All"
           active={!selectedType}
@@ -29,7 +29,7 @@ export default function FilterBar({
 
       {/* Subject filters */}
       {subjects.length > 0 && (
-        <div className="flex gap-1.5 overflow-x-auto sm:flex-wrap scrollbar-hide pb-1">
+        <div className="flex gap-1.5 overflow-x-auto sm:flex-wrap touch-scroll py-0.5 -mx-4 px-4 sm:mx-0 sm:px-0">
           <FilterChip
             label="All Subjects"
             active={!selectedSubject}
@@ -57,8 +57,8 @@ function FilterChip({ label, icon: Icon, active, onClick, small = false }) {
   return (
     <button
       onClick={onClick}
-      className={`shrink-0 flex items-center gap-1.5 border transition-all duration-200 whitespace-nowrap
-        ${small ? 'px-2.5 py-1 text-[10px] tracking-[0.03em] font-mono' : 'px-3 py-1.5 text-[11px] tracking-[0.02em] uppercase'}
+      className={`shrink-0 flex items-center gap-1.5 border transition-all duration-200 whitespace-nowrap active:scale-[0.98]
+        ${small ? 'px-2.5 py-1 text-[10.5px] sm:text-[10px] tracking-[0.03em] font-mono min-h-[32px] sm:min-h-[30px]' : 'px-3 py-1.5 text-[11px] tracking-[0.02em] uppercase min-h-[36px] sm:min-h-[34px]'}
         ${
           active
             ? 'bg-white border-white text-black font-semibold'

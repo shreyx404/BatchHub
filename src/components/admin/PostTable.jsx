@@ -136,15 +136,15 @@ export default function PostTable() {
         <h2 className="text-xl font-bold text-[var(--color-text)]">All Posts</h2>
 
         {/* Status filter */}
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-1.5 overflow-x-auto touch-scroll py-0.5 -mx-3 px-3 sm:mx-0 sm:px-0">
           {['all', 'published', 'draft', 'archived'].map((s) => (
             <button
               key={s}
               onClick={() => handleStatusFilterChange(s)}
-              className={`px-3 py-1.5 text-xs font-medium transition-all ${
+              className={`px-3 py-1.5 text-xs font-medium whitespace-nowrap min-h-[34px] transition-all active:scale-[0.98] ${
                 statusFilter === s
-                  ? 'bg-[var(--color-accent)] text-black'
-                  : 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
+                  ? 'bg-[var(--color-accent)] text-black font-semibold'
+                  : 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)]'
               }`}
             >
               {s === 'all' ? 'All' : POST_STATUSES[s]?.label || s}
@@ -157,17 +157,17 @@ export default function PostTable() {
       </div>
 
       {/* Sort controls */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-[10px] uppercase tracking-[0.05em] font-medium text-[var(--color-text-dim)]">
+      <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+        <span className="text-[10px] uppercase tracking-[0.05em] font-medium text-[var(--color-text-dim)] mr-0.5">
           Sort by
         </span>
         {SORT_OPTIONS.map(({ key, label, icon: SortIcon }) => (
           <button
             key={key}
             onClick={() => setSortBy(key)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-medium min-h-[34px] transition-all active:scale-[0.98] ${
               sortBy === key
-                ? 'bg-[var(--color-accent)] text-black'
+                ? 'bg-[var(--color-accent)] text-black font-semibold'
                 : 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
             }`}
           >
@@ -178,14 +178,14 @@ export default function PostTable() {
         <button
           onClick={toggleSortDirection}
           title={sortDirection === 'asc' ? 'Earliest first' : 'Latest first'}
-          className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)] transition-all"
+          className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium min-h-[34px] bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)] transition-all active:scale-[0.98]"
         >
           <ArrowUpDown size={12} />
           {sortDirection === 'asc' ? '↑ Asc' : '↓ Desc'}
         </button>
 
         {sortBy === 'due_date' && (
-          <span className="text-[10px] text-[var(--color-text-dim)] italic ml-1">
+          <span className="text-[10px] text-[var(--color-text-dim)] italic ml-1 w-full sm:w-auto">
             Posts without deadlines appear first
           </span>
         )}
@@ -194,7 +194,7 @@ export default function PostTable() {
       {sortedPosts.length === 0 ? (
         <EmptyState title="No posts" description="No posts match the selected filter." />
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           {sortedPosts.map((post) => (
             <div
               key={post.id}
@@ -218,7 +218,7 @@ export default function PostTable() {
                 <p className="text-sm font-medium text-[var(--color-text)] break-words sm:truncate">
                   {post.title}
                 </p>
-                <div className="flex items-center gap-3 text-xs text-[var(--color-text-dim)] mt-1 flex-wrap">
+                <div className="flex items-center gap-2.5 sm:gap-3 text-xs text-[var(--color-text-dim)] mt-1 flex-wrap">
                   <span>
                     Posted: {format(new Date(post.created_at || new Date()), 'dd-MM-yyyy · h:mm a')}
                   </span>
@@ -231,7 +231,7 @@ export default function PostTable() {
               </div>
 
               {/* Actions - Always visible */}
-              <div className="flex items-center gap-1.5 shrink-0 pt-2.5 sm:pt-0 border-t border-[var(--color-border)]/50 sm:border-t-0 opacity-100">
+              <div className="flex items-center gap-1.5 shrink-0 pt-2.5 sm:pt-0 border-t border-[var(--color-border)]/50 sm:border-t-0 opacity-100 justify-end">
                 <ActionButton
                   icon={Eye}
                   label="View Post"

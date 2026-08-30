@@ -111,13 +111,18 @@
 | FR-051 | Handle Discord Autocomplete (`type: 4`) for live subject searching by name/code | P1 | ✅ Implemented |
 | FR-053 | Provide a registration script (`scripts/register-discord-commands.js`) deploying all 9 subcommands | P2 | ✅ Implemented |
 
-### 1.8 Demo Mode
+### 1.9 Mobile & Tablet Ergonomics & Responsiveness
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| FR-054 | Detect missing Supabase credentials and fall back to in-memory demo data | P1 | ✅ Implemented |
-| FR-055 | Demo data includes sample subjects and posts with relative dates for freshness | P2 | ✅ Implemented |
-| FR-056 | All CRUD operations work against in-memory arrays in demo mode | P2 | ✅ Implemented |
+| FR-057 | Viewport and safe-area insets (`viewport-fit=cover`, `pt-safe`, `pb-safe`) for iOS and Android notch devices | P0 | ✅ Implemented |
+| FR-058 | Smooth inertia touch scrolling (`touch-scroll`, `-webkit-overflow-scrolling: touch`) across filter chips, deadline banners, and calendar week views | P1 | ✅ Implemented |
+| FR-059 | Ergonomic touch targets (≥40–44px) across all interactive action buttons, navigation icons, drawer toggles, and form controls | P1 | ✅ Implemented |
+| FR-060 | Mobile-adapted form controls in `PostForm` (stacked link label & URL inputs on `< sm:` viewports, sticky submit bar for seamless publishing without scrolling) | P1 | ✅ Implemented |
+| FR-061 | Responsive Admin Dashboard multi-tier layout: 2-column stats cards on phone viewports, 3-column on tablet viewports, 5-column on desktop | P1 | ✅ Implemented |
+| FR-062 | Mobile-optimized `PostTable` with touch-scrollable status filters and full-width card action buttons | P1 | ✅ Implemented |
+| FR-063 | Bottom-sheet dialog presentation and touch-friendly close button in `Modal` | P1 | ✅ Implemented |
+| FR-064 | Responsive typography scaling across hero headings, post detail headers, and stats counters | P1 | ✅ Implemented |
 
 ---
 

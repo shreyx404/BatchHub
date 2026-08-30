@@ -49,6 +49,7 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 | F-07 | **Deep Links & Sharing** | Every post has a unique URL (`/post/:id`) shareable via native Web Share API with rich formatted text (`*<Title>*\n\n_BatchHub :_ ->\n<Link>`) and robust clipboard fallback |
 | F-08 | **Academic Deadlines Calendar View** | Full-page interactive calendar (`/calendar`) supporting **Month**, **Week** (7-day timetable with touch scrolling), and **Agenda** (chronological grouped timeline strictly presenting upcoming deliverables with countdowns) views, complete with subject filter chips, date navigation, today snap-back, urgency indicators (< 24h red badges), selected-date inspector drawer with direct resource links, upcoming 7-day queue, and faded-out display of past & archived events in grid/week views |
 | F-08a | **Demo Mode** | App runs with sample data when Supabase is not configured, allowing UI preview without a database |
+| F-08b | **Mobile & Tablet Optimization** | End-to-end responsive design with safe area insets (`viewport-fit=cover`), touch-action manipulation, inertia scrolling, touch targets (≥40–44px), mobile-stacked link editors, sticky bottom submit action bar, bottom-sheet modals, and fluid typography |
 
 ### 3.2 Admin Dashboard (Password-Protected)
 

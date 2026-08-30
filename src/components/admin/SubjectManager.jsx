@@ -104,24 +104,24 @@ export default function SubjectManager() {
                   <p className="text-xs text-[var(--color-text-dim)] font-mono">{subject.code}</p>
                 )}
               </div>
-              <div className="flex items-center gap-1.5 shrink-0 opacity-100 transition-opacity">
+              <div className="flex items-center gap-2 shrink-0 opacity-100 transition-opacity">
                 <button
                   type="button"
                   onClick={() => openEdit(subject)}
                   title="Edit Subject"
                   aria-label="Edit Subject"
-                  className="p-2 bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface-2)]/80 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
+                  className="p-2 bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface-2)]/80 active:bg-[var(--color-surface-3)] transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
                 >
-                  <Edit2 size={14} />
+                  <Edit2 size={15} />
                 </button>
                 <button
                   type="button"
                   onClick={() => setDeleteTarget(subject)}
                   title="Delete Subject"
                   aria-label="Delete Subject"
-                  className="p-2 bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
+                  className="p-2 bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 active:bg-red-500/30 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={15} />
                 </button>
               </div>
             </div>
@@ -145,7 +145,7 @@ export default function SubjectManager() {
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               placeholder="e.g. Data Structures"
-              className="input-field"
+              className="input-field min-h-[42px]"
               autoFocus
             />
           </div>
@@ -158,44 +158,44 @@ export default function SubjectManager() {
               value={form.code}
               onChange={(e) => setForm({ ...form, code: e.target.value })}
               placeholder="e.g. CS201"
-              className="input-field"
+              className="input-field min-h-[42px]"
             />
           </div>
           <div>
             <label className="text-sm font-medium text-[var(--color-text)] block mb-1.5">
               Color
             </label>
-            <div className="flex flex-wrap gap-3 py-1">
+            <div className="flex flex-wrap gap-4 py-2">
               {COLOR_PRESETS.map((c) => (
                 <button
                   key={c}
                   type="button"
                   onClick={() => setForm({ ...form, color: c })}
-                  className="w-6 h-6 rotate-45 border transition-all hover:scale-110 flex items-center justify-center"
+                  className="w-7 h-7 rotate-45 border transition-all hover:scale-110 active:scale-95 flex items-center justify-center min-h-[28px] min-w-[28px]"
                   style={{
                     background: c,
                     borderColor: form.color === c ? '#ffffff' : 'transparent',
-                    boxShadow: form.color === c ? '0 0 0 1px #ffffff' : 'none',
+                    boxShadow: form.color === c ? '0 0 0 2px #ffffff' : 'none',
                   }}
                   title={c}
                 >
-                  {form.color === c && <Check size={11} className="text-white -rotate-45 stroke-[3]" />}
+                  {form.color === c && <Check size={12} className="text-white -rotate-45 stroke-[3]" />}
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="flex gap-3 justify-end pt-2">
+          <div className="flex gap-3 justify-end pt-3">
             <button
               onClick={() => setShowForm(false)}
-              className="px-4 py-2 border border-[var(--color-border)] text-sm text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] transition-colors"
+              className="px-4 py-2.5 min-h-[42px] border border-[var(--color-border)] text-sm text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-60 text-black text-sm font-semibold transition-colors"
+              className="flex items-center gap-2 px-5 py-2.5 min-h-[42px] bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] active:scale-[0.99] disabled:opacity-60 text-black text-sm font-semibold transition-all"
             >
               {saving ? (
                 <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />

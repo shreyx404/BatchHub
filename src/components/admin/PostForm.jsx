@@ -331,54 +331,57 @@ export default function PostForm({ existingPost, onSaved }) {
 
       {/* Links & Attachments */}
       <Field label="Resource Links / Attachments" hint="Add Google Drive, Google Classroom, GitHub, or submission URLs">
-        <div className="space-y-2">
+        <div className="space-y-3 sm:space-y-2">
           {form.links.map((link, i) => (
-            <div key={i} className="flex gap-2">
+            <div key={i} className="flex flex-col sm:flex-row gap-2 bg-[var(--color-surface)] sm:bg-transparent p-2.5 sm:p-0 border border-[var(--color-border)] sm:border-0">
               <input
                 type="text"
                 value={link.label}
                 onChange={(e) => updateLink(i, 'label', e.target.value)}
                 placeholder="Label (e.g. Assignment PDF / G-Drive)"
-                className="input-field flex-1"
+                className="input-field flex-1 text-xs sm:text-sm min-h-[40px]"
               />
-              <input
-                type="url"
-                value={link.url}
-                onChange={(e) => updateLink(i, 'url', e.target.value)}
-                placeholder="https://..."
-                className="input-field flex-[2]"
-              />
-              {form.links.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeLink(i)}
-                  className="p-2 border border-[var(--color-border)] hover:bg-red-500/10 text-[var(--color-text-dim)] hover:text-red-400 transition-colors"
-                >
-                  <X size={16} />
-                </button>
-              )}
+              <div className="flex gap-2 flex-1 sm:flex-[2]">
+                <input
+                  type="url"
+                  value={link.url}
+                  onChange={(e) => updateLink(i, 'url', e.target.value)}
+                  placeholder="https://..."
+                  className="input-field flex-1 text-xs sm:text-sm min-h-[40px]"
+                />
+                {form.links.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeLink(i)}
+                    aria-label="Remove link"
+                    className="p-2 min-h-[40px] min-w-[40px] flex items-center justify-center border border-[var(--color-border)] hover:bg-red-500/10 text-[var(--color-text-dim)] hover:text-red-400 active:bg-red-500/20 transition-colors shrink-0"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
             </div>
           ))}
           <button
             type="button"
             onClick={addLink}
-            className="flex items-center gap-1.5 text-xs font-medium text-[var(--color-accent-hover)] hover:underline pt-1"
+            className="flex items-center gap-1.5 text-xs font-medium text-[var(--color-accent-hover)] hover:underline pt-1 min-h-[34px]"
           >
-            <Plus size={12} />
+            <Plus size={14} />
             Add another link
           </button>
         </div>
       </Field>
 
-      {/* Submit */}
-      <div className="flex items-center gap-3 pt-4 border-t border-[var(--color-border)]">
+      {/* Submit Action Bar (Sticky on mobile for seamless submission) */}
+      <div className="sticky bottom-0 sm:static bg-[var(--color-bg)]/95 sm:bg-transparent backdrop-blur-md sm:backdrop-blur-none p-3 sm:p-0 -mx-3.5 sm:mx-0 pt-3 sm:pt-4 border-t border-[var(--color-border)] flex items-center gap-2.5 sm:gap-3 z-20 pb-safe">
         <button
           type="submit"
           disabled={saving}
-          className="flex items-center gap-2 px-5 py-2.5 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-60 text-black text-sm font-semibold transition-colors"
+          className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] active:scale-[0.99] disabled:opacity-60 text-black text-sm font-semibold transition-all"
         >
           {saving ? (
-            <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+            <div className="w-4 h-4 rounded-full border-2 border-black/30 border-t-black animate-spin" />
           ) : (
             <Save size={16} />
           )}
@@ -388,7 +391,7 @@ export default function PostForm({ existingPost, onSaved }) {
         <button
           type="button"
           onClick={() => navigate('/admin/posts')}
-          className="px-4 py-2.5 border border-[var(--color-border)] text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] transition-colors"
+          className="flex-1 sm:flex-initial px-4 py-2.5 min-h-[44px] border border-[var(--color-border)] text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors text-center"
         >
           Cancel
         </button>

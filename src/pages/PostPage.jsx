@@ -106,17 +106,17 @@ export default function PostPage() {
         </div>
 
         {/* Title */}
-        <h1 className="text-[2rem] sm:text-[2.75rem] font-display font-semibold text-[var(--color-text)] tracking-[-0.02em] leading-[1.1] mb-5">
+        <h1 className="text-[1.65rem] xs:text-[2rem] sm:text-[2.75rem] font-display font-semibold text-[var(--color-text)] tracking-[-0.02em] leading-[1.15] mb-4 sm:mb-5">
           {post.title}
         </h1>
 
         {/* Meta */}
-        <div className="flex flex-wrap items-center gap-4 text-[var(--text-sm)] text-[var(--color-text-muted)] mb-6 pb-6 border-b border-[var(--color-border)]">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[var(--text-xs)] sm:text-[var(--text-sm)] text-[var(--color-text-muted)] mb-5 sm:mb-6 pb-5 sm:pb-6 border-b border-[var(--color-border)]">
           {post.created_at && (
             <span className="flex items-center gap-1.5">
               <Clock size={14} />
               Posted {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-              <span className="text-[var(--color-text-dim)]">
+              <span className="text-[var(--color-text-dim)] hidden xs:inline">
                 · {format(new Date(post.created_at), 'dd-MM-yyyy · h:mm a')}
               </span>
             </span>
@@ -133,7 +133,7 @@ export default function PostPage() {
             >
               <CalendarClock size={14} />
               {isOverdue ? 'Overdue' : 'Due'} {format(dueDate, 'dd-MM-yyyy · h:mm a')}
-              <span className="text-xs opacity-75">
+              <span className="text-xs opacity-75 hidden xs:inline">
                 ({formatDistanceToNow(dueDate, { addSuffix: true })})
               </span>
             </span>
@@ -142,7 +142,7 @@ export default function PostPage() {
 
         {/* Content */}
         {post.content && (
-          <div className="prose mb-8">
+          <div className="prose mb-8 overflow-x-auto text-[var(--text-sm)] sm:text-[var(--text-base)]">
             <ReactMarkdown
               disallowedElements={['script', 'iframe', 'object', 'embed']}
               unwrapDisallowed
@@ -160,7 +160,7 @@ export default function PostPage() {
 
         {/* Tags */}
         {post.tags && post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-6">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-6">
             {post.tags.map((tag) => (
               <span
                 key={tag}
@@ -188,10 +188,10 @@ export default function PostPage() {
                     href={safeHref}
                     target={safeHref.startsWith('#') ? undefined : '_blank'}
                     rel={safeHref.startsWith('#') ? undefined : 'noopener noreferrer'}
-                    className="flex items-center gap-3 px-4 py-3.5 bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] text-[var(--text-sm)] text-[var(--color-accent-hover)] font-medium transition-all duration-300 group tracking-[0.005em]"
+                    className="flex items-center gap-3 px-3.5 sm:px-4 py-3 sm:py-3.5 bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] text-[var(--text-xs)] sm:text-[var(--text-sm)] text-[var(--color-accent-hover)] font-medium transition-all duration-300 group tracking-[0.005em] min-h-[44px]"
                   >
                     <ExternalLink size={15} className="shrink-0 text-[var(--color-text-dim)] group-hover:text-[var(--color-accent-hover)] transition-colors" />
-                    <span className="truncate flex-1 font-mono text-xs">{link.label || link.url}</span>
+                    <span className="truncate flex-1 font-mono">{link.label || link.url}</span>
                     <ArrowLeft size={13} className="ml-auto rotate-180 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all shrink-0" />
                   </a>
                 );
@@ -204,9 +204,9 @@ export default function PostPage() {
         <div className="pt-6 border-t border-[var(--color-border)]">
           <button
             onClick={handleShare}
-            className="flex items-center gap-2 px-5 py-2.5 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-black text-[var(--text-sm)] font-semibold transition-colors duration-300 tracking-[0.005em]"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] active:scale-[0.99] text-black text-[var(--text-sm)] font-semibold transition-all min-h-[44px]"
           >
-            <Share2 size={14} />
+            <Share2 size={16} />
             Share Post
           </button>
         </div>
@@ -221,14 +221,22 @@ export default function PostPage() {
 
 function NavBar() {
   return (
-    <nav className="sticky top-0 z-50 glass-strong border-b border-[var(--color-border)]">
-      <div className="mx-auto max-w-3xl px-4 h-14 flex items-center">
+    <nav className="sticky top-0 z-50 glass-strong border-b border-[var(--color-border)] pt-safe">
+      <div className="mx-auto max-w-3xl px-3 sm:px-4 h-14 flex items-center justify-between">
         <Link
           to="/"
-          className="flex items-center gap-2 text-[var(--text-sm)] font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors duration-300 tracking-[0.005em]"
+          className="flex items-center gap-2 text-[var(--text-sm)] font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors duration-300 tracking-[0.005em] min-h-[44px]"
         >
           <ArrowLeft size={16} />
-          Back to {APP_NAME}
+          <span>Back to {APP_NAME}</span>
+        </Link>
+        <Link
+          to="/calendar"
+          className="p-2 min-h-[40px] min-w-[40px] flex items-center justify-center text-[var(--color-text-dim)] hover:text-[var(--color-text)] transition-colors"
+          title="Academic Calendar"
+          aria-label="Academic Calendar"
+        >
+          <CalendarClock size={18} />
         </Link>
       </div>
     </nav>

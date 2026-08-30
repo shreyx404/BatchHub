@@ -181,7 +181,7 @@ export default function AdminLogin({ onLogin }) {
   };
 
   return (
-    <div className="min-h-dvh flex items-center justify-center bg-[var(--color-bg)] px-4">
+    <div className="min-h-dvh flex items-center justify-center bg-[var(--color-bg)] px-4 py-8 pt-safe pb-safe">
       <div className="w-full max-w-sm animate-fade-in-up">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
@@ -232,6 +232,9 @@ export default function AdminLogin({ onLogin }) {
                 type="password"
                 value={password}
                 disabled={isLocked || loading}
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck="false"
                 onChange={(e) => {
                   setPassword(e.target.value);
                   setError('');

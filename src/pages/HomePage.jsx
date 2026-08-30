@@ -126,13 +126,13 @@ export default function HomePage() {
         onSearchChange={handleSearch}
       />
 
-      <main className="flex-1 mx-auto w-full max-w-6xl px-4 py-6 space-y-6">
+      <main className="flex-1 mx-auto w-full max-w-6xl px-3.5 sm:px-4 py-4 sm:py-6 space-y-5 sm:space-y-6">
         {/* Hero */}
-        <div className="animate-fade-in pt-6 pb-3">
-          <h1 className="text-[2.5rem] sm:text-[3.25rem] font-display font-semibold text-[var(--color-text)] tracking-[-0.025em] leading-[1.05]">
+        <div className="animate-fade-in pt-4 sm:pt-6 pb-2 sm:pb-3">
+          <h1 className="text-[2.25rem] xs:text-[2.75rem] sm:text-[3.25rem] font-display font-semibold text-[var(--color-text)] tracking-[-0.025em] leading-[1.05]">
             {APP_NAME}
           </h1>
-          <p className="text-[var(--text-base)] font-light text-[var(--color-text-muted)] mt-3 tracking-[0.01em] leading-relaxed">
+          <p className="text-[var(--text-sm)] sm:text-[var(--text-base)] font-light text-[var(--color-text-muted)] mt-2 sm:mt-3 tracking-[0.01em] leading-relaxed">
             {APP_TAGLINE}
           </p>
         </div>

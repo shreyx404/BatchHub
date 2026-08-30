@@ -64,10 +64,10 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = 'ma
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/75 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
         onClick={onClose}
       />
 
@@ -77,15 +77,16 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = 'ma
         role="dialog"
         aria-modal="true"
         aria-label={title || 'Dialog'}
-        className={`relative w-full ${maxWidth} bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-modal)] animate-fade-in-up overflow-hidden`}
+        className={`relative w-full ${maxWidth} bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-modal)] animate-fade-in-up overflow-hidden pb-safe`}
       >
         {/* Header */}
         {title && (
-          <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--color-border)]">
-            <h2 className="text-lg font-display font-medium text-[var(--color-text)] tracking-[-0.01em]">{title}</h2>
+          <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 border-b border-[var(--color-border)]">
+            <h2 className="text-base sm:text-lg font-display font-medium text-[var(--color-text)] tracking-[-0.01em]">{title}</h2>
             <button
               onClick={onClose}
-              className="p-1.5 hover:bg-[var(--color-surface-2)] transition-colors text-[var(--color-text-muted)]"
+              aria-label="Close dialog"
+              className="p-2 min-h-[38px] min-w-[38px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
             >
               <X size={18} />
             </button>
@@ -93,7 +94,7 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = 'ma
         )}
 
         {/* Body */}
-        <div className="px-5 py-4 max-h-[70vh] overflow-y-auto">
+        <div className="px-4 sm:px-5 py-3 sm:py-4 max-h-[82dvh] sm:max-h-[75vh] overflow-y-auto">
           {children}
         </div>
       </div>

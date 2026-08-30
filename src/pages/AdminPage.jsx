@@ -43,21 +43,21 @@ export default function AdminPage() {
 
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
-        <header className="h-14 border-b border-[var(--color-border)] flex items-center px-4 gap-3 shrink-0">
+        <header className="h-14 border-b border-[var(--color-border)] flex items-center px-3 sm:px-4 gap-2.5 sm:gap-3 shrink-0 pt-safe">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 hover:bg-[var(--color-surface-2)] lg:hidden text-[var(--color-text-muted)] transition-colors"
+            className="p-2 min-h-[40px] min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] lg:hidden text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
             aria-label="Open sidebar"
           >
-            <Menu size={18} />
+            <Menu size={20} />
           </button>
-          <span className="text-[var(--text-sm)] font-medium text-[var(--color-text-muted)] tracking-[0.01em]">
+          <span className="text-[var(--text-xs)] sm:text-[var(--text-sm)] font-medium text-[var(--color-text-muted)] tracking-[0.01em]">
             Admin Dashboard
           </span>
         </header>
 
         {/* Content */}
-        <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
+        <main className="flex-1 p-3.5 sm:p-6 overflow-y-auto pb-safe">
           <Routes>
             <Route path="/" element={<AdminDashboard />} />
             <Route path="/create" element={<PostForm />} />
@@ -159,33 +159,33 @@ function AdminDashboard() {
   ];
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 sm:space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-display font-medium text-[var(--color-text)] tracking-[-0.01em]">Dashboard</h2>
+        <h2 className="text-lg sm:text-xl font-display font-medium text-[var(--color-text)] tracking-[-0.01em]">Dashboard</h2>
         <button
           onClick={() => navigate('/admin/create')}
-          className="flex items-center gap-1.5 px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-black text-[var(--text-sm)] font-medium transition-colors duration-300 tracking-[0.005em]"
+          className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 min-h-[38px] bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] active:scale-[0.98] text-black text-[var(--text-xs)] sm:text-[var(--text-sm)] font-medium transition-all tracking-[0.005em]"
         >
           <Plus size={14} />
           New Post
         </button>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 stagger-children">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 stagger-children">
         {cards.map(({ label, value, icon: Icon, color, bg, to }) => (
           <div
             key={label}
             onClick={() => to && navigate(to)}
-            className="border border-[var(--color-border)] bg-[var(--color-surface)] p-4 cursor-pointer hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]/40 transition-all group"
+            className="border border-[var(--color-border)] bg-[var(--color-surface)] p-3.5 sm:p-4 cursor-pointer hover:border-[var(--color-border-light)] hover:bg-[var(--color-surface-2)]/40 active:scale-[0.98] transition-all group"
           >
             <div
-              className="w-9 h-9 flex items-center justify-center mb-3"
+              className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center mb-2.5 sm:mb-3"
               style={{ background: bg + '15' }}
             >
-              <Icon size={18} style={{ color }} />
+              <Icon size={16} style={{ color }} />
             </div>
-            <p className="text-2xl font-display font-semibold text-[var(--color-text)] tracking-[-0.02em]">{value}</p>
-            <p className="text-[10px] text-[var(--color-text-muted)] group-hover:text-[var(--color-text)] mt-0.5 tracking-[0.03em] uppercase font-medium transition-colors">{label}</p>
+            <p className="text-xl sm:text-2xl font-display font-semibold text-[var(--color-text)] tracking-[-0.02em]">{value}</p>
+            <p className="text-[9.5px] sm:text-[10px] text-[var(--color-text-muted)] group-hover:text-[var(--color-text)] mt-0.5 tracking-[0.03em] uppercase font-medium transition-colors">{label}</p>
           </div>
         ))}
       </div>

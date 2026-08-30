@@ -33,7 +33,7 @@ export default function PostCard({ post }) {
   return (
     <Link
       to={`/post/${post.id}`}
-      className="group block relative pl-6 py-6 border-l border-[var(--color-border)] transition-all duration-300 hover:bg-[var(--color-surface-2)] hover:-translate-y-0.5 hover:translate-x-0.5"
+      className="group block relative pl-4 sm:pl-6 py-4 sm:py-6 border-l border-[var(--color-border)] transition-all duration-300 hover:bg-[var(--color-surface-2)] hover:-translate-y-0.5 hover:translate-x-0.5 active:bg-[var(--color-surface-3)]"
       style={{
         '--hover-border-color': hoverBorderColor,
         '--hover-glow-color': hoverGlowColor,
@@ -41,7 +41,7 @@ export default function PostCard({ post }) {
     >
       {/* Ledger Node Marker */}
       <div 
-        className="absolute left-[-4px] top-[30px] w-[7px] h-[7px] bg-[var(--color-border-light)] transition-colors duration-300 group-hover:bg-[var(--hover-border-color)]"
+        className="absolute left-[-4px] top-[22px] sm:top-[30px] w-[7px] h-[7px] bg-[var(--color-border-light)] transition-colors duration-300 group-hover:bg-[var(--hover-border-color)]"
         style={{ clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }}
       />
       {/* Ledger glowing line overlay */}
@@ -53,16 +53,16 @@ export default function PostCard({ post }) {
         }}
       />
 
-      <div className="flex flex-col gap-3.5">
+      <div className="flex flex-col gap-2.5 sm:gap-3.5">
         {/* Timestamp & Badges row */}
-        <div className="flex items-center gap-3 flex-wrap">
-          <span className="font-mono text-[10px] tracking-wider text-[var(--color-text-dim)] uppercase">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+          <span className="font-mono text-[9.5px] sm:text-[10px] tracking-wider text-[var(--color-text-dim)] uppercase">
             Posted: {format(new Date(post.created_at || new Date()), 'dd-MM-yyyy / HH:mm')}
           </span>
           <Badge type={post.type} />
           {post.subjects && <Badge subject={post.subjects} />}
           {post.is_pinned && (
-            <span className="flex items-center gap-1 text-[10px] font-medium tracking-[0.08em] uppercase text-[var(--color-accent)]">
+            <span className="flex items-center gap-1 text-[9.5px] sm:text-[10px] font-medium tracking-[0.08em] uppercase text-[var(--color-accent)]">
               <Pin size={10} className="rotate-45" />
               Pinned
             </span>
@@ -70,7 +70,7 @@ export default function PostCard({ post }) {
         </div>
 
         {/* Title — Playfair Display, generous size, tight leading */}
-        <h3 className="font-display font-medium text-[1.5rem] sm:text-[1.75rem] text-[var(--color-text)] transition-colors duration-500 leading-[1.15] tracking-[-0.015em] group-hover:text-[var(--hover-border-color)]">
+        <h3 className="font-display font-medium text-[1.25rem] xs:text-[1.4rem] sm:text-[1.75rem] text-[var(--color-text)] transition-colors duration-500 leading-[1.15] tracking-[-0.015em] group-hover:text-[var(--hover-border-color)]">
           {post.title}
         </h3>
 

@@ -27,7 +27,7 @@ export default function CalendarWeekView({
   return (
     <div className="border border-[var(--color-border)] flex flex-col bg-[#050505] animate-fade-in overflow-hidden">
       {/* Scrollable Container for Mobile / Tablet responsiveness with touch momentum */}
-      <div className="overflow-x-auto scrollbar-hide touch-pan-x">
+      <div className="overflow-x-auto touch-scroll touch-pan-x">
         <div className="min-w-[840px] md:min-w-0">
           {/* Week Day Header */}
           <div className="grid grid-cols-7 bg-[var(--color-surface-2)] border-b border-[var(--color-border)] text-center divide-x divide-[var(--color-border)]">
