@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { format, formatDistanceToNow, differenceInHours, isPast, addDays } from 'date-fns';
 import { CONTENT_TYPES } from '../../lib/constants';
-import { CalendarClock, Clock, Edit3, ArrowRight } from 'lucide-react';
+import { CalendarClock, CalendarCheck, Clock, Edit3, ArrowRight, X } from 'lucide-react';
 
 export default function CalendarSidebar({
   selectedDate,
@@ -11,6 +11,16 @@ export default function CalendarSidebar({
   isAdmin = false,
   onSelectDate,
 }) {
+  // Parse selected date key safely without timezone offset issues
+  const selectedDateObject = useMemo(() => {
+    if (!selectedDate) return null;
+    const parts = selectedDate.split('-').map(Number);
+    if (parts.length === 3) {
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+    return new Date(selectedDate);
+  }, [selectedDate]);
+
   // Sort selected date posts by due time ascending (earliest first)
   const sortedSelectedPosts = useMemo(() => {
     if (!selectedPosts || selectedPosts.length === 0) return [];
@@ -39,29 +49,84 @@ export default function CalendarSidebar({
 
   return (
     <div id="calendar-inspector-target" className="flex flex-col gap-4 sm:gap-5 scroll-mt-20">
-      {/* Selected Date Deadlines: All posts of that day combined & sorted by time */}
-      {sortedSelectedPosts.length > 0 ? (
-        <div className="flex flex-col gap-3">
-          {/* Section Header */}
-          <div className="flex items-center justify-between px-1 pb-0.5">
-            <div className="flex items-center gap-1.5 text-[10.5px] font-mono uppercase tracking-wider text-[var(--color-text)] font-semibold">
-              <CalendarClock size={13} className="text-[var(--color-text-muted)]" />
-              <span>
-                {format(new Date(sortedSelectedPosts[0].due_date), 'EEEE, MMMM d, yyyy')}
-              </span>
+      {/* Selected Date Section: Deadlines Inspector OR Empty Date Indicator OR Default Prompt */}
+      {selectedDateObject ? (
+        sortedSelectedPosts.length > 0 ? (
+          <div className="flex flex-col gap-3 animate-fade-in">
+            {/* Section Header */}
+            <div className="flex items-center justify-between px-1 pb-0.5">
+              <div className="flex items-center gap-1.5 text-[10.5px] font-mono uppercase tracking-wider text-[var(--color-text)] font-semibold">
+                <CalendarClock size={13} className="text-[var(--color-text-muted)]" />
+                <span>
+                  {format(selectedDateObject, 'EEEE, MMMM d, yyyy')}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono text-[var(--color-text-dim)]">
+                  {sortedSelectedPosts.length} {sortedSelectedPosts.length === 1 ? 'Item' : 'Items'}
+                </span>
+                {onSelectDate && (
+                  <button
+                    onClick={() => onSelectDate(null)}
+                    title="Clear selected date"
+                    className="text-[var(--color-text-dim)] hover:text-white transition-colors p-0.5"
+                  >
+                    <X size={12} />
+                  </button>
+                )}
+              </div>
             </div>
-            <span className="text-[10px] font-mono text-[var(--color-text-dim)]">
-              {sortedSelectedPosts.length} {sortedSelectedPosts.length === 1 ? 'Item' : 'Items'}
-            </span>
-          </div>
 
-          {/* All Posts on this date rendered as highlighted cards */}
-          <div className="flex flex-col gap-3.5">
-            {sortedSelectedPosts.map((post) => (
-              <InspectorCard key={post.id} post={post} isAdmin={isAdmin} />
-            ))}
+            {/* All Posts on this date rendered as highlighted cards */}
+            <div className="flex flex-col gap-3.5">
+              {sortedSelectedPosts.map((post) => (
+                <InspectorCard key={post.id} post={post} isAdmin={isAdmin} />
+              ))}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex flex-col gap-3 animate-fade-in">
+            {/* Section Header with Date */}
+            <div className="flex items-center justify-between px-1 pb-0.5">
+              <div className="flex items-center gap-1.5 text-[10.5px] font-mono uppercase tracking-wider text-[var(--color-text)] font-semibold">
+                <CalendarClock size={13} className="text-[var(--color-text-muted)]" />
+                <span>
+                  {format(selectedDateObject, 'EEEE, MMMM d, yyyy')}
+                </span>
+              </div>
+              {onSelectDate && (
+                <button
+                  onClick={() => onSelectDate(null)}
+                  title="Clear selected date"
+                  className="text-[var(--color-text-dim)] hover:text-white transition-colors p-0.5"
+                >
+                  <X size={12} />
+                </button>
+              )}
+            </div>
+
+            {/* Empty State for Selected Date */}
+            <div className="bg-[var(--color-surface-2)] border border-[var(--color-border)] p-4 sm:p-5 text-center">
+              <div className="flex flex-col items-center justify-center py-5 sm:py-6">
+                <CalendarCheck size={26} className="text-[var(--color-text-muted)] mb-2.5" />
+                <p className="text-[var(--text-sm)] font-semibold text-[var(--color-text)] font-display">
+                  No Deadlines Scheduled
+                </p>
+                <p className="text-[10.5px] text-[var(--color-text-dim)] mt-1 font-mono tracking-wider max-w-[240px] leading-relaxed">
+                  No assignments, practicals, or deliverables due on this date.
+                </p>
+                {onSelectDate && (
+                  <button
+                    onClick={() => onSelectDate(null)}
+                    className="mt-3.5 px-3 py-1 text-[10px] font-mono border border-[var(--color-border)] bg-[var(--color-surface-3)] text-[var(--color-text-muted)] hover:text-white hover:border-[var(--color-border-light)] transition-colors"
+                  >
+                    Clear Selection
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )
       ) : (
         <div className="bg-[var(--color-surface-2)] border border-[var(--color-border)] p-4 sm:p-5">
           <div className="flex flex-col items-center justify-center py-5 sm:py-6 text-center">
