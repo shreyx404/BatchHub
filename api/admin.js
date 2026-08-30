@@ -359,8 +359,16 @@ export default async function handler(req, res) {
         let query = supabase
           .from('posts')
           .select('*, subjects(*)')
-          .in('status', ['published', 'archived'])
           .not('due_date', 'is', null);
+
+        if (payload?.status && payload.status !== 'all') {
+          query = query.eq('status', payload.status);
+        } else if (payload?.includeDrafts) {
+          query = query.in('status', ['published', 'archived', 'draft']);
+        } else {
+          query = query.in('status', ['published', 'archived', 'draft']);
+        }
+
         if (payload?.start) query = query.gte('due_date', payload.start);
         if (payload?.end) query = query.lte('due_date', payload.end);
         result = await query.order('due_date', { ascending: true });

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { fetchCalendarDeadlines } from '../lib/api';
 
-export function useCalendarPosts(year, month) {
+export function useCalendarPosts(year, month, options = {}) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const optionsKey = JSON.stringify(options);
 
   useEffect(() => {
     let cancelled = false;
@@ -13,7 +15,7 @@ export function useCalendarPosts(year, month) {
       try {
         setLoading(true);
         setError(null);
-        const data = await fetchCalendarDeadlines(year, month);
+        const data = await fetchCalendarDeadlines(year, month, options);
         if (!cancelled) {
           setPosts(data || []);
         }
@@ -33,7 +35,7 @@ export function useCalendarPosts(year, month) {
     return () => {
       cancelled = true;
     };
-  }, [year, month]);
+  }, [year, month, optionsKey]);
 
   return { posts, loading, error };
 }

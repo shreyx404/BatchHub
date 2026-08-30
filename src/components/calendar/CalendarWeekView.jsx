@@ -143,7 +143,7 @@ export default function CalendarWeekView({
 
       {/* Week Footer / Legend & Touch Scroll Helper */}
       <div className="px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0a0a0a] border-t border-[var(--color-border)] flex flex-wrap items-center justify-between gap-2 sm:gap-3">
-        <div className="flex items-center gap-3 sm:gap-4 text-[var(--color-text-muted)] text-[9px] sm:text-[10px] font-mono">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[var(--color-text-muted)] text-[9px] sm:text-[10px] font-mono">
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#3b1515] border border-[#f87171]" />
             <span>Due &lt; 24h</span>
@@ -153,8 +153,12 @@ export default function CalendarWeekView({
             <span>Upcoming</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#0a0a0c] border border-[var(--color-border)]/50 opacity-50" />
-            <span>Past / Archived</span>
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#261010] border border-[#6b2121]" />
+            <span>Past Due</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#14141c] border border-[#3b3b4f]" />
+            <span>Archived</span>
           </div>
         </div>
         <div className="flex items-center gap-2 text-[9px] sm:text-[10px] font-mono text-[var(--color-text-dim)]">
@@ -171,17 +175,21 @@ function WeekEventCard({ post, onClick }) {
   const now = new Date();
   const hoursLeft = differenceInHours(dueDate, now);
   const isArchived = post.status === 'archived';
-  const isOverdue = isPast(dueDate);
-  const isFaded = isArchived || isOverdue;
-  const isUrgent = !isFaded && hoursLeft < 24;
+  const isDraft = post.status === 'draft';
+  const isOverdue = !isDraft && isPast(dueDate);
+  const isUrgent = !isArchived && !isDraft && !isOverdue && hoursLeft < 24;
   const subjectCode = post.subjects?.code || post.subjects?.name || '';
   const links = post.links || [];
 
   const cardClass = isUrgent
-    ? 'p-2 sm:p-2.5 bg-[#1e1414] border border-[#6b2121] hover:border-[#ef4444] transition-all shadow-sm'
-    : isFaded
-      ? 'p-2 sm:p-2.5 bg-[#0a0a0c]/80 border border-[var(--color-border)]/40 opacity-55 hover:opacity-95 transition-all'
-      : 'p-2 sm:p-2.5 bg-[#121214] border border-[var(--color-border)] hover:border-[var(--color-border-light)] transition-all';
+    ? 'p-2 sm:p-2.5 bg-[#1e1010] border border-[#7f1d1d] hover:border-[#b91c1c] transition-all shadow-sm'
+    : isArchived
+      ? 'p-2 sm:p-2.5 bg-[#0f0f15] border border-[#2b2b3b] hover:border-[#4b4b66] transition-all'
+      : isDraft
+        ? 'p-2 sm:p-2.5 bg-[#14120a] border border-[#453610] hover:border-[#735817] transition-all'
+        : isOverdue
+          ? 'p-2 sm:p-2.5 bg-[#170a0a] border border-[#4a1d1d] hover:border-[#702424] transition-all'
+          : 'p-2 sm:p-2.5 bg-[#121214] border border-[var(--color-border)] hover:border-[var(--color-border-light)] transition-all';
 
   return (
     <div
@@ -199,25 +207,49 @@ function WeekEventCard({ post, onClick }) {
       {/* Top row: Subject & Time */}
       <div className="flex items-center justify-between text-[8.5px] sm:text-[9px] font-mono gap-1 mb-1">
         <span
-          className={`truncate font-semibold ${
-            isUrgent ? 'text-[#fca5a5]' : isFaded ? 'text-[var(--color-text-dim)]' : 'text-[var(--color-text-muted)]'
+          className={`truncate font-bold ${
+            isUrgent
+              ? 'text-[#fca5a5]'
+              : isArchived
+                ? 'text-[#a0a0b8]'
+                : isDraft
+                  ? 'text-amber-300'
+                  : isOverdue
+                    ? 'text-red-300'
+                    : 'text-[var(--color-text-muted)]'
           }`}
         >
           {subjectCode}
         </span>
         <span
-          className={`shrink-0 ${
-            isUrgent ? 'text-[#fca5a5]' : 'text-[var(--color-text-dim)]'
+          className={`shrink-0 font-medium ${
+            isUrgent
+              ? 'text-[#fca5a5]'
+              : isArchived
+                ? 'text-[#85859e]'
+                : isDraft
+                  ? 'text-amber-400'
+                  : isOverdue
+                    ? 'text-red-400'
+                    : 'text-[var(--color-text-dim)]'
           }`}
         >
-          {isArchived ? 'Archived' : format(dueDate, 'h:mm a')}
+          {isArchived ? 'Archived' : isDraft ? 'Draft' : format(dueDate, 'h:mm a')}
         </span>
       </div>
 
       {/* Title */}
       <h4
         className={`text-[10.5px] sm:text-[11px] font-medium leading-snug line-clamp-2 ${
-          isUrgent ? 'text-white' : isFaded ? 'text-[var(--color-text-muted)]' : 'text-[var(--color-text)]'
+          isUrgent
+            ? 'text-white'
+            : isArchived
+              ? 'text-[#c0c0d8]'
+              : isDraft
+                ? 'text-amber-100'
+                : isOverdue
+                  ? 'text-red-100'
+                  : 'text-[var(--color-text)]'
         }`}
       >
         {post.title}

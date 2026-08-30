@@ -180,8 +180,11 @@ export async function fetchUpcomingDeadlines() {
 
 /**
  * Fetch posts with due_date in a given month (±6 days for calendar grid padding).
+ * Supports options: { includeDrafts, status }
  */
-export async function fetchCalendarDeadlines(year, month) {
+export async function fetchCalendarDeadlines(year, month, options = {}) {
+  const { includeDrafts = false, status = null } = options;
+
   // Build date range: start of month minus 6 days, end of month plus 6 days
   const start = new Date(year, month, 1);
   start.setDate(start.getDate() - 6);
@@ -195,7 +198,12 @@ export async function fetchCalendarDeadlines(year, month) {
   if (!isSupabaseConfigured()) {
     return DEMO_POSTS
       .filter((p) => {
-        if (!p.due_date || (p.status !== 'published' && p.status !== 'archived')) return false;
+        if (!p.due_date) return false;
+        if (status && status !== 'all') {
+          if (p.status !== status) return false;
+        } else if (!includeDrafts && p.status === 'draft') {
+          return false;
+        }
         const d = new Date(p.due_date);
         return d >= start && d <= end;
       })
@@ -206,7 +214,12 @@ export async function fetchCalendarDeadlines(year, month) {
   const token = sessionStorage.getItem('batchhub_admin_token');
   if (token) {
     try {
-      return await adminRequest('getCalendarDeadlines', { start: startIso, end: endIso });
+      return await adminRequest('getCalendarDeadlines', {
+        start: startIso,
+        end: endIso,
+        includeDrafts: includeDrafts || true,
+        status: status && status !== 'all' ? status : undefined,
+      });
     } catch {
       // Fallback to public fetch if admin request fails
     }
@@ -214,7 +227,8 @@ export async function fetchCalendarDeadlines(year, month) {
 
   // 2. Try fetching from public /api/calendar serverless endpoint (uses service role to ensure all archived deliverables are retrieved)
   try {
-    const res = await fetch(`/api/calendar?start=${encodeURIComponent(startIso)}&end=${encodeURIComponent(endIso)}`);
+    const statusParam = status && status !== 'all' ? `&status=${encodeURIComponent(status)}` : '';
+    const res = await fetch(`/api/calendar?start=${encodeURIComponent(startIso)}&end=${encodeURIComponent(endIso)}${statusParam}`);
     if (res.ok) {
       const json = await res.json();
       if (Array.isArray(json.data)) {
@@ -226,14 +240,20 @@ export async function fetchCalendarDeadlines(year, month) {
   }
 
   // 3. Fallback: Direct Supabase client query with anon key
-  const { data, error } = await supabase
+  let query = supabase
     .from('posts')
     .select('*, subjects(*)')
-    .in('status', ['published', 'archived'])
     .not('due_date', 'is', null)
     .gte('due_date', startIso)
-    .lte('due_date', endIso)
-    .order('due_date', { ascending: true });
+    .lte('due_date', endIso);
+
+  if (status && status !== 'all') {
+    query = query.eq('status', status);
+  } else {
+    query = query.in('status', ['published', 'archived']);
+  }
+
+  const { data, error } = await query.order('due_date', { ascending: true });
 
   if (error) throw error;
   return data;

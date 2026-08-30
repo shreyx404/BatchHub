@@ -25,14 +25,19 @@ export default async function handler(req, res) {
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
-  const { start, end } = req.query || req.body || {};
+  const { start, end, status } = req.query || req.body || {};
 
   try {
     let query = supabase
       .from('posts')
       .select('*, subjects(*)')
-      .in('status', ['published', 'archived'])
       .not('due_date', 'is', null);
+
+    if (status && ['published', 'archived'].includes(status)) {
+      query = query.eq('status', status);
+    } else {
+      query = query.in('status', ['published', 'archived']);
+    }
 
     if (start) {
       query = query.gte('due_date', start);

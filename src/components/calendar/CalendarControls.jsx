@@ -26,6 +26,10 @@ export default function CalendarControls({
   onSubjectChange,
   postCountBySubject,
   totalPosts,
+  showStatusFilters = false,
+  statusFilter = 'all',
+  onStatusFilterChange,
+  statusCounts = {},
 }) {
   // Label for date navigator depending on active view mode
   const dateLabel = useMemo(() => {
@@ -37,7 +41,7 @@ export default function CalendarControls({
   }, [currentDate, viewMode]);
 
   return (
-    <div className="space-y-3 sm:space-y-4 w-full md:w-auto">
+    <div className="space-y-3 sm:space-y-3.5 w-full md:w-auto">
       {/* Navigator & View Mode Bar */}
       <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2 sm:gap-3">
         
@@ -107,10 +111,71 @@ export default function CalendarControls({
         </div>
       </div>
 
+      {/* Optional Status Filters for Admin / Detailed View */}
+      {showStatusFilters && onStatusFilterChange && (
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-hide py-0.5 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <span className="text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-wider shrink-0 mr-1">
+            Status:
+          </span>
+          <button
+            onClick={() => onStatusFilterChange('all')}
+            className={`px-2.5 py-1 min-h-[30px] text-[10.5px] sm:text-[11px] font-mono uppercase tracking-wider transition-colors ${
+              statusFilter === 'all'
+                ? 'bg-white text-black font-bold'
+                : 'bg-[#0a0a0a] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-white hover:border-[var(--color-border-light)]'
+            }`}
+          >
+            All ({statusCounts.all ?? totalPosts})
+          </button>
+          <button
+            onClick={() => onStatusFilterChange('published')}
+            className={`px-2.5 py-1 min-h-[30px] text-[10.5px] sm:text-[11px] font-mono uppercase tracking-wider transition-colors ${
+              statusFilter === 'published'
+                ? 'bg-white text-black font-bold'
+                : 'bg-[#0a0a0a] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-white hover:border-[var(--color-border-light)]'
+            }`}
+          >
+            Upcoming ({statusCounts.published ?? 0})
+          </button>
+          <button
+            onClick={() => onStatusFilterChange('overdue')}
+            className={`px-2.5 py-1 min-h-[30px] text-[10.5px] sm:text-[11px] font-mono uppercase tracking-wider transition-colors ${
+              statusFilter === 'overdue'
+                ? 'bg-[#ef4444] text-white font-bold'
+                : 'bg-[#0a0a0a] border border-[var(--color-border)] text-red-400/90 hover:text-red-300 hover:border-red-800'
+            }`}
+          >
+            Past Due ({statusCounts.overdue ?? 0})
+          </button>
+          <button
+            onClick={() => onStatusFilterChange('archived')}
+            className={`px-2.5 py-1 min-h-[30px] text-[10.5px] sm:text-[11px] font-mono uppercase tracking-wider transition-colors ${
+              statusFilter === 'archived'
+                ? 'bg-[#8888a0] text-black font-bold'
+                : 'bg-[#0a0a0a] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-white hover:border-[var(--color-border-light)]'
+            }`}
+          >
+            Archived ({statusCounts.archived ?? 0})
+          </button>
+          {(statusCounts.draft > 0 || statusFilter === 'draft') && (
+            <button
+              onClick={() => onStatusFilterChange('draft')}
+              className={`px-2.5 py-1 min-h-[30px] text-[10.5px] sm:text-[11px] font-mono uppercase tracking-wider transition-colors ${
+                statusFilter === 'draft'
+                  ? 'bg-amber-400 text-black font-bold'
+                  : 'bg-[#0a0a0a] border border-[var(--color-border)] text-amber-400/90 hover:text-amber-300 hover:border-amber-700'
+              }`}
+            >
+              Drafts ({statusCounts.draft ?? 0})
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Subject Filters (Touch scrollable with momentum) */}
       <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-hide py-1 -mx-4 px-4 sm:mx-0 sm:px-0">
         <span className="text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-wider shrink-0 mr-1">
-          Filter:
+          Subject:
         </span>
         <button
           onClick={() => onSubjectChange(null)}
@@ -120,7 +185,7 @@ export default function CalendarControls({
               : 'bg-[#0a0a0a] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-light)] hover:text-[var(--color-text)] active:bg-[var(--color-surface-2)]'
           }`}
         >
-          All Deadlines ({totalPosts})
+          All Subjects ({totalPosts})
         </button>
         {subjects.map((subject) => (
           <button

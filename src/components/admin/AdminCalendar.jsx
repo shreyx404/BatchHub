@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
-import { format, addMonths, subMonths, addWeeks, subWeeks } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
+import { format, addMonths, subMonths, addWeeks, subWeeks, isPast } from 'date-fns';
 import CalendarControls from '../calendar/CalendarControls';
 import CalendarGrid from '../calendar/CalendarGrid';
 import CalendarWeekView from '../calendar/CalendarWeekView';
@@ -9,25 +10,72 @@ import LoadingState from '../ui/LoadingState';
 import ErrorState from '../ui/ErrorState';
 import { useCalendarPosts } from '../../hooks/useCalendar';
 import { useSubjects } from '../../hooks/useSubjects';
-import { CalendarClock } from 'lucide-react';
+import { CalendarClock, Plus } from 'lucide-react';
 
 export default function AdminCalendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState('month'); // 'month' | 'week' | 'agenda'
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
+  const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'published' | 'overdue' | 'archived' | 'draft'
+
+  const navigate = useNavigate();
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  const { posts, loading, error } = useCalendarPosts(year, month);
+  const { posts, loading, error } = useCalendarPosts(year, month, { includeDrafts: true });
   const { subjects } = useSubjects();
 
-  // Filter posts by subject
+  const now = new Date();
+
+  // Status counts for filter chips
+  const statusCounts = useMemo(() => {
+    let published = 0;
+    let overdue = 0;
+    let archived = 0;
+    let draft = 0;
+
+    for (const post of posts) {
+      if (!post.due_date) continue;
+      if (post.status === 'archived') {
+        archived++;
+      } else if (post.status === 'draft') {
+        draft++;
+      } else if (new Date(post.due_date) <= now) {
+        overdue++;
+      } else {
+        published++;
+      }
+    }
+
+    return {
+      all: posts.length,
+      published,
+      overdue,
+      archived,
+      draft,
+    };
+  }, [posts, now]);
+
+  // Filter posts by subject AND status
   const filteredPosts = useMemo(() => {
-    if (!selectedSubject) return posts;
-    return posts.filter((p) => p.subject_id === selectedSubject);
-  }, [posts, selectedSubject]);
+    return posts.filter((p) => {
+      if (selectedSubject && p.subject_id !== selectedSubject) {
+        return false;
+      }
+      if (statusFilter === 'all') return true;
+      if (statusFilter === 'archived') return p.status === 'archived';
+      if (statusFilter === 'draft') return p.status === 'draft';
+      if (statusFilter === 'overdue') {
+        return p.status !== 'archived' && p.status !== 'draft' && p.due_date && new Date(p.due_date) <= now;
+      }
+      if (statusFilter === 'published') {
+        return p.status === 'published' && p.due_date && new Date(p.due_date) > now;
+      }
+      return true;
+    });
+  }, [posts, selectedSubject, statusFilter, now]);
 
   // Group posts by date key (YYYY-MM-DD)
   const postsByDate = useMemo(() => {
@@ -103,11 +151,20 @@ export default function AdminCalendar() {
         <div>
           <div className="flex items-center gap-1.5 text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-widest mb-1">
             <CalendarClock size={12} />
-            <span>DEADLINE CALENDAR</span>
+            <span>ADMIN DEADLINE CALENDAR</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-display font-medium text-[var(--color-text)] tracking-[-0.01em]">
-            Deadlines & Schedule
-          </h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-xl sm:text-2xl font-display font-medium text-[var(--color-text)] tracking-[-0.01em]">
+              Deadlines & Schedule
+            </h2>
+            <button
+              onClick={() => navigate('/admin/create')}
+              className="flex items-center gap-1.5 px-3 py-1 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-black text-[11px] font-mono font-bold transition-colors"
+            >
+              <Plus size={12} />
+              <span>New Deadline</span>
+            </button>
+          </div>
         </div>
 
         <CalendarControls
@@ -122,6 +179,10 @@ export default function AdminCalendar() {
           onSubjectChange={setSelectedSubject}
           postCountBySubject={postCountBySubject}
           totalPosts={filteredPosts.length}
+          showStatusFilters={true}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+          statusCounts={statusCounts}
         />
       </div>
 
@@ -141,6 +202,7 @@ export default function AdminCalendar() {
                 postsByDate={postsByDate}
                 selectedDate={selectedDate}
                 onSelectDate={handleSelectDate}
+                isAdmin={true}
               />
             )}
 
@@ -150,6 +212,7 @@ export default function AdminCalendar() {
                 postsByDate={postsByDate}
                 selectedDate={selectedDate}
                 onSelectDate={handleSelectDate}
+                isAdmin={true}
               />
             )}
 
@@ -158,6 +221,7 @@ export default function AdminCalendar() {
                 posts={filteredPosts}
                 selectedSubject={selectedSubject}
                 onSubjectChange={setSelectedSubject}
+                isAdmin={true}
               />
             )}
           </div>
@@ -168,6 +232,8 @@ export default function AdminCalendar() {
               selectedDate={selectedDate}
               selectedPosts={selectedPosts}
               allPosts={filteredPosts}
+              isAdmin={true}
+              onSelectDate={handleSelectDate}
             />
           </div>
         </div>

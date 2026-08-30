@@ -197,6 +197,7 @@ export default function CalendarPage() {
                 selectedDate={selectedDate}
                 selectedPosts={selectedPosts}
                 allPosts={filteredPosts}
+                onSelectDate={handleSelectDate}
               />
             </div>
           </div>

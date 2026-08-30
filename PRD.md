@@ -60,7 +60,7 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 | F-12 | **Subject Manager** | Create, edit, delete subjects with color coding |
 | F-13 | **Resource Links & Attachments** | Add labeled resource links (Google Drive, Classroom, PDFs, GitHub) without upload bottlenecks |
 | F-14 | **Metadata Management** | Tags (comma-separated), external links (label + URL pairs), due dates, pin toggle, status control |
-| F-14a | **Admin Calendar View** | Dedicated multi-mode calendar view in Admin Dashboard (`/admin/calendar`) accessible from sidebar navigation for inspecting upcoming, past, and archived batch deliverables in Month, Week, and Agenda modes |
+| F-14a | **Admin Calendar View** | Dedicated multi-mode calendar view in Admin Dashboard (`/admin/calendar`) accessible from sidebar navigation for inspecting upcoming, past, archived, and draft batch deliverables in Month, Week, and Agenda modes, featuring status filters (`All`, `Upcoming`, `Past Due`, `Archived`, `Drafts`), queue tabs (`Upcoming (7d)`, `Past/Archived`, `Drafts`), and direct "Edit Post" shortcuts |
 
 ### 3.3 Discord Bot Integration (Optional)
 

@@ -186,7 +186,7 @@ BatchHub uses **local component state + custom hooks** — no global state libra
 |------|--------|---------|
 | `usePosts(filters)` | `hooks/usePosts.js` | Fetches published posts with filters; provides `posts`, `loading`, `error`, `refetch` |
 | `useUpcomingDeadlines()` | `hooks/usePosts.js` | Fetches posts with future `due_date`, sorted ascending |
-| `useCalendarPosts(year, month)` | `hooks/useCalendar.js` | Fetches posts with `due_date` falling within the month for calendar grid views |
+| `useCalendarPosts(year, month, options)` | `hooks/useCalendar.js` | Fetches posts with `due_date` falling within the month for calendar grid views (supports `includeDrafts` and `status` options) |
 | `usePost(id)` | `hooks/usePost.js` | Fetches a single post by UUID |
 | `useSubjects()` | `hooks/useSubjects.js` | Fetches all subjects sorted by name |
 | `useAdmin()` | `hooks/useAdmin.js` | Manages auth state: `isAuthenticated`, `login()`, `logout()` with instant demo bypass |
@@ -196,7 +196,7 @@ BatchHub uses **local component state + custom hooks** — no global state libra
 All data fetching is centralised in a single API module that:
 - Checks `isSupabaseConfigured()` before every call
 - Falls back to in-memory `DEMO_POSTS` / `DEMO_SUBJECTS` arrays
-- Routes admin mutations and privileged reads (`fetchAllPosts`, admin `fetchPost`) through `adminRequest()` → `POST /api/admin` to bypass public read RLS restrictions
+- Routes admin mutations and privileged reads (`fetchAllPosts`, admin `fetchPost`, admin `fetchCalendarDeadlines`) through `adminRequest()` → `POST /api/admin` to bypass public read RLS restrictions
 
 ---
 
@@ -219,7 +219,7 @@ The admin endpoint uses a single `POST` with an `action` field to route requests
 |--------|---------|--------|
 | `getAllPosts` | _(none)_ | Select all posts (bypassing public RLS) with joins |
 | `getPost` | `{id}` | Select single post by ID (bypassing public RLS) with joins |
-| `getCalendarDeadlines` | `{start, end}` | Select published & archived posts within date range with joins |
+| `getCalendarDeadlines` | `{start, end, includeDrafts, status}` | Select published, archived, and draft posts within date range with joins |
 | `createPost` | Post fields | Insert + return with joins |
 | `updatePost` | `{id, updates}` | Update + return with joins |
 | `deletePost` | `{id}` | Delete row |

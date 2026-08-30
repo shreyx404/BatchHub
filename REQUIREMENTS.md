@@ -93,6 +93,7 @@
 | FR-041h | Date selection inspector drawer displaying all deliverables on the selected date combined, highlighted, and sorted in ascending order by due time with direct resource links | P1 | ✅ Implemented |
 | FR-041i | Dedicated Admin Calendar view (`/admin/calendar`) integrated into Admin Sidebar supporting all three modes | P1 | ✅ Implemented |
 | FR-041j | Display past and archived events exclusively in Calendar views (Month, Week, Agenda, Sidebar) in an editorial faded-out theme with dedicated status badges (`ARCHIVED`, `PAST DUE`) and legend indicator, keeping the main student feed strictly filtered | P1 | ✅ Implemented |
+| FR-041k | Admin Dashboard Calendar enhanced past & archived visibility, status filtering (`All`, `Upcoming`, `Past Due`, `Archived`, `Drafts`), sidebar queues (`Upcoming`, `Past & Archived`, `Drafts`), and direct Admin edit shortcuts (`/admin/edit/:id`) | P1 | ✅ Implemented |
 
 ### 1.8 Discord Bot Integration
 

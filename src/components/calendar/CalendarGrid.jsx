@@ -127,18 +127,23 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
                 {events.slice(0, 3).map((post, idx) => {
                   const d = new Date(post.due_date);
                   const isPostArchived = post.status === 'archived';
-                  const isPostPast = isPast(d);
-                  const isPostUrgent = !isPostPast && !isPostArchived && differenceInHours(d, new Date()) < 24;
-                  const isPostFaded = isPostPast || isPostArchived;
+                  const isPostDraft = post.status === 'draft';
+                  const isPostPast = !isPostDraft && isPast(d);
+                  const isPostUrgent = !isPostPast && !isPostArchived && !isPostDraft && differenceInHours(d, new Date()) < 24;
+
                   return (
                     <span
                       key={idx}
                       className={`w-1.5 h-1.5 inline-block ${
                         isPostUrgent
                           ? 'bg-[#ef4444] shadow-[0_0_4px_#ef4444]'
-                          : isPostFaded
-                            ? 'bg-[var(--color-text-dim)]/40'
-                            : 'bg-[var(--color-text-muted)]'
+                          : isPostDraft
+                            ? 'bg-amber-400'
+                            : isPostArchived
+                              ? 'bg-[#8888a0]'
+                              : isPostPast
+                                ? 'bg-red-400/80'
+                                : 'bg-[var(--color-text-muted)]'
                       }`}
                     />
                   );
@@ -156,7 +161,7 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
                   <EventChip key={post.id} post={post} />
                 ))}
                 {events.length > 2 && (
-                  <span className="text-[8px] font-mono text-[var(--color-text-dim)] tracking-wider pl-1">
+                  <span className="text-[8px] font-mono text-[var(--color-text-dim)] tracking-wider pl-1 font-semibold">
                     +{events.length - 2} more
                   </span>
                 )}
@@ -168,7 +173,7 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
 
       {/* Calendar Footer / Legend */}
       <div className="px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0a0a0a] border-t border-[var(--color-border)] flex flex-wrap items-center justify-between gap-2 sm:gap-3">
-        <div className="flex items-center gap-3 sm:gap-4 text-[var(--color-text-muted)] text-[9px] sm:text-[10px] font-mono">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[var(--color-text-muted)] text-[9px] sm:text-[10px] font-mono">
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#3b1515] border border-[#f87171]" />
             <span>Due &lt; 24h</span>
@@ -178,8 +183,12 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
             <span>Upcoming</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#0a0a0c] border border-[var(--color-border)]/50 opacity-50" />
-            <span>Past / Archived</span>
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#261010] border border-[#6b2121]" />
+            <span>Past Due</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#14141c] border border-[#3b3b4f]" />
+            <span>Archived</span>
           </div>
         </div>
       </div>
@@ -192,32 +201,72 @@ function EventChip({ post }) {
   const now = new Date();
   const hoursLeft = differenceInHours(dueDate, now);
   const isArchived = post.status === 'archived';
-  const isOverdue = isPast(dueDate);
-  const isFaded = isArchived || isOverdue;
-  const isUrgent = !isFaded && hoursLeft < 24;
+  const isDraft = post.status === 'draft';
+  const isOverdue = !isDraft && isPast(dueDate);
+  const isUrgent = !isArchived && !isDraft && !isOverdue && hoursLeft < 24;
   const subjectCode = post.subjects?.code || post.subjects?.name || '';
 
   const chipClass = isUrgent
-    ? 'event-chip p-1 sm:p-1.5 bg-[#1e1414] border border-[#6b2121] hover:border-[#b91c1c]'
-    : isFaded
-      ? 'event-chip p-1 sm:p-1.5 bg-[#0a0a0c]/80 border border-[var(--color-border)]/40 opacity-50 hover:opacity-90 transition-opacity'
-      : 'event-chip p-1 sm:p-1.5 bg-[#121212] border border-[var(--color-border)] hover:border-[var(--color-border-light)]';
+    ? 'event-chip p-1 sm:p-1.5 bg-[#1e1010] border border-[#7f1d1d] hover:border-[#b91c1c] transition-colors'
+    : isArchived
+      ? 'event-chip p-1 sm:p-1.5 bg-[#0f0f15] border border-[#2b2b3b] hover:border-[#4b4b66] transition-colors'
+      : isDraft
+        ? 'event-chip p-1 sm:p-1.5 bg-[#14120a] border border-[#453610] hover:border-[#735817] transition-colors'
+        : isOverdue
+          ? 'event-chip p-1 sm:p-1.5 bg-[#170a0a] border border-[#4a1d1d] hover:border-[#702424] transition-colors'
+          : 'event-chip p-1 sm:p-1.5 bg-[#121214] border border-[var(--color-border)] hover:border-[var(--color-border-light)] transition-colors';
 
   return (
     <div className={chipClass}>
-      <div className="flex items-center justify-between text-[7px] sm:text-[8px] font-mono gap-1.5 min-w-0">
-        <span className={`truncate font-semibold shrink ${isUrgent ? 'text-[#fca5a5]' : isFaded ? 'text-[var(--color-text-dim)]' : 'text-[var(--color-text-muted)]'}`}>
+      <div className="flex items-center justify-between text-[7.5px] sm:text-[8px] font-mono gap-1.5 min-w-0">
+        <span
+          className={`truncate font-bold ${
+            isUrgent
+              ? 'text-[#fca5a5]'
+              : isArchived
+                ? 'text-[#a0a0b8]'
+                : isDraft
+                  ? 'text-amber-300'
+                  : isOverdue
+                    ? 'text-red-300'
+                    : 'text-[var(--color-text-muted)]'
+          }`}
+        >
           {subjectCode}
         </span>
-        <span className={`shrink-0 ${isUrgent ? 'text-[#fca5a5]' : 'text-[var(--color-text-dim)]'}`}>
-          {isArchived ? 'Archived' : format(dueDate, 'h:mm a')}
+        <span
+          className={`shrink-0 font-medium ${
+            isUrgent
+              ? 'text-[#fca5a5]'
+              : isArchived
+                ? 'text-[#85859e]'
+                : isDraft
+                  ? 'text-amber-400'
+                  : isOverdue
+                    ? 'text-red-400'
+                    : 'text-[var(--color-text-dim)]'
+          }`}
+        >
+          {isArchived ? 'Archived' : isDraft ? 'Draft' : format(dueDate, 'h:mm a')}
         </span>
       </div>
-      <p className={`text-[9px] sm:text-[10px] font-medium truncate mt-0.5 ${isUrgent ? 'text-white' : isFaded ? 'text-[var(--color-text-muted)]' : 'text-[var(--color-text)]'}`}>
+      <p
+        className={`text-[9.5px] sm:text-[10px] font-medium truncate mt-0.5 ${
+          isUrgent
+            ? 'text-white'
+            : isArchived
+              ? 'text-[#c0c0d8]'
+              : isDraft
+                ? 'text-amber-100'
+                : isOverdue
+                  ? 'text-red-100'
+                  : 'text-[var(--color-text)]'
+        }`}
+      >
         {post.title}
       </p>
       {isUrgent && (
-        <div className="mt-0.5 text-[7px] sm:text-[8px] font-mono text-[#f87171]">
+        <div className="mt-0.5 text-[7px] sm:text-[8px] font-mono text-[#f87171] font-semibold">
           ⏳ In {hoursLeft}h
         </div>
       )}
