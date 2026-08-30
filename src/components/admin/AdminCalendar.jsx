@@ -58,11 +58,18 @@ export default function AdminCalendar() {
     };
   }, [posts, now]);
 
-  // Filter posts by subject AND status
+  // Filter posts by subject, status, and viewMode
   const filteredPosts = useMemo(() => {
     return posts.filter((p) => {
       if (selectedSubject && p.subject_id !== selectedSubject) {
         return false;
+      }
+      if (viewMode === 'agenda') {
+        // In Agenda view, never include archived or past posts
+        if (!p.due_date) return false;
+        if (p.status === 'archived') return false;
+        if (isPast(new Date(p.due_date))) return false;
+        return true;
       }
       if (statusFilter === 'all') return true;
       if (statusFilter === 'archived') return p.status === 'archived';
@@ -75,7 +82,7 @@ export default function AdminCalendar() {
       }
       return true;
     });
-  }, [posts, selectedSubject, statusFilter, now]);
+  }, [posts, selectedSubject, statusFilter, now, viewMode]);
 
   // Group posts by date key (YYYY-MM-DD)
   const postsByDate = useMemo(() => {
@@ -93,13 +100,16 @@ export default function AdminCalendar() {
   // Count posts by subject for filter chips
   const postCountBySubject = useMemo(() => {
     const counts = {};
-    for (const post of posts) {
+    const sourcePosts = viewMode === 'agenda'
+      ? posts.filter((p) => p.due_date && p.status !== 'archived' && !isPast(new Date(p.due_date)))
+      : posts;
+    for (const post of sourcePosts) {
       if (post.subject_id) {
         counts[post.subject_id] = (counts[post.subject_id] || 0) + 1;
       }
     }
     return counts;
-  }, [posts]);
+  }, [posts, viewMode]);
 
   // Selected date posts
   const selectedPosts = selectedDate ? (postsByDate[selectedDate] || []) : [];
@@ -179,7 +189,7 @@ export default function AdminCalendar() {
           onSubjectChange={setSelectedSubject}
           postCountBySubject={postCountBySubject}
           totalPosts={filteredPosts.length}
-          showStatusFilters={true}
+          showStatusFilters={viewMode !== 'agenda'}
           statusFilter={statusFilter}
           onStatusFilterChange={setStatusFilter}
           statusCounts={statusCounts}

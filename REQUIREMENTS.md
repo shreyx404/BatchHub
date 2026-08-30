@@ -86,14 +86,14 @@
 | FR-041a | Dedicated full-page interactive calendar view at `/calendar` with multi-mode switcher (`MONTH`, `WEEK`, `AGENDA`) | P1 | ✅ Implemented |
 | FR-041b | Month View: 7-column monthly grid with previous/next month overflow, today highlight, and urgency indicators | P1 | ✅ Implemented |
 | FR-041c | Week View: 7-column weekly timetable (`CalendarWeekView`) with horizontal touch scrolling and day date badges | P1 | ✅ Implemented |
-| FR-041d | Agenda View: Chronological grouped timeline (`CalendarAgendaView`) with relative day badges, countdowns, and direct detail links | P1 | ✅ Implemented |
+| FR-041d | Agenda View: Chronological grouped timeline (`CalendarAgendaView`) strictly displaying active upcoming deadlines (past due and archived deliverables excluded for both Student and Admin) with countdowns and direct detail links | P1 | ✅ Implemented |
 | FR-041e | Date navigation (prev/next week or month) with fast `TODAY` return button | P1 | ✅ Implemented |
 | FR-041f | Subject filter chips dynamically filtering calendar events with count badges across all views | P1 | ✅ Implemented |
 | FR-041g | Visual urgency markers for deadlines due within 24 hours (red borders, countdown chips) | P1 | ✅ Implemented |
 | FR-041h | Date selection inspector drawer displaying all deliverables on the selected date combined, highlighted, and sorted in ascending order by due time with direct resource links | P1 | ✅ Implemented |
 | FR-041i | Dedicated Admin Calendar view (`/admin/calendar`) integrated into Admin Sidebar supporting all three modes | P1 | ✅ Implemented |
-| FR-041j | Display past and archived events exclusively in Calendar views (Month, Week, Agenda, Sidebar) in an editorial faded-out theme with dedicated status badges (`ARCHIVED`, `PAST DUE`) and legend indicator, keeping the main student feed strictly filtered | P1 | ✅ Implemented |
-| FR-041k | Admin Dashboard Calendar enhanced past & archived visibility, status filtering (`All`, `Upcoming`, `Past Due`, `Archived`, `Drafts`), sidebar queues (`Upcoming`, `Past & Archived`, `Drafts`), and direct Admin edit shortcuts (`/admin/edit/:id`) | P1 | ✅ Implemented |
+| FR-041j | Display past and archived events in Calendar matrix views (Month, Week, and Sidebar) in an editorial faded-out theme with status badges (`ARCHIVED`, `PAST DUE`) and legend indicator, while keeping the Agenda view strictly focused on active upcoming deliverables | P1 | ✅ Implemented |
+| FR-041k | Admin Dashboard Calendar enhanced past & archived visibility, status filtering (`All`, `Upcoming`, `Past Due`, `Archived`, `Drafts`), sidebar queue, and direct Admin edit shortcuts (`/admin/edit/:id`) | P1 | ✅ Implemented |
 
 ### 1.8 Discord Bot Integration
 

@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { format, addMonths, subMonths, addWeeks, subWeeks } from 'date-fns';
+import { format, addMonths, subMonths, addWeeks, subWeeks, isPast } from 'date-fns';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import CalendarControls from '../components/calendar/CalendarControls';
@@ -29,7 +29,7 @@ export default function CalendarPage() {
   const { posts, loading, error } = useCalendarPosts(year, month);
   const { subjects } = useSubjects();
 
-  // Filter posts by subject and search query
+  // Filter posts by subject, search query, and viewMode
   const filteredPosts = useMemo(() => {
     let result = posts;
     if (selectedSubject) {
@@ -44,8 +44,17 @@ export default function CalendarPage() {
           p.tags?.some((t) => t.toLowerCase().includes(q))
       );
     }
+    if (viewMode === 'agenda') {
+      result = result.filter((p) => {
+        if (!p.due_date) return false;
+        if (p.status === 'archived') return false;
+        const d = new Date(p.due_date);
+        if (isPast(d)) return false;
+        return true;
+      });
+    }
     return result;
-  }, [posts, selectedSubject, search]);
+  }, [posts, selectedSubject, search, viewMode]);
 
   // Group posts by date key (YYYY-MM-DD)
   const postsByDate = useMemo(() => {
@@ -63,13 +72,16 @@ export default function CalendarPage() {
   // Count posts by subject for filter chips
   const postCountBySubject = useMemo(() => {
     const counts = {};
-    for (const post of posts) {
+    const sourcePosts = viewMode === 'agenda'
+      ? posts.filter((p) => p.due_date && p.status !== 'archived' && !isPast(new Date(p.due_date)))
+      : posts;
+    for (const post of sourcePosts) {
       if (post.subject_id) {
         counts[post.subject_id] = (counts[post.subject_id] || 0) + 1;
       }
     }
     return counts;
-  }, [posts]);
+  }, [posts, viewMode]);
 
   // Selected date posts
   const selectedPosts = selectedDate ? (postsByDate[selectedDate] || []) : [];

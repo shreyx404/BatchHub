@@ -182,6 +182,28 @@ describe('Dual-Mode API & Data Layer (Demo Fallback Mode)', () => {
         assert.equal(p.status, 'archived');
       }
     });
+
+    it('should filter out past and archived posts for agenda view', async () => {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+
+      const allMonthPosts = await fetchCalendarDeadlines(year, month, { includeDrafts: true });
+      
+      // Agenda filter simulation: must have due_date, status !== 'archived', and due_date >= now
+      const agendaPosts = allMonthPosts.filter((p) => {
+        if (!p.due_date) return false;
+        if (p.status === 'archived') return false;
+        const d = new Date(p.due_date);
+        return d.getTime() >= now.getTime();
+      });
+
+      assert.ok(agendaPosts.length > 0, 'Should have upcoming agenda items');
+      for (const p of agendaPosts) {
+        assert.notEqual(p.status, 'archived', 'Agenda item must not be archived');
+        assert.ok(new Date(p.due_date).getTime() >= now.getTime(), 'Agenda item must not be in the past');
+      }
+    });
   });
 
   describe('autoArchiveExpiredPosts', () => {

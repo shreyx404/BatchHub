@@ -8,7 +8,7 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 
 ### Students
 - 🔍 Browse, search (`Ctrl + K`), and filter updates
-- 🗓️ Full-page interactive Academic Deadlines Calendar (`/calendar`) with **Month**, **Week** (7-day timetable), and **Agenda** (chronological timeline) views, subject filter chips, date navigation, today snap-back, selected-date inspector with empty-state handling, upcoming 7-day deadlines sidebar, and greyed-out display of past & archived deliverables
+- 🗓️ Full-page interactive Academic Deadlines Calendar (`/calendar`) with **Month**, **Week** (7-day timetable), and **Agenda** (chronological timeline strictly presenting active upcoming deliverables) views, subject filter chips, date navigation, today snap-back, selected-date inspector with empty-state handling, upcoming 7-day deadlines sidebar, and greyed-out display of past & archived deliverables in grid/week views
 - 📋 View detailed posts with markdown content
 - 🔗 Direct access to resource links & document attachments (Google Drive, Classroom, PDFs, GitHub)
 - 📅 See upcoming deadlines (automatically unpinned when passed)

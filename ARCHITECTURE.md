@@ -151,7 +151,7 @@ Rendered on PostPage as high-contrast actionable link cards with external domain
     │   ├── <CalendarControls>     // Multi-mode switcher (MONTH/WEEK/AGENDA), dynamic date navigator, TODAY button, subject filter chips
     │   ├── <CalendarGrid>         // 7-column monthly grid with urgency indicators (<24h red badges) [Month View]
     │   ├── <CalendarWeekView>     // 7-column weekly timetable with horizontal touch scrolling [Week View]
-    │   ├── <CalendarAgendaView>   // Chronological timeline view grouped by date with countdowns [Agenda View]
+    │   ├── <CalendarAgendaView>   // Chronological timeline view grouped by date with countdowns (active upcoming deadlines only) [Agenda View]
     │   ├── <CalendarSidebar>      // Selected date inspector (all posts combined & time-sorted) + upcoming 7 days queue
     │   └── <Footer>
     │
