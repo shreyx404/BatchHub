@@ -219,7 +219,8 @@ function InspectorCard({ post, isAdmin }) {
   const isArchived = post.status === 'archived';
   const isDraft = post.status === 'draft';
   const isOverdue = !isDraft && isPast(dueDate);
-  const isUrgent = !isArchived && !isDraft && !isOverdue && hoursLeft < 24;
+  const isFaded = isArchived || isOverdue;
+  const isUrgent = !isFaded && !isDraft && hoursLeft < 24;
   const subjectName = post.subjects?.name || post.subjects?.code || '';
   const subjectCode = post.subjects?.code || '';
   const typeConfig = CONTENT_TYPES[post.type];
@@ -251,13 +252,11 @@ function InspectorCard({ post, isAdmin }) {
       className={`border p-4 sm:p-5 animate-fade-in transition-all ${
         isUrgent
           ? 'bg-[#140a0a] border-[#7f1d1d] shadow-sm'
-          : isArchived
-            ? 'bg-[#0d0d12] border-[#272733]'
+          : isFaded
+            ? 'bg-[#07070a]/70 border border-[#1e1e24]/60 opacity-55 hover:opacity-100'
             : isDraft
               ? 'bg-[#14120a] border-[#453610]'
-              : isOverdue
-                ? 'bg-[#120a0a] border-[#4a1d1d]'
-                : 'bg-[#0c0c0e] border-[var(--color-border-light)]'
+              : 'bg-[#0c0c0e] border-[var(--color-border-light)]'
       }`}
     >
       {/* Top Meta Bar */}
@@ -269,7 +268,7 @@ function InspectorCard({ post, isAdmin }) {
             </span>
           )}
           {isArchived && (
-            <span className="px-2 py-0.5 bg-[#1a1a24] border border-[#3b3b4f] text-[#a0a0b8] text-[9px] font-mono font-bold uppercase tracking-wider">
+            <span className="px-2 py-0.5 bg-[#121218] border border-[#272733] text-[#71717a] text-[9px] font-mono font-bold uppercase tracking-wider">
               ARCHIVED
             </span>
           )}
@@ -279,11 +278,15 @@ function InspectorCard({ post, isAdmin }) {
             </span>
           )}
           {!isArchived && !isDraft && isOverdue && (
-            <span className="px-2 py-0.5 bg-[#261010] border border-[#6b2121] text-red-300 text-[9px] font-mono font-bold uppercase tracking-wider">
+            <span className="px-2 py-0.5 bg-[#1a0f0f] border border-[#3b1a1a] text-[#8e5252] text-[9px] font-mono font-bold uppercase tracking-wider">
               PAST DUE
             </span>
           )}
-          <span className="text-[10px] font-mono text-[var(--color-text-muted)] font-medium">
+          <span
+            className={`text-[10px] font-mono font-medium ${
+              isFaded ? 'text-[#52525b]' : 'text-[var(--color-text-muted)]'
+            }`}
+          >
             {isArchived || isOverdue
               ? `Ended ${format(dueDate, 'h:mm a')}`
               : `Due at ${format(dueDate, 'h:mm a')}`}
@@ -293,13 +296,11 @@ function InspectorCard({ post, isAdmin }) {
           className={`text-[10px] font-mono font-bold ${
             isUrgent
               ? 'text-red-400'
-              : isArchived
-                ? 'text-[#8e8ea6]'
+              : isFaded
+                ? 'text-[#52525b]'
                 : isDraft
                   ? 'text-amber-400'
-                  : isOverdue
-                    ? 'text-red-400/90'
-                    : 'text-[var(--color-text-muted)]'
+                  : 'text-[var(--color-text-muted)]'
           }`}
         >
           {countdownText}
@@ -309,15 +310,27 @@ function InspectorCard({ post, isAdmin }) {
       {/* Content */}
       <div className="mb-3.5">
         {(subjectCode || subjectName) && (
-          <span className="text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-wider font-semibold">
+          <span
+            className={`text-[10px] font-mono uppercase tracking-wider font-semibold ${
+              isFaded ? 'text-[#52525b]' : 'text-[var(--color-text-dim)]'
+            }`}
+          >
             {subjectCode}{subjectName && subjectCode ? ' · ' : ''}{subjectName}
           </span>
         )}
-        <h3 className="font-display text-base sm:text-lg leading-snug mt-1 text-[var(--color-text)] font-semibold">
+        <h3
+          className={`font-display text-base sm:text-lg leading-snug mt-1 font-semibold ${
+            isFaded ? 'text-[#888896]' : 'text-white'
+          }`}
+        >
           {post.title}
         </h3>
         {cleanSnippet && (
-          <p className="text-[var(--text-xs)] text-[var(--color-text-muted)] mt-2 leading-relaxed line-clamp-3">
+          <p
+            className={`text-[var(--text-xs)] mt-2 leading-relaxed line-clamp-3 ${
+              isFaded ? 'text-[#52525b]' : 'text-[var(--color-text-muted)]'
+            }`}
+          >
             {cleanSnippet}
           </p>
         )}
@@ -335,7 +348,11 @@ function InspectorCard({ post, isAdmin }) {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between p-2.5 sm:p-3 min-h-[38px] bg-[var(--color-surface-3)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] active:bg-[var(--color-surface-2)] text-[var(--text-xs)] text-[var(--color-text)] transition-colors"
+              className={`flex items-center justify-between p-2.5 sm:p-3 min-h-[38px] border transition-colors ${
+                isFaded
+                  ? 'bg-[#0b0b0e] border-[#1f1f26] text-[#71717a] hover:text-white hover:border-[#383845]'
+                  : 'bg-[var(--color-surface-3)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] active:bg-[var(--color-surface-2)] text-[var(--text-xs)] text-[var(--color-text)]'
+              }`}
             >
               <div className="flex items-center gap-2 truncate">
                 <span className="text-[10px] font-mono text-[var(--color-text-dim)]">↗</span>
@@ -348,7 +365,11 @@ function InspectorCard({ post, isAdmin }) {
 
       {/* Footer & Actions */}
       <div className="mt-4 pt-3 border-t border-[var(--color-border)] flex items-center justify-between gap-2 flex-wrap">
-        <span className="text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-wider">
+        <span
+          className={`text-[10px] font-mono uppercase tracking-wider ${
+            isFaded ? 'text-[#52525b]' : 'text-[var(--color-text-dim)]'
+          }`}
+        >
           {typeConfig?.label || post.type}
         </span>
 
@@ -356,7 +377,11 @@ function InspectorCard({ post, isAdmin }) {
           {isAdmin && (
             <Link
               to={`/admin/edit/${post.id}`}
-              className="px-3 py-1.5 min-h-[34px] flex items-center gap-1.5 text-[var(--text-xs)] font-mono font-semibold bg-[var(--color-surface-3)] border border-[var(--color-border-light)] hover:border-white text-[var(--color-text)] hover:text-white transition-colors"
+              className={`px-3 py-1.5 min-h-[34px] flex items-center gap-1.5 text-[var(--text-xs)] font-mono font-semibold border transition-colors ${
+                isFaded
+                  ? 'bg-[#0f0f14] border-[#22222a] text-[#71717a] hover:text-white hover:border-white'
+                  : 'bg-[var(--color-surface-3)] border border-[var(--color-border-light)] hover:border-white text-[var(--color-text)] hover:text-white'
+              }`}
             >
               <Edit3 size={12} />
               <span>Edit Post</span>
@@ -365,7 +390,11 @@ function InspectorCard({ post, isAdmin }) {
 
           <Link
             to={`/post/${post.id}`}
-            className="px-3.5 py-1.5 min-h-[34px] flex items-center justify-center font-semibold text-[var(--text-xs)] bg-white text-black hover:bg-[#e5e5e5] transition-colors"
+            className={`px-3.5 py-1.5 min-h-[34px] flex items-center justify-center font-semibold text-[var(--text-xs)] transition-colors ${
+              isFaded
+                ? 'bg-[#14141a] text-[#a1a1aa] hover:text-white hover:bg-[var(--color-surface-2)] border border-[#272732]'
+                : 'bg-white text-black hover:bg-[#e5e5e5]'
+            }`}
           >
             <span>View Details</span>
             <ArrowRight size={13} className="ml-1" />
@@ -381,6 +410,7 @@ function QueueItem({ post, isAdmin, isPastOrArchived = false, onSelectDate }) {
   const isArchived = post.status === 'archived';
   const isDraft = post.status === 'draft';
   const isOverdue = !isDraft && isPast(dueDate);
+  const isFaded = isArchived || isOverdue;
   const subjectCode = post.subjects?.code || post.subjects?.name || '';
   const typeConfig = CONTENT_TYPES[post.type];
   const dateKey = `${dueDate.getFullYear()}-${String(dueDate.getMonth() + 1).padStart(2, '0')}-${String(dueDate.getDate()).padStart(2, '0')}`;
@@ -394,12 +424,14 @@ function QueueItem({ post, isAdmin, isPastOrArchived = false, onSelectDate }) {
   return (
     <div
       onClick={handleClick}
-      className="py-3 first:pt-1 last:pb-1 block hover:bg-[var(--color-surface-2)]/40 transition-colors cursor-pointer group px-1"
+      className={`py-3 first:pt-1 last:pb-1 block transition-colors cursor-pointer group px-1 ${
+        isFaded ? 'opacity-55 hover:opacity-100 hover:bg-[var(--color-surface-2)]/30' : 'hover:bg-[var(--color-surface-2)]/40'
+      }`}
     >
       <div className="flex items-center justify-between text-[9px] font-mono mb-1 gap-1">
         <div className="flex items-center gap-1.5 truncate">
           {isArchived ? (
-            <span className="px-1.5 py-0.2 bg-[#1b1b26] border border-[#37374a] text-[#a5a5c0] font-bold uppercase">
+            <span className="px-1.5 py-0.2 bg-[#121218] border border-[#272733] text-[#71717a] font-bold uppercase">
               ARCHIVED
             </span>
           ) : isDraft ? (
@@ -407,27 +439,39 @@ function QueueItem({ post, isAdmin, isPastOrArchived = false, onSelectDate }) {
               DRAFT
             </span>
           ) : isOverdue ? (
-            <span className="px-1.5 py-0.2 bg-[#2b1010] border border-[#6b2121] text-red-300 font-bold uppercase">
+            <span className="px-1.5 py-0.2 bg-[#1a0f0f] border border-[#3b1a1a] text-[#8e5252] font-bold uppercase">
               PAST DUE
             </span>
           ) : null}
 
-          <span className="text-[var(--color-text-muted)] font-medium truncate">
+          <span
+            className={`font-medium truncate ${
+              isFaded ? 'text-[#52525b]' : 'text-[var(--color-text-muted)]'
+            }`}
+          >
             {subjectCode}{subjectCode && ' · '}{typeConfig?.label || post.type}
           </span>
         </div>
 
-        <span className="text-[var(--color-text-dim)] shrink-0 group-hover:text-[var(--color-text)] transition-colors">
+        <span
+          className={`shrink-0 transition-colors ${
+            isFaded ? 'text-[#3f3f46] group-hover:text-[#a1a1aa]' : 'text-[var(--color-text-dim)] group-hover:text-[var(--color-text)]'
+          }`}
+        >
           {format(dueDate, 'MMM d, h:mm a')}
         </span>
       </div>
 
-      <p className="text-[var(--text-xs)] font-medium text-[var(--color-text)] truncate group-hover:text-white transition-colors">
+      <p
+        className={`text-[var(--text-xs)] truncate transition-colors ${
+          isFaded ? 'text-[#71717a] font-normal group-hover:text-white' : 'text-white font-medium'
+        }`}
+      >
         {post.title}
       </p>
 
       <div className="mt-1 flex items-center justify-between text-[9px] font-mono text-[var(--color-text-dim)]">
-        <span>
+        <span className={isFaded ? 'text-[#3f3f46]' : 'text-[var(--color-text-dim)]'}>
           {isPastOrArchived || isOverdue
             ? `${formatDistanceToNow(dueDate, { addSuffix: true })}`
             : `${formatDistanceToNow(dueDate, { addSuffix: true })}`}

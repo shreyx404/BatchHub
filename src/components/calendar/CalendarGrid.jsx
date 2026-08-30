@@ -139,11 +139,9 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
                           ? 'bg-[#ef4444] shadow-[0_0_4px_#ef4444]'
                           : isPostDraft
                             ? 'bg-amber-400'
-                            : isPostArchived
-                              ? 'bg-[#8888a0]'
-                              : isPostPast
-                                ? 'bg-red-400/80'
-                                : 'bg-[var(--color-text-muted)]'
+                            : (isPostArchived || isPostPast)
+                              ? 'bg-[#3f3f46]/50 opacity-40'
+                              : 'bg-white shadow-[0_0_2px_rgba(255,255,255,0.4)]'
                       }`}
                     />
                   );
@@ -176,19 +174,15 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
         <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[var(--color-text-muted)] text-[9px] sm:text-[10px] font-mono">
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#3b1515] border border-[#f87171]" />
-            <span>Due &lt; 24h</span>
+            <span className="text-white font-medium">Due &lt; 24h</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#121212] border border-[var(--color-border-light)]" />
-            <span>Upcoming</span>
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#18181b] border border-[var(--color-border-light)]" />
+            <span className="text-white font-medium">Upcoming (Active)</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#261010] border border-[#6b2121]" />
-            <span>Past Due</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#14141c] border border-[#3b3b4f]" />
-            <span>Archived</span>
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#0a0a0c] border border-[#27272a]/60 opacity-40" />
+            <span className="text-[#71717a]">Past / Archived (Greyed Out)</span>
           </div>
         </div>
       </div>
@@ -203,18 +197,17 @@ function EventChip({ post }) {
   const isArchived = post.status === 'archived';
   const isDraft = post.status === 'draft';
   const isOverdue = !isDraft && isPast(dueDate);
-  const isUrgent = !isArchived && !isDraft && !isOverdue && hoursLeft < 24;
+  const isFaded = isArchived || isOverdue;
+  const isUrgent = !isFaded && !isDraft && hoursLeft < 24;
   const subjectCode = post.subjects?.code || post.subjects?.name || '';
 
   const chipClass = isUrgent
-    ? 'event-chip p-1 sm:p-1.5 bg-[#1e1010] border border-[#7f1d1d] hover:border-[#b91c1c] transition-colors'
-    : isArchived
-      ? 'event-chip p-1 sm:p-1.5 bg-[#0f0f15] border border-[#2b2b3b] hover:border-[#4b4b66] transition-colors'
+    ? 'event-chip p-1 sm:p-1.5 bg-[#1e1010] border border-[#7f1d1d] hover:border-[#b91c1c] transition-all shadow-sm'
+    : isFaded
+      ? 'event-chip p-1 sm:p-1.5 bg-[#08080a]/60 border border-[#1f1f24]/50 opacity-40 hover:opacity-95 hover:border-[var(--color-border)] transition-all'
       : isDraft
-        ? 'event-chip p-1 sm:p-1.5 bg-[#14120a] border border-[#453610] hover:border-[#735817] transition-colors'
-        : isOverdue
-          ? 'event-chip p-1 sm:p-1.5 bg-[#170a0a] border border-[#4a1d1d] hover:border-[#702424] transition-colors'
-          : 'event-chip p-1 sm:p-1.5 bg-[#121214] border border-[var(--color-border)] hover:border-[var(--color-border-light)] transition-colors';
+        ? 'event-chip p-1 sm:p-1.5 bg-[#14120a] border border-[#453610] hover:border-[#735817] transition-all'
+        : 'event-chip p-1 sm:p-1.5 bg-[#141417] border border-[#303038] hover:border-[#52525e] transition-all shadow-sm';
 
   return (
     <div className={chipClass}>
@@ -223,13 +216,11 @@ function EventChip({ post }) {
           className={`truncate font-bold ${
             isUrgent
               ? 'text-[#fca5a5]'
-              : isArchived
-                ? 'text-[#a0a0b8]'
+              : isFaded
+                ? 'text-[#60606a]'
                 : isDraft
                   ? 'text-amber-300'
-                  : isOverdue
-                    ? 'text-red-300'
-                    : 'text-[var(--color-text-muted)]'
+                  : 'text-[#e4e4e7]'
           }`}
         >
           {subjectCode}
@@ -238,13 +229,11 @@ function EventChip({ post }) {
           className={`shrink-0 font-medium ${
             isUrgent
               ? 'text-[#fca5a5]'
-              : isArchived
-                ? 'text-[#85859e]'
+              : isFaded
+                ? 'text-[#484852]'
                 : isDraft
                   ? 'text-amber-400'
-                  : isOverdue
-                    ? 'text-red-400'
-                    : 'text-[var(--color-text-dim)]'
+                  : 'text-[#a1a1aa]'
           }`}
         >
           {isArchived ? 'Archived' : isDraft ? 'Draft' : format(dueDate, 'h:mm a')}
@@ -254,13 +243,11 @@ function EventChip({ post }) {
         className={`text-[9.5px] sm:text-[10px] font-medium truncate mt-0.5 ${
           isUrgent
             ? 'text-white'
-            : isArchived
-              ? 'text-[#c0c0d8]'
+            : isFaded
+              ? 'text-[#63636e]'
               : isDraft
                 ? 'text-amber-100'
-                : isOverdue
-                  ? 'text-red-100'
-                  : 'text-[var(--color-text)]'
+                : 'text-white'
         }`}
       >
         {post.title}
