@@ -8,7 +8,7 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 
 ### Students
 - 🔍 Browse, search (`Ctrl + K`), and filter updates
-- 🗓️ Full-page interactive Academic Deadlines Calendar (`/calendar`) with **Month**, **Week** (7-day timetable), and **Agenda** (chronological timeline) views, subject filter chips, date navigation, today snap-back, selected-date inspector, and faded-out display of past & archived deliverables
+- 🗓️ Full-page interactive Academic Deadlines Calendar (`/calendar`) with **Month**, **Week** (7-day timetable), and **Agenda** (chronological timeline) views, subject filter chips, date navigation, today snap-back, selected-date inspector with empty-state handling, upcoming 7-day deadlines sidebar, and greyed-out display of past & archived deliverables
 - 📋 View detailed posts with markdown content
 - 🔗 Direct access to resource links & document attachments (Google Drive, Classroom, PDFs, GitHub)
 - 📅 See upcoming deadlines (automatically unpinned when passed)
@@ -22,7 +22,7 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 - 🔐 Password-protected admin dashboard backed by a secure Serverless API
 - 🛡️ 4-Tier Security Fortress: Cloudflare Turnstile bot verification, Device Fingerprinting, 10-attempt 24-hour lockout, and 30/day global rate limiting
 - 👁️ Live "Student View" preview embedded directly inside the Admin Dashboard overview
-- 🗓️ Integrated multi-mode Admin Calendar view (`/admin/calendar`) in the sidebar for deadline tracking (Month, Week, Agenda)
+- 🗓️ Integrated multi-mode Admin Calendar view (`/admin/calendar`) with status filters (All, Upcoming, Past Due, Archived, Drafts), quick New Deadline action, and direct edit shortcuts
 - ✏️ Create, edit, publish, archive, and 1-click restore posts with timezone-safe date picking
 - 📊 Manage all posts with status filters (Published, Drafts, Archived), deep-linking stats cards, and Created Date / Due Date sorting (with no-deadline post priority)
 - 📘 Manage assignments, labs, notices, deadlines, resources
