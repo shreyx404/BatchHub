@@ -34,14 +34,14 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-dvh flex bg-[var(--color-bg)]">
+    <div className="h-dvh max-h-dvh flex bg-[var(--color-bg)] overflow-hidden">
       <AdminSidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         onLogout={handleLogout}
       />
 
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         {/* Top bar */}
         <header className="h-14 border-b border-[var(--color-border)] flex items-center px-3 sm:px-4 gap-2.5 sm:gap-3 shrink-0 pt-safe">
           <button

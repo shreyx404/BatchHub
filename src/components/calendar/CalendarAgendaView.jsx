@@ -72,7 +72,7 @@ export default function CalendarAgendaView({
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in overflow-y-auto overscroll-y-contain max-h-[calc(100dvh-200px)] pr-2 focus:outline-none">
       {groupedByDate.map((group) => {
         const todayGroup = isToday(group.date);
         const tomorrowGroup = isTomorrow(group.date);
@@ -80,7 +80,7 @@ export default function CalendarAgendaView({
         return (
           <div key={group.dateKey} className="space-y-2.5">
             {/* Date Group Header */}
-            <div className="flex items-center justify-between gap-2 pb-2 border-b border-[var(--color-border)]">
+            <div className="flex items-center justify-between gap-2 pb-2 border-b border-[var(--color-border)] sticky top-0 bg-[var(--color-bg)]/95 backdrop-blur-md z-10 py-1.5">
               <div className="flex items-center gap-2">
                 <span className="text-[11px] sm:text-[var(--text-xs)] font-mono font-bold uppercase tracking-wider text-[var(--color-text)]">
                   {format(group.date, 'EEEE, MMMM d, yyyy')}

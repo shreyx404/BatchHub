@@ -174,7 +174,7 @@ export default function CalendarPage() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-start animate-fade-in">
             {/* Primary Calendar View Area (8 cols on large) */}
-            <div className="lg:col-span-8">
+            <div className="lg:col-span-8 min-w-0">
               {viewMode === 'month' && (
                 <CalendarGrid
                   year={year}
@@ -204,7 +204,7 @@ export default function CalendarPage() {
             </div>
 
             {/* Sidebar (4 cols on large) */}
-            <div className="lg:col-span-4">
+            <div className="lg:col-span-4 lg:sticky lg:top-20 lg:max-h-[calc(100dvh-200px)] lg:overflow-y-auto lg:pr-1 min-w-0">
               <CalendarSidebar
                 selectedDate={selectedDate}
                 selectedPosts={selectedPosts}
