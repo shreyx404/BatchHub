@@ -15,7 +15,7 @@ import { CalendarClock, Plus } from 'lucide-react';
 export default function AdminCalendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState('month'); // 'month' | 'week' | 'agenda'
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(() => format(new Date(), 'yyyy-MM-dd'));
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'published' | 'overdue' | 'archived' | 'draft'
 
@@ -138,8 +138,7 @@ export default function AdminCalendar() {
   const handleToday = useCallback(() => {
     const today = new Date();
     setCurrentDate(today);
-    const key = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    setSelectedDate(key);
+    setSelectedDate(format(today, 'yyyy-MM-dd'));
   }, []);
 
   const handleSelectDate = useCallback((dateKey) => {
