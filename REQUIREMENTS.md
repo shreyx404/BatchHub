@@ -1,7 +1,7 @@
 # BatchHub — Requirements Specification
 
-> **Version:** 1.2  
-> **Last Updated:** 2026-08-22
+> **Version:** 1.3  
+> **Last Updated:** 2026-08-31
 
 ---
 
@@ -94,6 +94,8 @@
 | FR-041i | Dedicated Admin Calendar view (`/admin/calendar`) integrated into Admin Sidebar supporting all three modes | P1 | ✅ Implemented |
 | FR-041j | Display past and archived events in Calendar matrix views (Month, Week, and Sidebar) in an editorial faded-out theme with status badges (`ARCHIVED`, `PAST DUE`) and legend indicator, while keeping the Agenda view strictly focused on active upcoming deliverables | P1 | ✅ Implemented |
 | FR-041k | Admin Dashboard Calendar enhanced past & archived visibility, status filtering (`All`, `Upcoming`, `Past Due`, `Archived`, `Drafts`), sidebar queue, and direct Admin edit shortcuts (`/admin/edit/:id`) | P1 | ✅ Implemented |
+| FR-041l | Agenda View contained independent scroll container (`overflow-y-auto`, `overscroll-y-contain`, `max-h-[calc(100dvh-200px)]`) with sticky date headers (`sticky top-0 bg-[var(--color-bg)]/95 backdrop-blur-md`), preventing outer page scroll bleed | P1 | ✅ Implemented |
+| FR-041m | Default selected date initialized to TODAY (`format(new Date(), 'yyyy-MM-dd')`) on initial page load for both Student and Admin calendars, opening today's inspector deliverables immediately | P1 | ✅ Implemented |
 
 ### 1.8 Discord Bot Integration
 

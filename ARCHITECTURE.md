@@ -1,7 +1,7 @@
 # BatchHub — Architecture Document
 
-> **Version:** 1.2  
-> **Last Updated:** 2026-08-22
+> **Version:** 1.3  
+> **Last Updated:** 2026-08-31
 
 ---
 

@@ -1,7 +1,7 @@
 # BatchHub — AI Agent Guidelines
 
-> **Version:** 1.3  
-> **Last Updated:** 2026-08-30
+> **Version:** 1.4  
+> **Last Updated:** 2026-08-31
 
 This file provides context and rules for AI coding agents working on the BatchHub codebase.
 
