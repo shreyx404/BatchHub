@@ -59,19 +59,20 @@ export default function PostPage() {
 
   const handleShare = async () => {
     const url = window.location.href;
-    const shareText = `*${post.title}*\n\n_${APP_NAME} :_ ->\n${url}`;
+    const shareHeader = `*${post.title}*\n\n_${APP_NAME} :_`;
+    const fullText = `${shareHeader}\n${url}`;
 
     if (navigator.share) {
       try {
         await navigator.share({
           title: post.title,
-          text: shareText,
+          text: shareHeader,
           url,
         });
       } catch (err) {
         if (err.name !== 'AbortError') {
           try {
-            await navigator.clipboard.writeText(shareText);
+            await navigator.clipboard.writeText(fullText);
             toast.success('Copied to clipboard!');
           } catch {
             toast.error('Failed to copy to clipboard');
@@ -80,7 +81,7 @@ export default function PostPage() {
       }
     } else {
       try {
-        await navigator.clipboard.writeText(shareText);
+        await navigator.clipboard.writeText(fullText);
         toast.success('Copied to clipboard!');
       } catch {
         toast.error('Failed to copy to clipboard');
