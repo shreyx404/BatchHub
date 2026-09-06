@@ -1,7 +1,7 @@
 # BatchHub — AI Agent Guidelines
 
-> **Version:** 1.4  
-> **Last Updated:** 2026-08-31
+> **Version:** 1.5  
+> **Last Updated:** 2026-09-06
 
 This file provides context and rules for AI coding agents working on the BatchHub codebase.
 
@@ -125,7 +125,7 @@ All write operations (create, update, delete) and privileged queries (`fetchAllP
 
 ### 4.3 Resource Links & Documents
 
-BatchHub unifies attachments and resource references into standard `{ label, url }` pairs stored in the `links` JSONB field on posts. This allows attaching Google Drive folders, Classroom links, GitHub repos, or direct PDF links cleanly without object storage egress or upload size bottlenecks.
+BatchHub unifies attachments and resource references into standard `{ label, url }` pairs stored in the `links` JSONB field on posts. This allows attaching Google Drive folders, Classroom links, GitHub repos, or direct PDF links cleanly without object storage egress or upload size bottlenecks. Links are order-preserved and can be rearranged in the admin editor via drag handles or Move Up / Move Down controls.
 
 ---
 

@@ -160,7 +160,7 @@ function timingSafeCompare(a, b) {
 }
 
 // ── Payload validators (whitelist allowed fields) ──────────────
-const POST_FIELDS = ['title', 'content', 'type', 'subject_id', 'is_pinned', 'status', 'due_date', 'created_at', 'tags', 'links'];
+const POST_FIELDS = ['title', 'content', 'type', 'subject_id', 'is_pinned', 'pinned_until', 'status', 'due_date', 'created_at', 'tags', 'links'];
 const SUBJECT_FIELDS = ['name', 'code', 'color'];
 
 function pick(obj, fields) {

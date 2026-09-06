@@ -27,8 +27,8 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 - 📊 Manage all posts with status filters (Published, Drafts, Archived), deep-linking stats cards, and Created Date / Due Date sorting (with no-deadline post priority)
 - 📘 Manage assignments, labs, notices, deadlines, resources
 - 📚 Manage subjects with color coding
-- 🔗 Add labeled resource links & attachments
-- 🏷️ Add tags with formatted preview
+- 🔗 Add and rearrange labeled resource links & attachments (drag-and-drop handles & Move Up/Down buttons)
+- ⏱️ Configure pin duration presets (Indefinite, Until Due Date, 24 Hours, 3 Days, 1 Week, 2 Weeks, Custom Date) with dynamic unpinning
 - 🤖 Discord Bot Integration: Use slash commands to post instantly from Discord
 
 ## Content Types

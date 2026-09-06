@@ -26,6 +26,7 @@ const DEMO_POSTS = [
     type: 'important',
     subject_id: null,
     is_pinned: true,
+    pinned_until: null,
     status: 'published',
     due_date: null,
     tags: ['exam', 'guidelines', 'urgent'],

@@ -44,7 +44,7 @@ PostgreSQL (posts + subjects joined)
     │
     ▼
 Response → Client-side processing:
-    • Dynamic unpinning (overdue posts lose is_pinned)
+    • Dynamic unpinning (posts with expired pinned_until duration or overdue due_date lose is_pinned)
     • Re-sorting (pinned first, then by created_at)
     • Categorisation into sections (notices, pinned, deadline-sorted, general)
 ```
@@ -262,6 +262,7 @@ subjects (1) ──────────< (N) posts
     │ color                   │ type
     │ created_at              │ subject_id (FK)
                               │ is_pinned
+                              │ pinned_until
                               │ status
                               │ due_date
                               │ tags[]

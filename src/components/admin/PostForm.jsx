@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Save, Plus, X, Link as LinkIcon, Eye, EyeOff } from 'lucide-react';
+import { Save, Plus, X, Link as LinkIcon, Eye, EyeOff, ChevronUp, ChevronDown, GripVertical, Pin, Clock } from 'lucide-react';
+import { format } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
 import toast from 'react-hot-toast';
 import { CONTENT_TYPE_LIST } from '../../lib/constants';
@@ -32,11 +33,66 @@ function sanitizeLinkUrl(url) {
   return '';
 }
 
+function getEffectivePinExpiry(isPinned, duration, customDate, dueDate) {
+  if (!isPinned) return null;
+  if (duration === 'forever') return null;
+  if (duration === 'until_due') {
+    if (!dueDate) return null;
+    const d = new Date(dueDate);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  if (duration === '1d') return new Date(Date.now() + 24 * 60 * 60 * 1000);
+  if (duration === '3d') return new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+  if (duration === '7d') return new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  if (duration === '14d') return new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+  if (duration === 'custom') {
+    if (!customDate) return null;
+    const d = new Date(customDate);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  return null;
+}
+
+function formatPinHelper(duration, customDate, dueDate) {
+  if (duration === 'forever') {
+    return 'Stays pinned indefinitely until manually unpinned.';
+  }
+  if (duration === 'until_due') {
+    if (!dueDate) return 'Please specify a Due Date above to unpin on deadline.';
+    const d = new Date(dueDate);
+    if (isNaN(d.getTime())) return 'Invalid due date.';
+    return `Automatically unpins on deadline: ${format(d, 'dd-MM-yyyy · h:mm a')}`;
+  }
+  if (duration === '1d') {
+    return `Automatically unpins after 24h: ${format(new Date(Date.now() + 24 * 3600 * 1000), 'dd-MM-yyyy · h:mm a')}`;
+  }
+  if (duration === '3d') {
+    return `Automatically unpins after 3 days: ${format(new Date(Date.now() + 3 * 24 * 3600 * 1000), 'dd-MM-yyyy · h:mm a')}`;
+  }
+  if (duration === '7d') {
+    return `Automatically unpins after 1 week: ${format(new Date(Date.now() + 7 * 24 * 3600 * 1000), 'dd-MM-yyyy · h:mm a')}`;
+  }
+  if (duration === '14d') {
+    return `Automatically unpins after 2 weeks: ${format(new Date(Date.now() + 14 * 24 * 3600 * 1000), 'dd-MM-yyyy · h:mm a')}`;
+  }
+  if (duration === 'custom') {
+    if (!customDate) return 'Please pick an expiration date & time above.';
+    const d = new Date(customDate);
+    if (isNaN(d.getTime())) return 'Invalid expiration date.';
+    return `Automatically unpins on: ${format(d, 'dd-MM-yyyy · h:mm a')}`;
+  }
+  return '';
+}
+
 export default function PostForm({ existingPost, onSaved }) {
   const navigate = useNavigate();
   const { subjects } = useSubjects();
   const [saving, setSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+
+  // Drag & drop state for link reordering
+  const [dragIndex, setDragIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
 
   const [form, setForm] = useState({
     title: '',
@@ -44,25 +100,37 @@ export default function PostForm({ existingPost, onSaved }) {
     type: 'notice',
     subject_id: '',
     is_pinned: false,
+    pin_duration: 'forever',
+    pinned_until: '',
     status: 'published',
     due_date: '',
     created_at: '',
-    tags: '',
     links: [{ label: '', url: '' }],
   });
 
   useEffect(() => {
     if (existingPost) {
+      let initialPinDuration = 'forever';
+      let initialPinnedUntil = '';
+
+      if (existingPost.pinned_until) {
+        initialPinnedUntil = toLocalISOString(existingPost.pinned_until);
+        initialPinDuration = 'custom';
+      } else if (existingPost.is_pinned && existingPost.due_date) {
+        initialPinDuration = 'until_due';
+      }
+
       setForm({
         title: existingPost.title || '',
         content: existingPost.content || '',
         type: existingPost.type || 'notice',
         subject_id: existingPost.subject_id || '',
         is_pinned: existingPost.is_pinned || false,
+        pin_duration: initialPinDuration,
+        pinned_until: initialPinnedUntil,
         status: existingPost.status || 'published',
         due_date: toLocalISOString(existingPost.due_date),
         created_at: toLocalISOString(existingPost.created_at),
-        tags: existingPost.tags?.join(', ') || '',
         links:
           existingPost.links?.length > 0
             ? existingPost.links
@@ -96,6 +164,44 @@ export default function PostForm({ existingPost, onSaved }) {
         i === index ? { ...link, [field]: value } : link
       ),
     }));
+  };
+
+  const moveLink = (fromIndex, toIndex) => {
+    if (toIndex < 0 || toIndex >= form.links.length) return;
+    setForm((prev) => {
+      const updated = [...prev.links];
+      const [movedItem] = updated.splice(fromIndex, 1);
+      updated.splice(toIndex, 0, movedItem);
+      return { ...prev, links: updated };
+    });
+  };
+
+  const handleDragStart = (e, index) => {
+    setDragIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', String(index));
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (dragOverIndex !== index) {
+      setDragOverIndex(index);
+    }
+  };
+
+  const handleDrop = (e, targetIndex) => {
+    e.preventDefault();
+    if (dragIndex !== null && dragIndex !== targetIndex) {
+      moveLink(dragIndex, targetIndex);
+    }
+    setDragIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDragIndex(null);
+    setDragOverIndex(null);
   };
 
   const handleSubmit = async (e) => {
@@ -140,18 +246,30 @@ export default function PostForm({ existingPost, onSaved }) {
         }
       }
 
+      let parsedPinnedUntil = null;
+      if (form.is_pinned) {
+        const expiry = getEffectivePinExpiry(
+          true,
+          form.pin_duration,
+          form.pinned_until,
+          form.due_date
+        );
+        if (expiry) {
+          parsedPinnedUntil = expiry.toISOString();
+        }
+      }
+
       const postData = {
         title: form.title.trim(),
         content: form.content.trim(),
         type: form.type,
         subject_id: form.subject_id || null,
         is_pinned: form.is_pinned,
+        pinned_until: parsedPinnedUntil,
         status: form.status,
         due_date: parsedDueDate,
         ...(parsedCreatedAt !== undefined && { created_at: parsedCreatedAt }),
-        tags: form.tags
-          ? form.tags.split(',').map((t) => t.trim()).filter(Boolean)
-          : [],
+        tags: existingPost?.tags || [],
         links: sanitizedLinks,
       };
 
@@ -289,79 +407,194 @@ export default function PostForm({ existingPost, onSaved }) {
         </Field>
       </div>
 
-      {/* Status + Pin */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Field label="Status">
-          <select
-            id="post-status"
-            value={form.status}
-            onChange={(e) => updateField('status', e.target.value)}
-            className="input-field"
-          >
-            <option value="published">Published</option>
-            <option value="draft">Draft</option>
-            <option value="archived">Archived</option>
-          </select>
-        </Field>
+      {/* Status */}
+      <Field label="Status">
+        <select
+          id="post-status"
+          value={form.status}
+          onChange={(e) => updateField('status', e.target.value)}
+          className="input-field"
+        >
+          <option value="published">Published</option>
+          <option value="draft">Draft</option>
+          <option value="archived">Archived</option>
+        </select>
+      </Field>
 
-        <Field label="Pin Post">
-          <label className="flex items-center gap-2 h-11 px-3 bg-[var(--color-surface)] border border-[var(--color-border)] cursor-pointer">
+      {/* Pin Post & Duration Controls */}
+      <div className="p-3.5 bg-[var(--color-surface)] border border-[var(--color-border)] space-y-3">
+        <div className="flex items-center justify-between">
+          <label className="flex items-center gap-2 cursor-pointer select-none">
             <input
               type="checkbox"
+              id="post-is-pinned"
               checked={form.is_pinned}
               onChange={(e) => updateField('is_pinned', e.target.checked)}
               className="w-4 h-4 accent-[var(--color-accent)]"
             />
-            <span className="text-sm text-[var(--color-text)]">Pinned (Keep at top)</span>
+            <span className="text-sm font-medium text-[var(--color-text)] flex items-center gap-1.5">
+              <Pin size={14} className={form.is_pinned ? 'text-[var(--color-accent)] fill-current' : 'text-[var(--color-text-muted)]'} />
+              Pinned (Keep at top)
+            </span>
           </label>
-        </Field>
+          {form.is_pinned && (
+            <span className="text-[10px] uppercase font-semibold tracking-wider px-1.5 py-0.5 bg-[var(--color-surface-2)] text-[var(--color-accent)] border border-[var(--color-accent)]/30">
+              Pin Active
+            </span>
+          )}
+        </div>
+
+        {form.is_pinned && (
+          <div className="pt-2.5 border-t border-[var(--color-border)] space-y-3">
+            <div>
+              <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1.5">
+                Pin Duration / Expiration
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                {[
+                  { value: 'forever', label: 'Indefinite' },
+                  { value: 'until_due', label: 'Until Due Date', disabled: !form.due_date },
+                  { value: '1d', label: '24 Hours' },
+                  { value: '3d', label: '3 Days' },
+                  { value: '7d', label: '1 Week' },
+                  { value: '14d', label: '2 Weeks' },
+                  { value: 'custom', label: 'Custom Date' },
+                ].map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    disabled={opt.disabled}
+                    onClick={() => updateField('pin_duration', opt.value)}
+                    className={`px-2.5 py-1.5 text-xs font-medium transition-colors border text-left flex items-center justify-between ${
+                      form.pin_duration === opt.value
+                        ? 'bg-[var(--color-accent)] text-black font-semibold border-[var(--color-accent)]'
+                        : opt.disabled
+                        ? 'bg-[var(--color-surface-2)] text-[var(--color-text-dim)] border-[var(--color-border)] opacity-40 cursor-not-allowed'
+                        : 'bg-[var(--color-surface-2)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] border-[var(--color-border)]'
+                    }`}
+                  >
+                    <span>{opt.label}</span>
+                    {form.pin_duration === opt.value && <span className="text-[10px]">✓</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Custom date picker */}
+            {form.pin_duration === 'custom' && (
+              <div>
+                <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1">
+                  Select Unpin Date & Time
+                </label>
+                <input
+                  id="post-pinned-until"
+                  type="datetime-local"
+                  value={form.pinned_until}
+                  onChange={(e) => updateField('pinned_until', e.target.value)}
+                  className="input-field"
+                />
+              </div>
+            )}
+
+            {/* Live Expiration Feedback */}
+            <div className="flex items-center gap-1.5 text-xs text-[var(--color-accent-hover)] bg-[var(--color-surface-2)] p-2 border border-[var(--color-border)]">
+              <Clock size={13} className="shrink-0" />
+              <span>
+                {formatPinHelper(form.pin_duration, form.pinned_until, form.due_date)}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Tags */}
-      <Field label="Tags" hint="Comma-separated (e.g. graded, individual)">
-        <input
-          id="post-tags"
-          type="text"
-          value={form.tags}
-          onChange={(e) => updateField('tags', e.target.value)}
-          placeholder="graded, individual, urgent"
-          className="input-field"
-        />
-      </Field>
-
-      {/* Links & Attachments */}
-      <Field label="Resource Links / Attachments" hint="Add Google Drive, Google Classroom, GitHub, or submission URLs">
-        <div className="space-y-3 sm:space-y-2">
+      {/* Resource Links / Attachments (Rearrangable) */}
+      <Field
+        label="Resource Links / Attachments"
+        hint="Add Google Drive, Google Classroom, GitHub, or submission URLs. Reorder using arrow buttons or drag handle."
+      >
+        <div className="space-y-2.5">
           {form.links.map((link, i) => (
-            <div key={i} className="flex flex-col sm:flex-row gap-2 bg-[var(--color-surface)] sm:bg-transparent p-2.5 sm:p-0 border border-[var(--color-border)] sm:border-0">
-              <input
-                type="text"
-                value={link.label}
-                onChange={(e) => updateLink(i, 'label', e.target.value)}
-                placeholder="Label (e.g. Assignment PDF / G-Drive)"
-                className="input-field flex-1 text-xs sm:text-sm min-h-[40px]"
-              />
-              <div className="flex gap-2 flex-1 sm:flex-[2]">
+            <div
+              key={i}
+              draggable
+              onDragStart={(e) => handleDragStart(e, i)}
+              onDragOver={(e) => handleDragOver(e, i)}
+              onDrop={(e) => handleDrop(e, i)}
+              onDragEnd={handleDragEnd}
+              className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-[var(--color-surface)] p-2.5 sm:p-2 border transition-all ${
+                dragOverIndex === i
+                  ? 'border-[var(--color-accent)] bg-[var(--color-accent-glow)]'
+                  : dragIndex === i
+                  ? 'opacity-40 border-dashed border-[var(--color-border-light)]'
+                  : 'border-[var(--color-border)]'
+              }`}
+            >
+              {/* Reorder controls & Index badge */}
+              <div className="flex items-center gap-1 shrink-0 self-start sm:self-center">
+                <div
+                  title="Drag to reorder link"
+                  className="p-1 text-[var(--color-text-dim)] hover:text-[var(--color-text)] cursor-grab active:cursor-grabbing shrink-0"
+                >
+                  <GripVertical size={16} />
+                </div>
+                <span className="text-[10px] font-mono text-[var(--color-text-dim)] w-5 text-center select-none">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <button
+                  type="button"
+                  disabled={i === 0}
+                  onClick={() => moveLink(i, i - 1)}
+                  title="Move link up"
+                  aria-label="Move link up"
+                  className="p-1 border border-[var(--color-border)] hover:bg-[var(--color-surface-2)] disabled:opacity-30 disabled:pointer-events-none text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors min-h-[28px] min-w-[28px] flex items-center justify-center"
+                >
+                  <ChevronUp size={14} />
+                </button>
+                <button
+                  type="button"
+                  disabled={i === form.links.length - 1}
+                  onClick={() => moveLink(i, i + 1)}
+                  title="Move link down"
+                  aria-label="Move link down"
+                  className="p-1 border border-[var(--color-border)] hover:bg-[var(--color-surface-2)] disabled:opacity-30 disabled:pointer-events-none text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors min-h-[28px] min-w-[28px] flex items-center justify-center"
+                >
+                  <ChevronDown size={14} />
+                </button>
+              </div>
+
+              {/* Link Inputs */}
+              <div className="flex-1 flex flex-col sm:flex-row gap-2">
                 <input
-                  type="url"
-                  value={link.url}
-                  onChange={(e) => updateLink(i, 'url', e.target.value)}
-                  placeholder="https://..."
-                  className="input-field flex-1 text-xs sm:text-sm min-h-[40px]"
+                  type="text"
+                  value={link.label}
+                  onChange={(e) => updateLink(i, 'label', e.target.value)}
+                  placeholder="Label (e.g. Assignment PDF / G-Drive)"
+                  className="input-field flex-1 text-xs sm:text-sm min-h-[38px]"
                 />
-                {form.links.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeLink(i)}
-                    aria-label="Remove link"
-                    className="p-2 min-h-[40px] min-w-[40px] flex items-center justify-center border border-[var(--color-border)] hover:bg-red-500/10 text-[var(--color-text-dim)] hover:text-red-400 active:bg-red-500/20 transition-colors shrink-0"
-                  >
-                    <X size={16} />
-                  </button>
-                )}
+                <div className="flex gap-2 flex-1 sm:flex-[2]">
+                  <input
+                    type="url"
+                    value={link.url}
+                    onChange={(e) => updateLink(i, 'url', e.target.value)}
+                    placeholder="https://..."
+                    className="input-field flex-1 text-xs sm:text-sm min-h-[38px]"
+                  />
+                  {form.links.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeLink(i)}
+                      aria-label="Remove link"
+                      title="Remove link"
+                      className="p-2 min-h-[38px] min-w-[38px] flex items-center justify-center border border-[var(--color-border)] hover:bg-red-500/10 text-[var(--color-text-dim)] hover:text-red-400 active:bg-red-500/20 transition-colors shrink-0"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}
+
           <button
             type="button"
             onClick={addLink}

@@ -73,6 +73,54 @@ describe('Dual-Mode API & Data Layer (Demo Fallback Mode)', () => {
       if (idx !== -1) DEMO_POSTS.splice(idx, 1);
     });
 
+    it('should dynamically unpin posts whose pinned_until has already passed', async () => {
+      const expiredPinnedUntilPost = {
+        id: 'test-expired-pinned-until',
+        title: 'Expired Pin Duration Post',
+        type: 'notice',
+        is_pinned: true,
+        pinned_until: new Date(Date.now() - 3600 * 1000).toISOString(), // 1 hour ago
+        status: 'published',
+        due_date: null,
+        created_at: new Date(Date.now() - 72 * 3600 * 1000).toISOString(),
+        links: [],
+      };
+      DEMO_POSTS.unshift(expiredPinnedUntilPost);
+
+      const posts = await fetchPosts({ status: 'published' });
+      const retrieved = posts.find(p => p.id === 'test-expired-pinned-until');
+      assert.ok(retrieved, 'Post should be retrieved');
+      assert.equal(retrieved.is_pinned, false, 'Post with passed pinned_until should dynamically have is_pinned = false');
+
+      // Cleanup
+      const idx = DEMO_POSTS.findIndex(p => p.id === 'test-expired-pinned-until');
+      if (idx !== -1) DEMO_POSTS.splice(idx, 1);
+    });
+
+    it('should retain pinned status for posts whose pinned_until is in the future', async () => {
+      const activePinnedUntilPost = {
+        id: 'test-active-pinned-until',
+        title: 'Active Pin Duration Post',
+        type: 'notice',
+        is_pinned: true,
+        pinned_until: new Date(Date.now() + 24 * 3600 * 1000).toISOString(), // 24 hours in future
+        status: 'published',
+        due_date: null,
+        created_at: new Date(Date.now() - 1000).toISOString(),
+        links: [],
+      };
+      DEMO_POSTS.unshift(activePinnedUntilPost);
+
+      const posts = await fetchPosts({ status: 'published' });
+      const retrieved = posts.find(p => p.id === 'test-active-pinned-until');
+      assert.ok(retrieved, 'Post should be retrieved');
+      assert.equal(retrieved.is_pinned, true, 'Post with future pinned_until should retain is_pinned = true');
+
+      // Cleanup
+      const idx = DEMO_POSTS.findIndex(p => p.id === 'test-active-pinned-until');
+      if (idx !== -1) DEMO_POSTS.splice(idx, 1);
+    });
+
     it('should correctly sort unpinned deliverables by due_date ascending, placing no-due-date posts at the end', async () => {
       const posts = await fetchPosts({ status: 'published' });
       const unpinned = posts.filter(p => !p.is_pinned);

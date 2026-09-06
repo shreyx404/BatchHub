@@ -14,7 +14,7 @@
 | FR-001 | Display published posts in a structured feed with sections: Notices & Important → Pinned → Deadline-sorted → General | P0 | ✅ Implemented |
 | FR-002 | Show an upcoming deadlines banner with countdown timers at the top of the feed | P0 | ✅ Implemented |
 | FR-003 | Visually highlight urgent deadlines (< 48 hours remaining) with inverted styling | P0 | ✅ Implemented |
-| FR-004 | Automatically unpin posts whose `due_date` has passed (client-side dynamic unpinning) | P1 | ✅ Implemented |
+| FR-004 | Automatically unpin posts whose `pinned_until` duration or `due_date` has passed (client-side dynamic unpinning) | P1 | ✅ Implemented |
 | FR-005 | Provide debounced search (300 ms) across `title` and `content` fields with `Ctrl + K` shortcut | P0 | ✅ Implemented |
 | FR-006 | Allow filtering by content type (assignment, lab, notice, deadline, resource, important) | P0 | ✅ Implemented |
 | FR-007 | Allow filtering by subject | P0 | ✅ Implemented |
@@ -61,15 +61,16 @@
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| FR-031 | Create new posts with: title (required), content (Markdown), type, subject, due date, status, pin toggle, tags, and resource links | P0 | ✅ Implemented |
+| FR-031 | Create new posts with: title (required), content (Markdown), type, subject, due date, status, pin duration controls, and resource links | P0 | ✅ Implemented |
 | FR-032 | Edit existing posts with all fields pre-populated | P0 | ✅ Implemented |
 | FR-033 | Delete posts with confirmation | P0 | ✅ Implemented |
 | FR-034 | Change post status between published, draft, and archived | P0 | ✅ Implemented |
 | FR-035 | Live Markdown preview toggle in the content editor | P1 | ✅ Implemented |
 | FR-036 | Labeled resource links / document attachments (Drive, Classroom, PDF, GitHub) without storage bottlenecks | P1 | ✅ Implemented |
-| FR-037 | Multiple link entries per post with label + URL pairs | P1 | ✅ Implemented |
-| FR-038 | Comma-separated tag input | P2 | ✅ Implemented |
+| FR-037 | Multiple link entries per post with label + URL pairs and drag-and-drop / Move Up / Move Down sequence reordering | P1 | ✅ Implemented |
+| FR-038 | Streamlined post creation omitting tags requirement (preserving legacy tags on edit) | P2 | ✅ Implemented |
 | FR-038a | Sort all posts by Due Date (default, Ascending) or Created Date with Asc/Desc toggle; posts without deadlines float to top in Due Date sort | P1 | ✅ Implemented |
+| FR-038b | Pin duration options (Indefinite, Until Due Date, 24 Hours, 3 Days, 1 Week, 2 Weeks, Custom Date) with live expiration preview | P1 | ✅ Implemented |
 
 ### 1.6 Subject Management (Admin)
 
@@ -195,6 +196,7 @@
 | `type` | TEXT | Enum check: `assignment`, `lab`, `notice`, `deadline`, `resource`, `important` |
 | `subject_id` | UUID | FK → subjects, `ON DELETE SET NULL` |
 | `is_pinned` | BOOLEAN | Default `false` |
+| `pinned_until` | TIMESTAMPTZ | Optional pin duration expiration |
 | `status` | TEXT | Enum check: `published`, `draft`, `archived` |
 | `due_date` | TIMESTAMPTZ | Optional deadline |
 | `tags` | TEXT[] | Array of strings |

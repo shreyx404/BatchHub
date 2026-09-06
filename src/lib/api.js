@@ -57,11 +57,17 @@ export async function fetchPosts({ type, subjectId, search, status = 'published'
   const { data, error } = await query;
   if (error) throw error;
 
-  // Dynamic unpinning: if a post is pinned but its due date has passed, treat it as unpinned.
+  // Dynamic unpinning: if post has explicit pinned_until or due_date that has passed, treat it as unpinned.
   const now = new Date();
   const processedData = data.map(post => {
-    if (post.is_pinned && post.due_date && new Date(post.due_date) < now) {
-      return { ...post, is_pinned: false };
+    if (post.is_pinned) {
+      if (post.pinned_until) {
+        if (new Date(post.pinned_until) < now) {
+          return { ...post, is_pinned: false };
+        }
+      } else if (post.due_date && new Date(post.due_date) < now) {
+        return { ...post, is_pinned: false };
+      }
     }
     return post;
   });
@@ -376,8 +382,14 @@ function filterDemoPosts({ type, subjectId, search, status }) {
   }
   const now = new Date();
   filtered = filtered.map(post => {
-    if (post.is_pinned && post.due_date && new Date(post.due_date) < now) {
-      return { ...post, is_pinned: false };
+    if (post.is_pinned) {
+      if (post.pinned_until) {
+        if (new Date(post.pinned_until) < now) {
+          return { ...post, is_pinned: false };
+        }
+      } else if (post.due_date && new Date(post.due_date) < now) {
+        return { ...post, is_pinned: false };
+      }
     }
     return post;
   });

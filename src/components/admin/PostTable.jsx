@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Edit2, Trash2, Archive, ArchiveRestore, Eye, ArrowUpDown, Calendar, Clock } from 'lucide-react';
+import { Edit2, Trash2, Archive, ArchiveRestore, Eye, ArrowUpDown, Calendar, Clock, Pin } from 'lucide-react';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 import Badge from '../ui/Badge';
@@ -214,6 +214,12 @@ export default function PostTable() {
                   >
                     {POST_STATUSES[post.status]?.label || post.status}
                   </span>
+                  {post.is_pinned && (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 bg-[var(--color-surface-2)] text-[var(--color-accent)] border border-[var(--color-accent)]/30">
+                      <Pin size={10} className="fill-current rotate-45" />
+                      Pinned{post.pinned_until ? ` (until ${format(new Date(post.pinned_until), 'dd-MM · h:mm a')})` : ''}
+                    </span>
+                  )}
                 </div>
                 <p className="text-sm font-medium text-[var(--color-text)] break-words sm:truncate">
                   {post.title}

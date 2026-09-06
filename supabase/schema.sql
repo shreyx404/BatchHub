@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS posts (
   type        TEXT NOT NULL CHECK (type IN ('assignment', 'lab', 'notice', 'deadline', 'resource', 'important')),
   subject_id  UUID REFERENCES subjects(id) ON DELETE SET NULL,
   is_pinned   BOOLEAN DEFAULT false,
+  pinned_until TIMESTAMPTZ,
   status      TEXT DEFAULT 'published' CHECK (status IN ('published', 'draft', 'archived')),
   due_date    TIMESTAMPTZ,
   tags        TEXT[] DEFAULT '{}',
