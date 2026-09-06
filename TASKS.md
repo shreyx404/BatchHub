@@ -71,10 +71,12 @@
 ## Phase 4: UI Components
 
 ### Layout
+
 - [x] **T-018** — `Header` — sticky glass nav, logo, search toggle, admin link
 - [x] **T-019** — `Footer` — simple footer
 
 ### UI Primitives
+
 - [x] **T-020** — `Badge` — type badges and subject badges with colour coding
 - [x] **T-021** — `SearchBar` — debounced search input
 - [x] **T-022** — `FilterBar` — type and subject filter pills
@@ -84,6 +86,7 @@
 - [x] **T-026** — `EmptyState` — no results placeholder
 
 ### Post Components
+
 - [x] **T-027** — `PostCard` — ledger-style card with diamond marker, hover glow, badges, due date, attachment count
 - [x] **T-028** — `PostGrid` — responsive grid / list of PostCards
 - [x] **T-029** — `DeadlineBanner` — horizontal scrollable deadline cards with urgency highlighting
@@ -91,6 +94,7 @@
 - [x] **T-031** — `NoticesSection` — notices & important posts with highlighted border
 
 ### Admin Components
+
 - [x] **T-032** — `AdminLogin` — password form with server-side validation
 - [x] **T-033** — `AdminSidebar` — navigation sidebar with mobile collapse
 - [x] **T-034** — `PostForm` — create/edit with Markdown preview, subjects, tags, links, attachments
