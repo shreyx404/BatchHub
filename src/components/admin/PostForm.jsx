@@ -104,7 +104,6 @@ export default function PostForm({ existingPost, onSaved }) {
     pinned_until: '',
     status: 'published',
     due_date: '',
-    created_at: '',
     links: [{ label: '', url: '' }],
   });
 
@@ -130,7 +129,6 @@ export default function PostForm({ existingPost, onSaved }) {
         pinned_until: initialPinnedUntil,
         status: existingPost.status || 'published',
         due_date: toLocalISOString(existingPost.due_date),
-        created_at: toLocalISOString(existingPost.created_at),
         links:
           existingPost.links?.length > 0
             ? existingPost.links
@@ -238,14 +236,6 @@ export default function PostForm({ existingPost, onSaved }) {
         }
       }
 
-      let parsedCreatedAt = undefined;
-      if (form.created_at) {
-        const d = new Date(form.created_at);
-        if (!isNaN(d.getTime())) {
-          parsedCreatedAt = d.toISOString();
-        }
-      }
-
       let parsedPinnedUntil = null;
       if (form.is_pinned) {
         const expiry = getEffectivePinExpiry(
@@ -268,7 +258,7 @@ export default function PostForm({ existingPost, onSaved }) {
         pinned_until: parsedPinnedUntil,
         status: form.status,
         due_date: parsedDueDate,
-        ...(parsedCreatedAt !== undefined && { created_at: parsedCreatedAt }),
+        ...(existingPost?.created_at && { created_at: existingPost.created_at }),
         tags: existingPost?.tags || [],
         links: sanitizedLinks,
       };
@@ -384,7 +374,7 @@ export default function PostForm({ existingPost, onSaved }) {
         )}
       </Field>
 
-      {/* Due date + Publication date */}
+      {/* Due date & Status row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Due Date & Time" hint="Optional deadline for submissions/tasks">
           <input
@@ -396,30 +386,19 @@ export default function PostForm({ existingPost, onSaved }) {
           />
         </Field>
 
-        <Field label="Publication Date & Time" hint="Defaults to now if left blank">
-          <input
-            id="post-created-at"
-            type="datetime-local"
-            value={form.created_at}
-            onChange={(e) => updateField('created_at', e.target.value)}
+        <Field label="Status">
+          <select
+            id="post-status"
+            value={form.status}
+            onChange={(e) => updateField('status', e.target.value)}
             className="input-field"
-          />
+          >
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+            <option value="archived">Archived</option>
+          </select>
         </Field>
       </div>
-
-      {/* Status */}
-      <Field label="Status">
-        <select
-          id="post-status"
-          value={form.status}
-          onChange={(e) => updateField('status', e.target.value)}
-          className="input-field"
-        >
-          <option value="published">Published</option>
-          <option value="draft">Draft</option>
-          <option value="archived">Archived</option>
-        </select>
-      </Field>
 
       {/* Pin Post & Duration Controls */}
       <div className="p-3.5 bg-[var(--color-surface)] border border-[var(--color-border)] space-y-3">

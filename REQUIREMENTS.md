@@ -27,7 +27,7 @@
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
 | FR-011 | Render post content as Markdown with sanitisation (disallow `script`, `iframe`, `object`, `embed`) | P0 | ✅ Implemented |
-| FR-012 | Display type badge, subject badge, creation date, and relative timestamp | P0 | ✅ Implemented |
+| FR-012 | Display type badge and subject badge (publication date omitted for clean display) | P0 | ✅ Implemented |
 | FR-013 | Display due date with formatted date and time when present | P0 | ✅ Implemented |
 | FR-014 | Render tags as styled chips | P1 | ✅ Implemented |
 | FR-015 | Display external links with label and URL in clickable cards | P1 | ✅ Implemented |

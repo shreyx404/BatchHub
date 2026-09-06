@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import {
-  ArrowLeft, Clock, CalendarClock, ExternalLink,
+  ArrowLeft, CalendarClock, ExternalLink,
   Share2
 } from 'lucide-react';
 import { format, formatDistanceToNow, isPast, differenceInHours } from 'date-fns';
@@ -111,18 +111,9 @@ export default function PostPage() {
           {post.title}
         </h1>
 
-        {/* Meta */}
-        <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[var(--text-xs)] sm:text-[var(--text-sm)] text-[var(--color-text-muted)] mb-5 sm:mb-6 pb-5 sm:pb-6 border-b border-[var(--color-border)]">
-          {post.created_at && (
-            <span className="flex items-center gap-1.5">
-              <Clock size={14} />
-              Posted {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-              <span className="text-[var(--color-text-dim)] hidden xs:inline">
-                · {format(new Date(post.created_at), 'dd-MM-yyyy · h:mm a')}
-              </span>
-            </span>
-          )}
-          {hasDueDate && (
+        {/* Meta (Due Date) */}
+        {hasDueDate && (
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[var(--text-xs)] sm:text-[var(--text-sm)] text-[var(--color-text-muted)] mb-5 sm:mb-6 pb-5 sm:pb-6 border-b border-[var(--color-border)]">
             <span
               className={`flex items-center gap-1.5 font-medium tracking-[0.005em] ${
                 isOverdue
@@ -138,8 +129,8 @@ export default function PostPage() {
                 ({formatDistanceToNow(dueDate, { addSuffix: true })})
               </span>
             </span>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Content */}
         {post.content && (

@@ -54,11 +54,8 @@ export default function PostCard({ post }) {
       />
 
       <div className="flex flex-col gap-2.5 sm:gap-3.5">
-        {/* Timestamp & Badges row */}
+        {/* Badges row */}
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-          <span className="font-mono text-[9.5px] sm:text-[10px] tracking-wider text-[var(--color-text-dim)] uppercase">
-            Posted: {format(new Date(post.created_at || new Date()), 'dd-MM-yyyy / HH:mm')}
-          </span>
           <Badge type={post.type} />
           {post.subjects && <Badge subject={post.subjects} />}
           {post.is_pinned && (
