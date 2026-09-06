@@ -429,7 +429,7 @@ export default function PostForm({ existingPost, onSaved }) {
               <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1.5">
                 Pin Duration / Expiration
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {[
                   { value: 'forever', label: 'Indefinite' },
                   { value: 'until_due', label: 'Until Due Date', disabled: !form.due_date },
@@ -444,7 +444,9 @@ export default function PostForm({ existingPost, onSaved }) {
                     type="button"
                     disabled={opt.disabled}
                     onClick={() => updateField('pin_duration', opt.value)}
-                    className={`px-2.5 py-1.5 text-xs font-medium transition-colors border text-left flex items-center justify-between ${
+                    className={`min-h-[40px] sm:min-h-[36px] px-3 py-2 text-xs font-medium transition-all border text-left flex items-center justify-between active:scale-[0.98] ${
+                      opt.value === 'custom' ? 'col-span-2 sm:col-span-1' : ''
+                    } ${
                       form.pin_duration === opt.value
                         ? 'bg-[var(--color-accent)] text-black font-semibold border-[var(--color-accent)]'
                         : opt.disabled
@@ -476,7 +478,7 @@ export default function PostForm({ existingPost, onSaved }) {
             )}
 
             {/* Live Expiration Feedback */}
-            <div className="flex items-center gap-1.5 text-xs text-[var(--color-accent-hover)] bg-[var(--color-surface-2)] p-2 border border-[var(--color-border)]">
+            <div className="flex items-center gap-1.5 text-xs text-[var(--color-accent-hover)] bg-[var(--color-surface-2)] p-2.5 border border-[var(--color-border)]">
               <Clock size={13} className="shrink-0" />
               <span>
                 {formatPinHelper(form.pin_duration, form.pinned_until, form.due_date)}
@@ -512,7 +514,7 @@ export default function PostForm({ existingPost, onSaved }) {
               <div className="flex items-center gap-1 shrink-0 self-start sm:self-center">
                 <div
                   title="Drag to reorder link"
-                  className="p-1 text-[var(--color-text-dim)] hover:text-[var(--color-text)] cursor-grab active:cursor-grabbing shrink-0"
+                  className="p-1 text-[var(--color-text-dim)] hover:text-[var(--color-text)] cursor-grab active:cursor-grabbing shrink-0 min-h-[34px] min-w-[30px] flex items-center justify-center touch-manipulation"
                 >
                   <GripVertical size={16} />
                 </div>
@@ -525,7 +527,7 @@ export default function PostForm({ existingPost, onSaved }) {
                   onClick={() => moveLink(i, i - 1)}
                   title="Move link up"
                   aria-label="Move link up"
-                  className="p-1 border border-[var(--color-border)] hover:bg-[var(--color-surface-2)] disabled:opacity-30 disabled:pointer-events-none text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors min-h-[28px] min-w-[28px] flex items-center justify-center"
+                  className="p-1 border border-[var(--color-border)] hover:bg-[var(--color-surface-2)] disabled:opacity-30 disabled:pointer-events-none text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors min-h-[34px] min-w-[34px] sm:min-h-[28px] sm:min-w-[28px] flex items-center justify-center active:scale-95 touch-manipulation"
                 >
                   <ChevronUp size={14} />
                 </button>
@@ -535,7 +537,7 @@ export default function PostForm({ existingPost, onSaved }) {
                   onClick={() => moveLink(i, i + 1)}
                   title="Move link down"
                   aria-label="Move link down"
-                  className="p-1 border border-[var(--color-border)] hover:bg-[var(--color-surface-2)] disabled:opacity-30 disabled:pointer-events-none text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors min-h-[28px] min-w-[28px] flex items-center justify-center"
+                  className="p-1 border border-[var(--color-border)] hover:bg-[var(--color-surface-2)] disabled:opacity-30 disabled:pointer-events-none text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors min-h-[34px] min-w-[34px] sm:min-h-[28px] sm:min-w-[28px] flex items-center justify-center active:scale-95 touch-manipulation"
                 >
                   <ChevronDown size={14} />
                 </button>
@@ -548,7 +550,7 @@ export default function PostForm({ existingPost, onSaved }) {
                   value={link.label}
                   onChange={(e) => updateLink(i, 'label', e.target.value)}
                   placeholder="Label (e.g. Assignment PDF / G-Drive)"
-                  className="input-field flex-1 text-xs sm:text-sm min-h-[38px]"
+                  className="input-field flex-1 text-xs sm:text-sm min-h-[40px] sm:min-h-[38px]"
                 />
                 <div className="flex gap-2 flex-1 sm:flex-[2]">
                   <input
@@ -556,7 +558,7 @@ export default function PostForm({ existingPost, onSaved }) {
                     value={link.url}
                     onChange={(e) => updateLink(i, 'url', e.target.value)}
                     placeholder="https://..."
-                    className="input-field flex-1 text-xs sm:text-sm min-h-[38px]"
+                    className="input-field flex-1 text-xs sm:text-sm min-h-[40px] sm:min-h-[38px]"
                   />
                   {form.links.length > 1 && (
                     <button
@@ -564,7 +566,7 @@ export default function PostForm({ existingPost, onSaved }) {
                       onClick={() => removeLink(i)}
                       aria-label="Remove link"
                       title="Remove link"
-                      className="p-2 min-h-[38px] min-w-[38px] flex items-center justify-center border border-[var(--color-border)] hover:bg-red-500/10 text-[var(--color-text-dim)] hover:text-red-400 active:bg-red-500/20 transition-colors shrink-0"
+                      className="p-2 min-h-[40px] min-w-[40px] sm:min-h-[38px] sm:min-w-[38px] flex items-center justify-center border border-[var(--color-border)] hover:bg-red-500/10 text-[var(--color-text-dim)] hover:text-red-400 active:bg-red-500/20 transition-colors shrink-0 touch-manipulation"
                     >
                       <X size={16} />
                     </button>
@@ -577,7 +579,7 @@ export default function PostForm({ existingPost, onSaved }) {
           <button
             type="button"
             onClick={addLink}
-            className="flex items-center gap-1.5 text-xs font-medium text-[var(--color-accent-hover)] hover:underline pt-1 min-h-[34px]"
+            className="flex items-center gap-1.5 text-xs font-medium text-[var(--color-accent-hover)] hover:underline pt-1 min-h-[38px] sm:min-h-[34px] touch-manipulation"
           >
             <Plus size={14} />
             Add another link
@@ -586,7 +588,7 @@ export default function PostForm({ existingPost, onSaved }) {
       </Field>
 
       {/* Submit Action Bar (Sticky on mobile for seamless submission) */}
-      <div className="sticky bottom-0 sm:static bg-[var(--color-bg)]/95 sm:bg-transparent backdrop-blur-md sm:backdrop-blur-none p-3 sm:p-0 -mx-3.5 sm:mx-0 pt-3 sm:pt-4 border-t border-[var(--color-border)] flex items-center gap-2.5 sm:gap-3 z-20 pb-safe">
+      <div className="sticky bottom-0 sm:static bg-[var(--color-bg)]/95 sm:bg-transparent backdrop-blur-md sm:backdrop-blur-none p-3 sm:p-0 -mx-4 sm:mx-0 pt-3 sm:pt-4 border-t border-[var(--color-border)] flex items-center gap-2.5 sm:gap-3 z-20 pb-safe">
         <button
           type="submit"
           disabled={saving}
