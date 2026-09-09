@@ -76,7 +76,7 @@ export default function SubjectManager() {
         <h2 className="text-xl font-bold text-[var(--color-text)]">Subjects</h2>
         <button
           onClick={openCreate}
-          className="flex items-center gap-1.5 px-3 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-black text-sm font-semibold transition-colors"
+          className="flex items-center gap-1.5 px-3 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] text-sm font-semibold transition-colors"
         >
           <Plus size={14} />
           Add Subject
@@ -195,7 +195,7 @@ export default function SubjectManager() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-5 py-2.5 min-h-[42px] bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] active:scale-[0.99] disabled:opacity-60 text-black text-sm font-semibold transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 min-h-[42px] bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] active:scale-[0.99] disabled:opacity-60 text-[var(--color-accent-text)] text-sm font-semibold transition-all"
             >
               {saving ? (
                 <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />

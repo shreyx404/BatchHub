@@ -168,7 +168,7 @@ export default function AdminCalendar() {
             </h2>
             <button
               onClick={() => navigate('/admin/create')}
-              className="flex items-center gap-1.5 px-3 py-1 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-black text-[11px] font-mono font-bold transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] text-[11px] font-mono font-bold transition-colors"
             >
               <Plus size={12} />
               <span>New Deadline</span>

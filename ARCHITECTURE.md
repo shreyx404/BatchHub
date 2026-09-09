@@ -1,6 +1,6 @@
 # BatchHub — Architecture Document
 
-> **Version:** 1.5  
+> **Version:** 1.6  
 > **Last Updated:** 2026-09-09
 
 ---
@@ -227,6 +227,7 @@ BatchHub uses **local component state + custom hooks** — no global state libra
 | `usePost(id)` | `hooks/usePost.js` | Fetches a single post by UUID |
 | `useSubjects()` | `hooks/useSubjects.js` | Fetches all subjects sorted by name |
 | `useAdmin()` | `hooks/useAdmin.js` | Manages auth state: `isAuthenticated`, `login()`, `logout()` with instant demo bypass |
+| `useTheme()` | `context/ThemeContext.jsx` | Manages theme state (`dark`, `light`, `system`), persistence in `localStorage`, and DOM attribute syncing |
 
 ### 3.3 API Layer (`lib/api.js`)
 
@@ -234,6 +235,14 @@ All data fetching is centralised in a single API module that:
 - Checks `isSupabaseConfigured()` before every call
 - Falls back to in-memory `DEMO_POSTS` / `DEMO_SUBJECTS` arrays
 - Routes admin mutations and privileged reads (`fetchAllPosts`, admin `fetchPost`, admin `fetchCalendarDeadlines`) through `adminRequest()` → `POST /api/admin` to bypass public read RLS restrictions
+
+### 3.4 Dual-Theme Architecture
+
+BatchHub provides a zero-flicker dual-theme system calibrated to the "Editorial Elevated" design language:
+- **Anti-Flash Initialization**: Inline `<script>` in `index.html` inspects `localStorage` (`batchhub_theme`) and `prefers-color-scheme` before DOM rendering, applying `data-theme="light|dark"` and class `light|dark` immediately to `<html>`.
+- **CSS Variable Ladder**: Defined in `src/index.css` via `:root[data-theme="dark"]` and `[data-theme="light"]`, ensuring that all Tailwind utility classes (`bg-bg`, `bg-surface-2`, `text-text`, `border-border`, etc.) adapt dynamically.
+- **Inverted Semantic Tokens**: High-contrast items (such as selected filter chips and primary action buttons) use `bg-[var(--color-text)] text-[var(--color-bg)]` and `text-[var(--color-accent-text)]`, automatically rendering off-white on dark and deep charcoal on light.
+- **Theme Controls**: Accessible `<ThemeToggle />` component with animated Sun/Moon icons in `Header.jsx`, `AdminPage.jsx` header bar, and `AdminLogin.jsx`.
 
 ---
 

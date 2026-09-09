@@ -1,6 +1,6 @@
 # BatchHub — Product Requirements Document (PRD)
 
-> **Version:** 1.5  
+> **Version:** 1.6  
 > **Last Updated:** 2026-09-09  
 > **Status:** Living Document
 
@@ -53,6 +53,7 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 | F-08c | **Contained Agenda Scroll & Default Today Selection** | Isolated viewport-bounded scroll container for Agenda views with sticky date group headers and default selection to TODAY for instant deliverable inspection across both Student and Admin calendars |
 | F-08d | **Past Events & Deliverables Archive** | Dedicated full-page archive section (`/archive`) accessible via header navigation for browsing, searching (`Ctrl + K`), filtering (by content type and subject), and sorting (Recent, Oldest, Due Date, A → Z) past events, expired deadlines, and completed assignments. Synchronizes search, filter, and sort state with URL query parameters for direct sharing and back/forward navigation. |
 | F-08e | **Editorial Elevated Design System** | Dark editorial aesthetic upgraded with 5-tier surface elevation ladder (`#000000` to `#141414`), warm amber accent tokens (`#D4A574`) for subtle focal hierarchy and urgency, oversized Playfair Display hero with live batch statistics counter, typographic countdown cards (`DD:HH:MM`) with live ticking, Bento grid layouts in notices & pinned feeds, continuous ledger timeline (`gap-0`), section dividers with diamond markers, and historical styling for the archive page. |
+| F-08f | **Dark / Light Theme Toggle** | Dual-theme system featuring the baseline dark editorial aesthetic alongside a light editorial paper aesthetic (`#F8F7F4` linen background, `#FFFFFF` cards, `#181716` deep charcoal typography, `#A86A24` calibrated amber ink). Zero-flicker anti-flash startup script in `index.html`, `localStorage` persistence under `batchhub_theme`, dynamic OS preference listener, and sharp `<ThemeToggle />` controls with Sun/Moon animations in header navigation, admin dashboard, and login screen. |
 
 ### 3.2 Admin Dashboard (Password-Protected)
 

@@ -7,7 +7,8 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 ## Features
 
 ### Students
-- 📰 **Editorial Elevated Design:** Dark editorial aesthetic with 5-tier surface elevation ladder (`#000000` to `#141414`), warm amber accents (`#D4A574`), oversized Playfair Display hero with live stats counter, section dividers with diamond markers (`◇`), and film grain texture overlay
+- 🌗 **Dark / Light Theme Toggle:** Seamless dual-theme support switching between Editorial Elevated Dark gallery mode (`#050505`) and pristine Editorial Paper Light mode (`#F8F7F4`), featuring zero-flicker startup anti-flash script, system scheme detection, and persistent state
+- 📰 **Editorial Elevated Design:** Dark editorial aesthetic with 5-tier surface elevation ladder (`#000000` to `#141414`), warm amber accents (`#D4A574` / `#A86A24`), oversized Playfair Display hero with live stats counter, section dividers with diamond markers (`◇`), and film grain texture overlay
 - ⏱️ **Typographic Countdown Cards:** Live-ticking `DD:HH:MM` numeric blocks in the upcoming deadlines banner with count-pulse animations and urgent diamond glows
 - 🍱 **Bento Grid Layouts:** High-priority notices and pinned updates feature dynamic 2-column lead cards
 - 📜 **Continuous Ledger Timeline:** Seamless zero-gap timeline (`gap-0`) with diamond markers and hover illumination

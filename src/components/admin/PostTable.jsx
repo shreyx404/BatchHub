@@ -143,7 +143,7 @@ export default function PostTable() {
               onClick={() => handleStatusFilterChange(s)}
               className={`px-3 py-1.5 text-xs font-medium whitespace-nowrap min-h-[34px] transition-all active:scale-[0.98] ${
                 statusFilter === s
-                  ? 'bg-[var(--color-accent)] text-black font-semibold'
+                  ? 'bg-[var(--color-accent)] text-[var(--color-accent-text)] font-semibold'
                   : 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)]'
               }`}
             >
@@ -167,7 +167,7 @@ export default function PostTable() {
             onClick={() => setSortBy(key)}
             className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-medium min-h-[34px] transition-all active:scale-[0.98] ${
               sortBy === key
-                ? 'bg-[var(--color-accent)] text-black font-semibold'
+                ? 'bg-[var(--color-accent)] text-[var(--color-accent-text)] font-semibold'
                 : 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
             }`}
           >
@@ -288,7 +288,7 @@ export default function PostTable() {
           </button>
           <button
             onClick={confirmArchive}
-            className="px-4 py-2 text-sm font-medium bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-black font-semibold transition-colors"
+            className="px-4 py-2 text-sm font-medium bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] font-semibold transition-colors"
           >
             Archive Post
           </button>

@@ -49,7 +49,7 @@ export default function CalendarAgendaView({
 
   if (groupedByDate.length === 0) {
     return (
-      <div className="border border-[var(--color-border)] bg-[#050505] p-8 sm:p-12 text-center flex flex-col items-center justify-center animate-fade-in">
+      <div className="border border-[var(--color-border)] bg-[var(--color-surface)] p-8 sm:p-12 text-center flex flex-col items-center justify-center animate-fade-in">
         <CalendarX size={36} className="text-[var(--color-text-dim)] mb-3" />
         <h3 className="font-display text-lg sm:text-xl font-semibold text-[var(--color-text)] mb-1">
           No Upcoming Deadlines
@@ -62,7 +62,7 @@ export default function CalendarAgendaView({
         {selectedSubject && (
           <button
             onClick={() => onSubjectChange(null)}
-            className="px-3.5 py-2 min-h-[38px] text-[var(--text-xs)] font-mono bg-white text-black font-semibold hover:bg-[#e5e5e5] transition-colors"
+            className="px-3.5 py-2 min-h-[38px] text-[var(--text-xs)] font-mono bg-[var(--color-text)] text-[var(--color-bg)] font-semibold hover:opacity-90 transition-opacity"
           >
             Clear Subject Filter
           </button>
@@ -86,7 +86,7 @@ export default function CalendarAgendaView({
                   {format(group.date, 'EEEE, MMMM d, yyyy')}
                 </span>
                 {todayGroup && (
-                  <span className="px-2 py-0.5 text-[9px] font-mono font-bold bg-white text-black uppercase">
+                  <span className="px-2 py-0.5 text-[9px] font-mono font-bold bg-[var(--color-text)] text-[var(--color-bg)] uppercase">
                     TODAY
                   </span>
                 )}
@@ -146,10 +146,10 @@ function AgendaPostCard({ post, isAdmin }) {
     <div
       className={`border p-4 sm:p-5 transition-all ${
         isUrgent
-          ? 'bg-[#140a0a] border-[#7f1d1d]'
+          ? 'bg-red-50/70 dark:bg-[#140a0a] border-red-300 dark:border-[#7f1d1d]'
           : isDraft
-            ? 'bg-[#14120a] border-[#453610]'
-            : 'bg-[#0c0c0f] border border-[var(--color-border-light)]'
+            ? 'bg-amber-50/70 dark:bg-[#14120a] border-amber-300 dark:border-[#453610]'
+            : 'bg-[var(--color-surface)] border border-[var(--color-border-light)]'
       }`}
     >
       <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
@@ -165,7 +165,7 @@ function AgendaPostCard({ post, isAdmin }) {
             <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--color-text-dim)]">
               {typeConfig?.label || post.type}
             </span>
-            <span className="text-[10px] font-mono text-[#3f3f46]">·</span>
+            <span className="text-[10px] font-mono text-[var(--color-border-light)]">·</span>
             <span className="text-[10px] font-mono text-[var(--color-text-muted)]">
               {format(dueDate, 'h:mm a')}
             </span>
@@ -174,10 +174,10 @@ function AgendaPostCard({ post, isAdmin }) {
             <span
               className={`px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider ml-auto lg:ml-0 ${
                 isUrgent
-                  ? 'bg-red-950 border border-red-800 text-red-300'
+                  ? 'bg-red-100 dark:bg-red-950 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300'
                   : isDraft
-                    ? 'bg-amber-950 border border-amber-800 text-amber-300'
-                    : 'bg-[#141416] border border-[var(--color-border)] text-[var(--color-text-muted)]'
+                    ? 'bg-amber-100 dark:bg-amber-950 border border-amber-300 dark:border-amber-800 text-amber-700 dark:text-amber-300'
+                    : 'bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-muted)]'
               }`}
             >
               {countdownText}
@@ -185,7 +185,7 @@ function AgendaPostCard({ post, isAdmin }) {
           </div>
 
           {/* Title */}
-          <h3 className="font-display text-base sm:text-lg leading-snug text-white font-semibold">
+          <h3 className="font-display text-base sm:text-lg leading-snug text-[var(--color-text)] font-semibold">
             {post.title}
           </h3>
 
@@ -220,14 +220,14 @@ function AgendaPostCard({ post, isAdmin }) {
           {isAdmin && (
             <Link
               to={`/admin/edit/${post.id}`}
-              className="px-3 py-2 min-h-[38px] flex items-center justify-center gap-1 text-[var(--text-xs)] font-mono font-semibold border transition-colors bg-[var(--color-surface-3)] border-[var(--color-border-light)] hover:border-white text-[var(--color-text)] hover:text-white"
+              className="px-3 py-2 min-h-[38px] flex items-center justify-center gap-1 text-[var(--text-xs)] font-mono font-semibold border transition-colors bg-[var(--color-surface-3)] border-[var(--color-border-light)] hover:border-[var(--color-text)] text-[var(--color-text)] hover:text-[var(--color-text)]"
             >
               <span>Edit</span>
             </Link>
           )}
           <Link
             to={`/post/${post.id}`}
-            className="px-4 py-2 min-h-[38px] flex items-center justify-center gap-1.5 text-[var(--text-xs)] transition-colors bg-white text-black font-semibold hover:bg-[#e5e5e5] active:bg-[#cccccc]"
+            className="px-4 py-2 min-h-[38px] flex items-center justify-center gap-1.5 text-[var(--text-xs)] transition-opacity bg-[var(--color-text)] text-[var(--color-bg)] font-semibold hover:opacity-90 active:opacity-80"
           >
             <span>View Details</span>
             <ArrowRight size={13} />

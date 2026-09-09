@@ -13,7 +13,7 @@ export default function ArchiveSortBar({ sortBy, onSortChange, totalCount, loadi
               px-2.5 py-1 text-[10.5px] sm:text-[10px] tracking-[0.03em] font-mono min-h-[32px] sm:min-h-[30px]
               ${
                 sortBy === value
-                  ? 'bg-white border-white text-black font-semibold'
+                  ? 'bg-[var(--color-text)] border-[var(--color-text)] text-[var(--color-bg)] font-semibold'
                   : 'bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-muted)] font-normal hover:border-[var(--color-border-light)] hover:text-[var(--color-text)]'
               }`}
           >

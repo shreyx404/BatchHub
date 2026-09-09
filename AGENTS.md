@@ -1,6 +1,6 @@
 # BatchHub — AI Agent Guidelines
 
-> **Version:** 1.7  
+> **Version:** 1.8  
 > **Last Updated:** 2026-09-09
 
 This file provides context and rules for AI coding agents working on the BatchHub codebase.
@@ -13,7 +13,7 @@ This file provides context and rules for AI coding agents working on the BatchHu
 
 - **Frontend:** React 19 SPA with Vite 6, Tailwind CSS v4, React Router v7 (with route code splitting)
 - **Backend:** Supabase (PostgreSQL) with Vercel Serverless Functions
-- **Design:** Editorial Elevated dark aesthetic — Playfair Display headings, Inter body, surface elevation ladder (`#000000` to `#141414`), monochromatic baseline with warm amber accents (`#D4A574`) for focal hierarchy and urgency, square corners (0px border-radius)
+- **Design:** Editorial Elevated dual-theme aesthetic (Dark mode baseline `#000000` to `#141414` with `#f5f5f4` text; Light mode paper aesthetic `#F8F7F4` to `#FFFFFF` with `#181716` deep charcoal text), Playfair Display headings, Inter body, warm amber accents (`#D4A574` in dark, `#A86A24` in light) for focal hierarchy and urgency, square corners (0px border-radius)
 
 ---
 
@@ -21,9 +21,11 @@ This file provides context and rules for AI coding agents working on the BatchHu
 
 ```
 src/
-├── main.jsx              # Entry point — BrowserRouter, Toaster (custom dark theme)
+├── main.jsx              # Entry point — ThemeProvider, BrowserRouter, theme-aware Toaster
 ├── App.jsx               # Route definitions with lazy loading & Suspense
-├── index.css             # Design system — @theme tokens, typography, animations, utilities
+├── index.css             # Design system — @theme tokens, dark/light definitions, animations, utilities
+├── context/
+│   └── ThemeContext.jsx  # ThemeProvider + useTheme() — persistent dark/light/system theme state
 ├── lib/
 │   ├── supabase.js       # Supabase client init (returns null if not configured)
 │   ├── api.js            # ALL data fetching — dual-mode (Supabase + demo fallback)
@@ -39,7 +41,7 @@ src/
 │   └── useAdmin.js       # useAdmin() — auth state + login/logout + 24h lockout (instant demo bypass)
 ├── components/
 │   ├── layout/           # Header, Footer
-│   ├── ui/               # Badge, SearchBar, FilterBar, ArchiveSortBar, Modal, LoadingState, ErrorState, EmptyState
+│   ├── ui/               # Badge, SearchBar, FilterBar, ArchiveSortBar, ThemeToggle, Modal, LoadingState, ErrorState, EmptyState
 │   ├── posts/            # PostCard, PostGrid, DeadlineBanner, PinnedSection, NoticesSection
 │   ├── calendar/         # CalendarGrid, CalendarWeekView, CalendarAgendaView, CalendarSidebar, CalendarControls
 │   └── admin/            # AdminLogin, AdminSidebar, PostForm, PostTable, SubjectManager, AdminCalendar

@@ -61,7 +61,7 @@ function FilterChip({ label, icon: Icon, active, onClick, small = false }) {
         ${small ? 'px-2.5 py-1 text-[10.5px] sm:text-[10px] tracking-[0.03em] font-mono min-h-[32px] sm:min-h-[30px]' : 'px-3 py-1.5 text-[11px] tracking-[0.02em] uppercase min-h-[36px] sm:min-h-[34px]'}
         ${
           active
-            ? 'bg-white border-white text-black font-semibold'
+            ? 'bg-[var(--color-text)] border-[var(--color-text)] text-[var(--color-bg)] font-semibold'
             : 'bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-muted)] font-normal hover:border-[var(--color-border-light)] hover:text-[var(--color-text)]'
         }`}
     >

@@ -2,10 +2,13 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Lock, AlertCircle, ShieldAlert, Clock, Shield } from 'lucide-react';
 import { APP_NAME } from '../../lib/constants';
 import { getLockoutInfo } from '../../hooks/useAdmin';
+import { useTheme } from '../../context/ThemeContext';
+import ThemeToggle from '../ui/ThemeToggle';
 
 const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY;
 
 export default function AdminLogin({ onLogin }) {
+  const { effectiveTheme } = useTheme();
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -34,7 +37,7 @@ export default function AdminLogin({ onLogin }) {
 
       turnstileWidgetId.current = window.turnstile.render(turnstileRef.current, {
         sitekey: TURNSTILE_SITE_KEY,
-        theme: 'dark',
+        theme: effectiveTheme === 'light' ? 'light' : 'dark',
         size: 'flexible',
         callback: (token) => {
           setTurnstileToken(token);
@@ -181,7 +184,10 @@ export default function AdminLogin({ onLogin }) {
   };
 
   return (
-    <div className="min-h-dvh flex items-center justify-center bg-[var(--color-bg)] px-4 py-8 pt-safe pb-safe">
+    <div className="min-h-dvh flex items-center justify-center bg-[var(--color-bg)] px-4 py-8 pt-safe pb-safe relative">
+      <div className="fixed top-3 right-3 sm:top-4 sm:right-4 z-10">
+        <ThemeToggle />
+      </div>
       <div className="w-full max-w-sm animate-fade-in-up">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
@@ -262,7 +268,7 @@ export default function AdminLogin({ onLogin }) {
           <button
             type="submit"
             disabled={loading || isLocked || (TURNSTILE_SITE_KEY && !turnstileReady)}
-            className="w-full h-11 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-black text-[var(--text-sm)] font-semibold transition-colors duration-300 flex items-center justify-center gap-2 tracking-[0.005em]"
+            className="w-full h-11 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-accent-text)] text-[var(--text-sm)] font-semibold transition-colors duration-300 flex items-center justify-center gap-2 tracking-[0.005em]"
           >
             {loading ? (
               <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />

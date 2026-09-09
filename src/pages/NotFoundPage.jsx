@@ -22,7 +22,7 @@ export default function NotFoundPage() {
 
         <Link
           to="/"
-          className="inline-flex items-center gap-2 px-6 py-2.5 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-black text-[var(--text-sm)] font-semibold transition-colors duration-300 tracking-[0.005em]"
+          className="inline-flex items-center gap-2 px-6 py-2.5 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] text-[var(--text-sm)] font-semibold transition-colors duration-300 tracking-[0.005em]"
         >
           <Home size={16} />
           Go to Feed

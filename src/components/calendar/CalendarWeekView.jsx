@@ -25,7 +25,7 @@ export default function CalendarWeekView({
   }, [currentDate]);
 
   return (
-    <div className="border border-[var(--color-border)] flex flex-col bg-[#050505] animate-fade-in overflow-hidden">
+    <div className="border border-[var(--color-border)] flex flex-col bg-[var(--color-bg)] animate-fade-in overflow-hidden">
       {/* Scrollable Container for Mobile / Tablet responsiveness with touch momentum */}
       <div className="overflow-x-auto touch-scroll touch-pan-x">
         <div className="min-w-[840px] md:min-w-0">
@@ -42,7 +42,7 @@ export default function CalendarWeekView({
                   onClick={() => onSelectDate(dateKey)}
                   className={`py-2.5 px-2 cursor-pointer transition-colors ${
                     todayDay
-                      ? 'bg-[#0d0d12]'
+                      ? 'bg-[var(--color-surface-3)]'
                       : isSelected
                         ? 'bg-[var(--color-surface-3)]'
                         : 'hover:bg-[var(--color-surface-3)]'
@@ -64,9 +64,9 @@ export default function CalendarWeekView({
                     <span
                       className={`text-[12px] sm:text-[var(--text-sm)] font-mono ${
                         todayDay
-                          ? 'bg-white text-black px-1.5 py-0.5 font-bold'
+                          ? 'bg-[var(--color-text)] text-[var(--color-bg)] px-1.5 py-0.5 font-bold'
                           : isSelected
-                            ? 'text-white font-bold underline underline-offset-4'
+                            ? 'text-[var(--color-text)] font-bold underline underline-offset-4'
                             : 'text-[var(--color-text)] font-medium'
                       }`}
                     >
@@ -84,7 +84,7 @@ export default function CalendarWeekView({
           </div>
 
           {/* 7 Columns for the 7 Days */}
-          <div className="grid grid-cols-7 divide-x divide-[var(--color-border)] bg-[#050505] min-h-[380px] sm:min-h-[460px]">
+          <div className="grid grid-cols-7 divide-x divide-[var(--color-border)] bg-[var(--color-bg)] min-h-[380px] sm:min-h-[460px]">
             {weekDays.map((day) => {
               const dateKey = format(day, 'yyyy-MM-dd');
               const events = postsByDate[dateKey] || [];
@@ -93,9 +93,9 @@ export default function CalendarWeekView({
 
               const colClasses = [
                 'p-2 sm:p-2.5 flex flex-col gap-2 transition-colors relative cursor-pointer',
-                todayDay ? 'bg-[#0a0a0e]' : 'bg-[#050505]',
-                isSelected && 'outline outline-[1.5px] outline-white -outline-offset-[1.5px] z-10',
-                'hover:bg-[#0c0c10]',
+                todayDay ? 'bg-[var(--color-surface-2)]' : 'bg-[var(--color-surface)]',
+                isSelected && 'outline outline-[1.5px] outline-[var(--color-text)] -outline-offset-[1.5px] z-10',
+                'hover:bg-[var(--color-surface-2)]',
               ]
                 .filter(Boolean)
                 .join(' ');
@@ -110,7 +110,7 @@ export default function CalendarWeekView({
                 >
                   {/* Top Day Accent Line for Today */}
                   {todayDay && (
-                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-white" />
+                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-[var(--color-amber)]" />
                   )}
 
                   {/* Deadline Cards inside the Day Column */}
@@ -142,19 +142,19 @@ export default function CalendarWeekView({
       </div>
 
       {/* Week Footer / Legend & Touch Scroll Helper */}
-      <div className="px-3 sm:px-4 py-2 sm:py-2.5 bg-[#0a0a0a] border-t border-[var(--color-border)] flex flex-wrap items-center justify-between gap-2 sm:gap-3">
+      <div className="px-3 sm:px-4 py-2 sm:py-2.5 bg-[var(--color-surface-2)] border-t border-[var(--color-border)] flex flex-wrap items-center justify-between gap-2 sm:gap-3">
         <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[var(--color-text-muted)] text-[9px] sm:text-[10px] font-mono">
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#3b1515] border border-[#f87171]" />
-            <span className="text-white font-medium">Due &lt; 24h</span>
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-red-100 dark:bg-[#3b1515] border border-red-500 dark:border-[#f87171]" />
+            <span className="text-[var(--color-text)] font-medium">Due &lt; 24h</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#18181b] border border-[var(--color-border-light)]" />
-            <span className="text-white font-medium">Upcoming (Active)</span>
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[var(--color-surface-3)] border border-[var(--color-border-light)]" />
+            <span className="text-[var(--color-text)] font-medium">Upcoming (Active)</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#0a0a0c] border border-[#27272a]/60 opacity-40" />
-            <span className="text-[#71717a]">Past / Archived (Greyed Out)</span>
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[var(--color-surface-2)] border border-[var(--color-border)] opacity-60" />
+            <span className="text-[var(--color-text-dim)]">Past / Archived (Greyed Out)</span>
           </div>
         </div>
         <div className="flex items-center gap-2 text-[9px] sm:text-[10px] font-mono text-[var(--color-text-dim)]">
@@ -178,13 +178,15 @@ function WeekEventCard({ post, onClick }) {
   const subjectCode = post.subjects?.code || post.subjects?.name || '';
   const links = post.links || [];
 
-  const cardClass = isUrgent
-    ? 'p-2 sm:p-2.5 bg-[#1e1010] border border-[#7f1d1d] hover:border-[#ef4444] transition-all shadow-sm'
-    : isFaded
-      ? 'p-2 sm:p-2.5 bg-[#08080a]/60 border border-[#1f1f24]/50 opacity-40 hover:opacity-95 hover:border-[var(--color-border)] transition-all'
-      : isDraft
-        ? 'p-2 sm:p-2.5 bg-[#14120a] border border-[#453610] hover:border-[#735817] transition-all'
-        : 'p-2 sm:p-2.5 bg-[#141417] border border-[#303038] hover:border-[#52525e] transition-all shadow-sm';
+  const cardClass = `p-2 sm:p-2.5 transition-all shadow-sm ${
+    isUrgent
+      ? 'event-chip-urgent'
+      : isFaded
+        ? 'event-chip-archived'
+        : isDraft
+          ? 'event-chip-draft'
+          : 'event-chip-normal'
+  }`;
 
   return (
     <div
@@ -204,12 +206,12 @@ function WeekEventCard({ post, onClick }) {
         <span
           className={`truncate font-bold ${
             isUrgent
-              ? 'text-[#fca5a5]'
+              ? 'text-red-600 dark:text-[#fca5a5]'
               : isFaded
-                ? 'text-[#60606a]'
+                ? 'text-[var(--color-text-dim)]'
                 : isDraft
-                  ? 'text-amber-300'
-                  : 'text-[#e4e4e7]'
+                  ? 'text-amber-700 dark:text-amber-300'
+                  : 'text-[var(--color-text)]'
           }`}
         >
           {subjectCode}
@@ -217,12 +219,12 @@ function WeekEventCard({ post, onClick }) {
         <span
           className={`shrink-0 font-medium ${
             isUrgent
-              ? 'text-[#fca5a5]'
+              ? 'text-red-600 dark:text-[#fca5a5]'
               : isFaded
-                ? 'text-[#484852]'
+                ? 'text-[var(--color-text-dim)]'
                 : isDraft
-                  ? 'text-amber-400'
-                  : 'text-[#a1a1aa]'
+                  ? 'text-amber-700 dark:text-amber-400'
+                  : 'text-[var(--color-text-muted)]'
           }`}
         >
           {isArchived ? 'Archived' : isDraft ? 'Draft' : format(dueDate, 'h:mm a')}
@@ -233,12 +235,12 @@ function WeekEventCard({ post, onClick }) {
       <h4
         className={`text-[10.5px] sm:text-[11px] font-medium leading-snug line-clamp-2 ${
           isUrgent
-            ? 'text-white'
+            ? 'text-red-700 dark:text-white font-semibold'
             : isFaded
-              ? 'text-[#63636e]'
+              ? 'text-[var(--color-text-dim)]'
               : isDraft
-                ? 'text-amber-100'
-                : 'text-white'
+                ? 'text-amber-800 dark:text-amber-100 font-semibold'
+                : 'text-[var(--color-text)]'
         }`}
       >
         {post.title}
@@ -246,7 +248,7 @@ function WeekEventCard({ post, onClick }) {
 
       {/* Urgency Badge or Countdown */}
       {isUrgent && (
-        <div className="mt-1.5 text-[8px] font-mono text-[#f87171] font-semibold flex items-center gap-1">
+        <div className="mt-1.5 text-[8px] font-mono text-red-600 dark:text-[#f87171] font-semibold flex items-center gap-1">
           <span>⏳</span>
           <span>In {hoursLeft}h</span>
         </div>
@@ -259,7 +261,7 @@ function WeekEventCard({ post, onClick }) {
           <Link
             to={`/post/${post.id}`}
             onClick={(e) => e.stopPropagation()}
-            className="hover:text-white underline underline-offset-2 transition-colors px-1"
+            className="hover:text-[var(--color-text)] underline underline-offset-2 transition-colors px-1"
           >
             Details →
           </Link>

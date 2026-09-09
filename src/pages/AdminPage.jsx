@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Routes, Route, useNavigate, useParams } from 'react-router-dom';
 import { Menu, FileText, BookOpen, Plus, TrendingUp, Eye, Archive } from 'lucide-react';
+import ThemeToggle from '../components/ui/ThemeToggle';
 import AdminLogin from '../components/admin/AdminLogin';
 import AdminSidebar from '../components/admin/AdminSidebar';
 import PostForm from '../components/admin/PostForm';
@@ -43,17 +44,22 @@ export default function AdminPage() {
 
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         {/* Top bar */}
-        <header className="h-14 border-b border-[var(--color-border)] flex items-center px-3 sm:px-4 gap-2.5 sm:gap-3 shrink-0 pt-safe">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 min-h-[40px] min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] lg:hidden text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
-            aria-label="Open sidebar"
-          >
-            <Menu size={20} />
-          </button>
-          <span className="text-[var(--text-xs)] sm:text-[var(--text-sm)] font-medium text-[var(--color-text-muted)] tracking-[0.01em]">
-            Admin Dashboard
-          </span>
+        <header className="h-14 border-b border-[var(--color-border)] flex items-center justify-between px-3 sm:px-4 shrink-0 pt-safe">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="p-2 min-h-[40px] min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] lg:hidden text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+              aria-label="Open sidebar"
+            >
+              <Menu size={20} />
+            </button>
+            <span className="text-[var(--text-xs)] sm:text-[var(--text-sm)] font-medium text-[var(--color-text-muted)] tracking-[0.01em]">
+              Admin Dashboard
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+          </div>
         </header>
 
         {/* Content */}
@@ -164,7 +170,7 @@ function AdminDashboard() {
         <h2 className="text-lg sm:text-xl font-display font-medium text-[var(--color-text)] tracking-[-0.01em]">Dashboard</h2>
         <button
           onClick={() => navigate('/admin/create')}
-          className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 min-h-[38px] bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] active:scale-[0.98] text-black text-[var(--text-xs)] sm:text-[var(--text-sm)] font-medium transition-all tracking-[0.005em]"
+          className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 min-h-[38px] bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] active:scale-[0.98] text-[var(--color-accent-text)] text-[var(--text-xs)] sm:text-[var(--text-sm)] font-medium transition-all tracking-[0.005em]"
         >
           <Plus size={14} />
           New Post

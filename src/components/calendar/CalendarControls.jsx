@@ -46,7 +46,7 @@ export default function CalendarControls({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between lg:justify-end gap-2 sm:gap-3">
         
         {/* Date Navigator */}
-        <div className="flex items-center bg-[#0a0a0a] border border-[var(--color-border)] w-full sm:w-auto justify-between">
+        <div className="flex items-center bg-[var(--color-surface)] border border-[var(--color-border)] w-full sm:w-auto justify-between">
           <button
             onClick={onPrev}
             className="px-3 py-2 min-h-[38px] min-w-[38px] flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] border-r border-[var(--color-border)] transition-colors"
@@ -76,12 +76,12 @@ export default function CalendarControls({
           </button>
 
           {/* View Mode Toggle: [ MONTH | WEEK | AGENDA ] */}
-          <div className="flex items-center bg-[#0a0a0a] border border-[var(--color-border)] divide-x divide-[var(--color-border)] grow sm:grow-0 justify-center">
+          <div className="flex items-center bg-[var(--color-surface)] border border-[var(--color-border)] divide-x divide-[var(--color-border)] grow sm:grow-0 justify-center">
             <button
               onClick={() => onViewModeChange('month')}
               className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 min-h-[38px] text-[10.5px] sm:text-[var(--text-xs)] font-mono transition-colors text-center ${
                 viewMode === 'month'
-                  ? 'bg-white text-black font-bold'
+                  ? 'bg-[var(--color-text)] text-[var(--color-bg)] font-bold'
                   : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)]'
               }`}
             >
@@ -91,7 +91,7 @@ export default function CalendarControls({
               onClick={() => onViewModeChange('week')}
               className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 min-h-[38px] text-[10.5px] sm:text-[var(--text-xs)] font-mono transition-colors text-center ${
                 viewMode === 'week'
-                  ? 'bg-white text-black font-bold'
+                  ? 'bg-[var(--color-text)] text-[var(--color-bg)] font-bold'
                   : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)]'
               }`}
             >
@@ -101,7 +101,7 @@ export default function CalendarControls({
               onClick={() => onViewModeChange('agenda')}
               className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 min-h-[38px] text-[10.5px] sm:text-[var(--text-xs)] font-mono transition-colors text-center ${
                 viewMode === 'agenda'
-                  ? 'bg-white text-black font-bold'
+                  ? 'bg-[var(--color-text)] text-[var(--color-bg)] font-bold'
                   : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)]'
               }`}
             >
@@ -121,8 +121,8 @@ export default function CalendarControls({
             onClick={() => onStatusFilterChange('all')}
             className={`px-2.5 py-1 min-h-[30px] text-[10.5px] sm:text-[11px] font-mono uppercase tracking-wider transition-colors whitespace-nowrap active:scale-[0.98] ${
               statusFilter === 'all'
-                ? 'bg-white text-black font-bold'
-                : 'bg-[#0a0a0a] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-white hover:border-[var(--color-border-light)]'
+                ? 'bg-[var(--color-text)] text-[var(--color-bg)] font-bold'
+                : 'bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)]'
             }`}
           >
             All ({statusCounts.all ?? totalPosts})
@@ -131,8 +131,8 @@ export default function CalendarControls({
             onClick={() => onStatusFilterChange('published')}
             className={`px-2.5 py-1 min-h-[30px] text-[10.5px] sm:text-[11px] font-mono uppercase tracking-wider transition-colors whitespace-nowrap active:scale-[0.98] ${
               statusFilter === 'published'
-                ? 'bg-white text-black font-bold'
-                : 'bg-[#0a0a0a] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-white hover:border-[var(--color-border-light)]'
+                ? 'bg-[var(--color-text)] text-[var(--color-bg)] font-bold'
+                : 'bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)]'
             }`}
           >
             Upcoming ({statusCounts.published ?? 0})
@@ -142,7 +142,7 @@ export default function CalendarControls({
             className={`px-2.5 py-1 min-h-[30px] text-[10.5px] sm:text-[11px] font-mono uppercase tracking-wider transition-colors whitespace-nowrap active:scale-[0.98] ${
               statusFilter === 'overdue'
                 ? 'bg-[#ef4444] text-white font-bold'
-                : 'bg-[#0a0a0a] border border-[var(--color-border)] text-red-400/90 hover:text-red-300 hover:border-red-800'
+                : 'bg-[var(--color-surface-2)] border border-[var(--color-border)] text-red-500 hover:text-red-400 hover:border-red-400'
             }`}
           >
             Past Due ({statusCounts.overdue ?? 0})
@@ -152,7 +152,7 @@ export default function CalendarControls({
             className={`px-2.5 py-1 min-h-[30px] text-[10.5px] sm:text-[11px] font-mono uppercase tracking-wider transition-colors whitespace-nowrap active:scale-[0.98] ${
               statusFilter === 'archived'
                 ? 'bg-[#8888a0] text-black font-bold'
-                : 'bg-[#0a0a0a] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-white hover:border-[var(--color-border-light)]'
+                : 'bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)]'
             }`}
           >
             Archived ({statusCounts.archived ?? 0})
@@ -163,7 +163,7 @@ export default function CalendarControls({
               className={`px-2.5 py-1 min-h-[30px] text-[10.5px] sm:text-[11px] font-mono uppercase tracking-wider transition-colors whitespace-nowrap active:scale-[0.98] ${
                 statusFilter === 'draft'
                   ? 'bg-amber-400 text-black font-bold'
-                  : 'bg-[#0a0a0a] border border-[var(--color-border)] text-amber-400/90 hover:text-amber-300 hover:border-amber-700'
+                  : 'bg-[var(--color-surface-2)] border border-[var(--color-border)] text-amber-500 hover:text-amber-400 hover:border-amber-400'
               }`}
             >
               Drafts ({statusCounts.draft ?? 0})
@@ -181,8 +181,8 @@ export default function CalendarControls({
           onClick={() => onSubjectChange(null)}
           className={`px-2.5 sm:px-3 py-1 sm:py-1.5 min-h-[32px] sm:min-h-[34px] text-[11px] sm:text-[var(--text-xs)] font-medium whitespace-nowrap transition-colors active:scale-[0.98] ${
             !selectedSubject
-              ? 'bg-white text-black font-semibold border border-white'
-              : 'bg-[#0a0a0a] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-light)] hover:text-[var(--color-text)] active:bg-[var(--color-surface-2)]'
+              ? 'bg-[var(--color-text)] text-[var(--color-bg)] font-semibold border border-[var(--color-text)]'
+              : 'bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-light)] hover:text-[var(--color-text)] active:bg-[var(--color-surface)]'
           }`}
         >
           All Subjects ({totalPosts})
@@ -193,12 +193,12 @@ export default function CalendarControls({
             onClick={() => onSubjectChange(selectedSubject === subject.id ? null : subject.id)}
             className={`px-2.5 sm:px-3 py-1 sm:py-1.5 min-h-[32px] sm:min-h-[34px] text-[11px] sm:text-[var(--text-xs)] whitespace-nowrap transition-colors active:scale-[0.98] ${
               selectedSubject === subject.id
-                ? 'bg-white text-black font-semibold border border-white'
-                : 'bg-[#0a0a0a] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-light)] hover:text-[var(--color-text)] active:bg-[var(--color-surface-2)]'
+                ? 'bg-[var(--color-text)] text-[var(--color-bg)] font-semibold border border-[var(--color-text)]'
+                : 'bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-light)] hover:text-[var(--color-text)] active:bg-[var(--color-surface)]'
             }`}
           >
             {subject.code || subject.name}
-            <span className={`ml-1 ${selectedSubject === subject.id ? 'text-black/80 font-bold' : 'text-[var(--color-text-dim)]'}`}>
+            <span className={`ml-1 ${selectedSubject === subject.id ? 'opacity-80 font-bold' : 'text-[var(--color-text-dim)]'}`}>
               ({postCountBySubject[subject.id] || 0})
             </span>
           </button>

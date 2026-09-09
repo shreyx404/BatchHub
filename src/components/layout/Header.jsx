@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Search, X, Settings, CalendarClock, Archive } from 'lucide-react';
+import ThemeToggle from '../ui/ThemeToggle';
 import { APP_NAME } from '../../lib/constants';
 
 export default function Header({ searchOpen, onToggleSearch, onSearchChange, searchValue }) {
@@ -13,7 +14,7 @@ export default function Header({ searchOpen, onToggleSearch, onSearchChange, sea
       <div className="mx-auto max-w-6xl px-3 sm:px-4 h-14 flex items-center justify-between gap-2 sm:gap-3">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 sm:gap-2.5 shrink-0 group min-h-[40px]">
-          <div className="w-7 h-7 sm:w-8 sm:h-8 bg-white flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 bg-white flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105 border border-[var(--color-border)]">
             <img
               src="/batchhub-icon.png"
               alt={APP_NAME}
@@ -86,18 +87,19 @@ export default function Header({ searchOpen, onToggleSearch, onSearchChange, sea
               >
                 <Archive size={18} />
               </Link>
-            </>
-          )}
+              {/* Theme Toggle */}
+              <ThemeToggle />
 
-          {!isAdmin && (
-            <Link
-              to="/admin"
-              className="p-2 min-h-[40px] min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors text-[var(--color-text-dim)] hover:text-[var(--color-text-muted)]"
-              aria-label="Admin Settings"
-              title="Admin Settings"
-            >
-              <Settings size={18} />
-            </Link>
+              {/* Admin Settings Button */}
+              <Link
+                to="/admin"
+                className="p-2 min-h-[40px] min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors text-[var(--color-text-dim)] hover:text-[var(--color-text-muted)]"
+                aria-label="Admin Settings"
+                title="Admin Settings"
+              >
+                <Settings size={18} />
+              </Link>
+            </>
           )}
         </div>
       </div>

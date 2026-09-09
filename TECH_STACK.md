@@ -1,6 +1,6 @@
 # BatchHub — Technology Stack
 
-> **Version:** 1.7  
+> **Version:** 1.8  
 > **Last Updated:** 2026-09-09
 
 ---
@@ -19,9 +19,10 @@ BatchHub is built with a modern JAMstack architecture: a React SPA frontend host
 | **Vite** | 6.3 | Build tool & dev server | Instant HMR, fast builds, native ES modules support |
 | **React Router** | 7.6 | Client-side routing | SPA navigation with `lazy()` route splitting and Suspense fallback (`/`, `/calendar`, `/archive`, `/post/:id`, `/admin/*`) |
 | **Tailwind CSS** | 4.1 | Utility-first CSS framework | Rapid styling with custom design tokens via `@theme` directive |
+| **Theme Management** | Custom (`ThemeContext`) | Dual-theme state & persistence | Zero-dependency React Context + `localStorage` + inline anti-flash script + OS scheme listener |
 | **Lucide React** | 0.511 | Icon library | Consistent, tree-shakeable SVG icons |
 | **React Markdown** | 10.1 | Markdown rendering | Safe rendering of user-authored content with element filtering |
-| **React Hot Toast** | 2.5 | Toast notifications | Lightweight, customisable notification system styled with 0px sharp corners |
+| **React Hot Toast** | 2.5 | Toast notifications | Lightweight, customisable notification system styled with 0px sharp corners and theme CSS variables |
 | **date-fns** | 4.1 | Date utilities | Tree-shakeable date formatting, relative times, and comparisons |
 | **Cloudflare Turnstile** | v0 API | Invisible CAPTCHA / Anti-Bot | Free, privacy-focused bot defense loaded asynchronously without UX friction |
 | **Device Fingerprinting** | Internal | Hardware & Graphics Hashing | Zero-dependency canvas, WebGL, and hardware signals hashed via djb2 algorithm |

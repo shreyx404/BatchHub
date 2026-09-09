@@ -448,7 +448,7 @@ export default function PostForm({ existingPost, onSaved }) {
                       opt.value === 'custom' ? 'col-span-2 sm:col-span-1' : ''
                     } ${
                       form.pin_duration === opt.value
-                        ? 'bg-[var(--color-accent)] text-black font-semibold border-[var(--color-accent)]'
+                        ? 'bg-[var(--color-accent)] text-[var(--color-accent-text)] font-semibold border-[var(--color-accent)]'
                         : opt.disabled
                         ? 'bg-[var(--color-surface-2)] text-[var(--color-text-dim)] border-[var(--color-border)] opacity-40 cursor-not-allowed'
                         : 'bg-[var(--color-surface-2)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] border-[var(--color-border)]'
@@ -592,10 +592,10 @@ export default function PostForm({ existingPost, onSaved }) {
         <button
           type="submit"
           disabled={saving}
-          className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] active:scale-[0.99] disabled:opacity-60 text-black text-sm font-semibold transition-all"
+          className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] active:scale-[0.99] disabled:opacity-60 text-[var(--color-accent-text)] text-sm font-semibold transition-all"
         >
           {saving ? (
-            <div className="w-4 h-4 rounded-full border-2 border-black/30 border-t-black animate-spin" />
+            <div className="w-4 h-4 rounded-full border-2 border-current/30 border-t-current animate-spin" />
           ) : (
             <Save size={16} />
           )}

@@ -1,6 +1,6 @@
 # BatchHub — Requirements Specification
 
-> **Version:** 1.5  
+> **Version:** 1.6  
 > **Last Updated:** 2026-09-09
 
 ---
@@ -24,6 +24,7 @@
 | FR-009 | Show "Overdue" label on post cards whose deadline has passed | P1 | ✅ Implemented |
 | FR-010 | Display post count next to section headings | P2 | ✅ Implemented |
 | FR-010i | Continuous ledger timeline layout in `PostGrid` (`gap-0`) with seamless borders and diamond node markers | P1 | ✅ Implemented |
+| FR-010j | Dark / Light theme toggle with anti-flash script in `index.html`, `localStorage` persistence, system preference listener, and sharp `<ThemeToggle />` button in header, admin bar, and login screen | P0 | ✅ Implemented |
 
 ### 1.1a Past Events & Deliverables Archive (Student View)
 

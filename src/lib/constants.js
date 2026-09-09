@@ -39,7 +39,7 @@ export const CONTENT_TYPES = {
     label: 'Important',
     icon: Star,
     color: 'var(--color-text)',
-    bgClass: 'bg-[var(--color-text)] text-black border-[var(--color-text)]',
+    bgClass: 'bg-[var(--color-text)] text-[var(--color-bg)] border-[var(--color-text)]',
   },
 };
 

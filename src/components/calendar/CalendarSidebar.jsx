@@ -142,7 +142,7 @@ export default function CalendarSidebar({
       )}
 
       {/* Upcoming Deadlines (Next 7 Days) */}
-      <div className="bg-[#050505] border border-[var(--color-border)] overflow-hidden">
+      <div className="bg-[var(--color-surface)] border border-[var(--color-border)] overflow-hidden">
         <div className="px-3.5 sm:px-4 py-2.5 sm:py-3 border-b border-[var(--color-border)] bg-[var(--color-surface-2)] flex items-center justify-between">
           <div className="flex items-center gap-2 text-[10.5px] font-mono font-bold uppercase tracking-wider text-[var(--color-text)]">
             <Clock size={13} className="text-[var(--color-text-muted)]" />
@@ -155,7 +155,7 @@ export default function CalendarSidebar({
 
         <div className="p-3 sm:p-4">
           {upcomingPosts.length > 0 ? (
-            <div className="flex flex-col divide-y divide-[#171717]">
+            <div className="flex flex-col divide-y divide-[var(--color-border)]">
               {upcomingPosts.map((post) => (
                 <QueueItem
                   key={post.id}
@@ -215,40 +215,40 @@ function InspectorCard({ post, isAdmin }) {
     <div
       className={`border p-4 sm:p-5 animate-fade-in transition-all ${
         isUrgent
-          ? 'bg-[#140a0a] border-[#7f1d1d] shadow-sm'
+          ? 'bg-red-50/70 dark:bg-[#140a0a] border-red-300 dark:border-[#7f1d1d] shadow-sm'
           : isFaded
-            ? 'bg-[#07070a]/70 border border-[#1e1e24]/60 opacity-55 hover:opacity-100'
+            ? 'bg-[var(--color-surface-2)]/60 border border-[var(--color-border)] opacity-70 hover:opacity-100'
             : isDraft
-              ? 'bg-[#14120a] border-[#453610]'
-              : 'bg-[#0c0c0e] border-[var(--color-border-light)]'
+              ? 'bg-amber-50/70 dark:bg-[#14120a] border-amber-300 dark:border-[#453610]'
+              : 'bg-[var(--color-surface)] border-[var(--color-border-light)]'
       }`}
     >
       {/* Top Meta Bar */}
       <div className="flex items-center justify-between pb-3 mb-3 border-b border-[var(--color-border)] flex-wrap gap-2">
         <div className="flex items-center gap-2 flex-wrap">
           {isUrgent && (
-            <span className="px-2 py-0.5 bg-red-950 border border-red-700 text-red-300 text-[9px] font-mono font-bold uppercase tracking-wider">
+            <span className="px-2 py-0.5 bg-red-100 dark:bg-red-950 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 text-[9px] font-mono font-bold uppercase tracking-wider">
               URGENT
             </span>
           )}
           {isArchived && (
-            <span className="px-2 py-0.5 bg-[#121218] border border-[#272733] text-[#71717a] text-[9px] font-mono font-bold uppercase tracking-wider">
+            <span className="px-2 py-0.5 bg-[var(--color-surface-3)] border border-[var(--color-border)] text-[var(--color-text-dim)] text-[9px] font-mono font-bold uppercase tracking-wider">
               ARCHIVED
             </span>
           )}
           {isDraft && (
-            <span className="px-2 py-0.5 bg-amber-950 border border-amber-700 text-amber-300 text-[9px] font-mono font-bold uppercase tracking-wider">
+            <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-950 border border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 text-[9px] font-mono font-bold uppercase tracking-wider">
               DRAFT
             </span>
           )}
           {!isArchived && !isDraft && isOverdue && (
-            <span className="px-2 py-0.5 bg-[#1a0f0f] border border-[#3b1a1a] text-[#8e5252] text-[9px] font-mono font-bold uppercase tracking-wider">
+            <span className="px-2 py-0.5 bg-red-100/60 dark:bg-[#1a0f0f] border border-red-200 dark:border-[#3b1a1a] text-red-600 dark:text-[#8e5252] text-[9px] font-mono font-bold uppercase tracking-wider">
               PAST DUE
             </span>
           )}
           <span
             className={`text-[10px] font-mono font-medium ${
-              isFaded ? 'text-[#52525b]' : 'text-[var(--color-text-muted)]'
+              isFaded ? 'text-[var(--color-text-dim)]' : 'text-[var(--color-text-muted)]'
             }`}
           >
             {isArchived || isOverdue
@@ -283,8 +283,8 @@ function InspectorCard({ post, isAdmin }) {
           </span>
         )}
         <h3
-          className={`font-display text-base sm:text-lg leading-snug mt-1 font-semibold ${
-            isFaded ? 'text-[#888896]' : 'text-white'
+          className={`text-base sm:text-lg font-display font-semibold leading-snug tracking-[-0.01em] ${
+            isFaded ? 'text-[var(--color-text-dim)]' : 'text-[var(--color-text)]'
           }`}
         >
           {post.title}
@@ -343,8 +343,8 @@ function InspectorCard({ post, isAdmin }) {
               to={`/admin/edit/${post.id}`}
               className={`px-3 py-1.5 min-h-[34px] flex items-center gap-1.5 text-[var(--text-xs)] font-mono font-semibold border transition-colors ${
                 isFaded
-                  ? 'bg-[#0f0f14] border-[#22222a] text-[#71717a] hover:text-white hover:border-white'
-                  : 'bg-[var(--color-surface-3)] border border-[var(--color-border-light)] hover:border-white text-[var(--color-text)] hover:text-white'
+                  ? 'bg-[var(--color-surface-2)] border-[var(--color-border)] text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)]'
+                  : 'bg-[var(--color-surface-3)] border border-[var(--color-border-light)] hover:border-[var(--color-text)] text-[var(--color-text)] hover:text-[var(--color-text)]'
               }`}
             >
               <Edit3 size={12} />
@@ -356,8 +356,8 @@ function InspectorCard({ post, isAdmin }) {
             to={`/post/${post.id}`}
             className={`px-3.5 py-1.5 min-h-[34px] flex items-center justify-center font-semibold text-[var(--text-xs)] transition-colors ${
               isFaded
-                ? 'bg-[#14141a] text-[#a1a1aa] hover:text-white hover:bg-[var(--color-surface-2)] border border-[#272732]'
-                : 'bg-white text-black hover:bg-[#e5e5e5]'
+                ? 'bg-[var(--color-surface-2)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] border border-[var(--color-border)]'
+                : 'bg-[var(--color-text)] text-[var(--color-bg)] hover:opacity-90'
             }`}
           >
             <span>View Details</span>
@@ -428,14 +428,14 @@ function QueueItem({ post, isAdmin, isPastOrArchived = false, onSelectDate }) {
 
       <p
         className={`text-[var(--text-xs)] truncate transition-colors ${
-          isFaded ? 'text-[#71717a] font-normal group-hover:text-white' : 'text-white font-medium'
+          isFaded ? 'text-[var(--color-text-dim)] font-normal group-hover:text-[var(--color-text)]' : 'text-[var(--color-text)] font-medium'
         }`}
       >
         {post.title}
       </p>
 
       <div className="mt-1 flex items-center justify-between text-[9px] font-mono text-[var(--color-text-dim)]">
-        <span className={isFaded ? 'text-[#3f3f46]' : 'text-[var(--color-text-dim)]'}>
+        <span>
           {isPastOrArchived || isOverdue
             ? `${formatDistanceToNow(dueDate, { addSuffix: true })}`
             : `${formatDistanceToNow(dueDate, { addSuffix: true })}`}
@@ -445,7 +445,7 @@ function QueueItem({ post, isAdmin, isPastOrArchived = false, onSelectDate }) {
           <Link
             to={`/admin/edit/${post.id}`}
             onClick={(e) => e.stopPropagation()}
-            className="hover:text-white underline underline-offset-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+            className="hover:text-[var(--color-text)] underline underline-offset-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
           >
             <Edit3 size={10} />
             <span>Edit</span>

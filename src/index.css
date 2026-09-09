@@ -25,6 +25,7 @@
   --color-accent-hover: #e7e5e4;
   --color-accent-dim: #a8a29e;
   --color-accent-glow: rgba(245, 245, 244, 0.08);
+  --color-accent-text: #050505;
 
   /* ── Warm Amber Accent — used sparingly ── */
   --color-amber: #D4A574;
@@ -71,6 +72,81 @@
   /* ── Transitions ── */
   --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ============================================================
+   Theme Definitions — Dark (Baseline) & Light (Editorial Paper)
+   ============================================================ */
+
+:root,
+[data-theme="dark"],
+.dark {
+  --color-bg: #050505;
+  --color-surface: #050505;
+  --color-surface-2: #0c0c0c;
+  --color-surface-3: #141414;
+  --color-surface-hover: #171717;
+  
+  --color-border: #1a1a1a;
+  --color-border-light: #2a2a2a;
+  
+  --color-text: #f5f5f4;
+  --color-text-muted: #a8a29e;
+  --color-text-dim: #78716c;
+
+  --color-accent: #f5f5f4;
+  --color-accent-hover: #e7e5e4;
+  --color-accent-dim: #a8a29e;
+  --color-accent-glow: rgba(245, 245, 244, 0.08);
+  --color-accent-text: #050505;
+
+  --color-amber: #D4A574;
+  --color-amber-dim: rgba(212, 165, 116, 0.12);
+  --color-amber-glow: rgba(212, 165, 116, 0.25);
+
+  --color-glass: rgba(5, 5, 5, 0.8);
+  --color-glass-strong: rgba(5, 5, 5, 0.88);
+  --grain-opacity: 0.5;
+
+  --shadow-modal: 0 0 0 1px var(--color-border), 0 24px 64px rgba(0, 0, 0, 0.9);
+
+  --day-cell-other-bg: #020202;
+  --day-cell-today-bg: #0a0a0e;
+}
+
+[data-theme="light"],
+.light {
+  --color-bg: #F8F7F4;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #F2EFE9;
+  --color-surface-3: #E7E3DA;
+  --color-surface-hover: #EBE7DF;
+  
+  --color-border: #DCD7CE;
+  --color-border-light: #CFC9BD;
+  
+  --color-text: #181716;
+  --color-text-muted: #56524D;
+  --color-text-dim: #827C74;
+
+  --color-accent: #181716;
+  --color-accent-hover: #292826;
+  --color-accent-dim: #56524D;
+  --color-accent-glow: rgba(24, 23, 22, 0.06);
+  --color-accent-text: #FFFFFF;
+
+  --color-amber: #A86A24;
+  --color-amber-dim: rgba(168, 106, 36, 0.12);
+  --color-amber-glow: rgba(168, 106, 36, 0.20);
+
+  --color-glass: rgba(248, 247, 244, 0.88);
+  --color-glass-strong: rgba(248, 247, 244, 0.94);
+  --grain-opacity: 0.22;
+
+  --shadow-modal: 0 0 0 1px var(--color-border), 0 20px 48px rgba(0, 0, 0, 0.12);
+
+  --day-cell-other-bg: #EFECE5;
+  --day-cell-today-bg: #ECE7DE;
 }
 
 /* ============================================================
@@ -259,14 +335,14 @@ h3 {
    ============================================================ */
 
 .glass {
-  background: rgba(5, 5, 5, 0.8);
+  background: var(--color-glass, rgba(5, 5, 5, 0.8));
   backdrop-filter: blur(16px) saturate(1.5);
   -webkit-backdrop-filter: blur(16px) saturate(1.5);
   border-bottom: 1px solid var(--color-border);
 }
 
 .glass-strong {
-  background: rgba(5, 5, 5, 0.88);
+  background: var(--color-glass-strong, rgba(5, 5, 5, 0.88));
   backdrop-filter: blur(24px) saturate(1.8);
   -webkit-backdrop-filter: blur(24px) saturate(1.8);
   border-bottom: 1px solid var(--color-border);
@@ -291,7 +367,7 @@ h3 {
   animation: grain 8s steps(10) infinite;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.5;
+  opacity: var(--grain-opacity, 0.5);
 }
 
 /* ============================================================
@@ -621,12 +697,12 @@ textarea.input-field {
 }
 
 .day-cell-other {
-  background-color: #020202;
-  opacity: 0.3;
+  background-color: var(--day-cell-other-bg, #020202);
+  opacity: 0.4;
 }
 
 .day-cell-today {
-  background-color: #0a0a0e;
+  background-color: var(--day-cell-today-bg, #0a0a0e);
   position: relative;
 }
 
@@ -652,6 +728,44 @@ textarea.input-field {
 
 .event-chip:hover {
   transform: translateX(1px);
+}
+
+/* ── Event Chip Themes for Calendar Views ── */
+.event-chip-urgent {
+  background-color: rgba(239, 68, 68, 0.12);
+  border: 1px solid #ef4444;
+  color: #b91c1c;
+}
+:root[data-theme="dark"] .event-chip-urgent,
+.dark .event-chip-urgent {
+  background-color: #1e1010;
+  border-color: #7f1d1d;
+  color: #fca5a5;
+}
+
+.event-chip-draft {
+  background-color: rgba(217, 119, 6, 0.12);
+  border: 1px solid #d97706;
+  color: #92400e;
+}
+:root[data-theme="dark"] .event-chip-draft,
+.dark .event-chip-draft {
+  background-color: #14120a;
+  border-color: #453610;
+  color: #fbbf24;
+}
+
+.event-chip-archived {
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  opacity: 0.55;
+  color: var(--color-text-dim);
+}
+
+.event-chip-normal {
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-border-light);
+  color: var(--color-text);
 }
 
 /* ── High-Contrast Utilities ── */
