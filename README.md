@@ -7,6 +7,11 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 ## Features
 
 ### Students
+- 📰 **Editorial Elevated Design:** Dark editorial aesthetic with 5-tier surface elevation ladder (`#000000` to `#141414`), warm amber accents (`#D4A574`), oversized Playfair Display hero with live stats counter, section dividers with diamond markers (`◇`), and film grain texture overlay
+- ⏱️ **Typographic Countdown Cards:** Live-ticking `DD:HH:MM` numeric blocks in the upcoming deadlines banner with count-pulse animations and urgent diamond glows
+- 🍱 **Bento Grid Layouts:** High-priority notices and pinned updates feature dynamic 2-column lead cards
+- 📜 **Continuous Ledger Timeline:** Seamless zero-gap timeline (`gap-0`) with diamond markers and hover illumination
+- 🧭 **Quick Footer Navigation:** Ergonomic bottom bar with quick routes (Home, Calendar, Archive) and amber hover states
 - 🔍 Browse, search (`Ctrl + K`), and filter updates
 - 🗓️ Full-page interactive Academic Deadlines Calendar (`/calendar`) with **Month**, **Week** (7-day timetable), and **Agenda** (chronological timeline strictly presenting active upcoming deliverables with contained independent scroll and sticky date headers) views, default selection date set to TODAY, subject filter chips, date navigation, today snap-back, selected-date inspector with empty-state handling, upcoming 7-day deadlines sidebar, and greyed-out display of past & archived deliverables in grid/week views
 - 🗄️ Full-page Archive gallery (`/archive`) to browse, search (`Ctrl + K`), filter (by content type and subject), and sort (Recent, Oldest, Due Date, A → Z) past events, expired deliverables, and completed assignments with bi-directional URL parameter state
@@ -46,7 +51,7 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 ## Tech Stack
 
 - **Frontend:** React 19 + Vite 6 + React Router v7 (Lazy routing)
-- **Styling:** Tailwind CSS v4 (Monochromatic sharp/editorial design)
+- **Styling:** Tailwind CSS v4 (Editorial Elevated dark design, surface elevation ladder, warm amber accents, 0px sharp corners)
 - **Backend:** Supabase (PostgreSQL) + Vercel Serverless Functions
 - **Icons:** Lucide React
 - **Hosting:** Vercel
@@ -161,20 +166,27 @@ The `vercel.json` handles SPA routing and CSP automatically.
 ```
 src/
 ├── main.jsx              # Entry point
-├── App.jsx               # Router (lazy route splitting)
-├── index.css             # Design system
-├── lib/                  # API, constants, Supabase client, fingerprint.js
-├── hooks/                # Custom React hooks (usePosts, usePost, useSubjects, useAdmin)
+├── App.jsx               # Router (lazy route splitting + Suspense)
+├── index.css             # Design system (@theme, surface ladder, amber tokens, utilities)
+├── lib/                  # API, constants, Supabase client, demoData.js, fingerprint.js
+├── hooks/                # Custom React hooks (usePosts, usePost, useSubjects, useCalendar, useArchivePosts, useAdmin)
 ├── components/
-│   ├── layout/           # Header, Footer
-│   ├── ui/               # Badges, search, filters, modals
-│   ├── posts/            # Post cards, grid, deadlines, notices section
-│   └── admin/            # Admin forms, tables, sidebar, login with Turnstile
-└── pages/                # Route pages (HomePage, PostPage, AdminPage, NotFoundPage)
+│   ├── layout/           # Header, Footer (with quick navigation)
+│   ├── ui/               # Badges, search, filters, archive sort, modals, states
+│   ├── posts/            # PostCard, PostGrid, DeadlineBanner (countdown), PinnedSection, NoticesSection
+│   ├── calendar/         # CalendarGrid, CalendarWeekView, CalendarAgendaView, CalendarSidebar, CalendarControls
+│   └── admin/            # Admin forms, tables, sidebar, calendar, login with Turnstile
+└── pages/                # Route pages (HomePage, CalendarPage, ArchivePage, PostPage, AdminPage, NotFoundPage)
 
 api/                      # Vercel Serverless Functions
-├── admin.js              # Secure backend for admin dashboard (4-tier security)
-└── discord.js            # Discord interactions webhook
+├── admin.js              # Secure backend for admin dashboard (5-tier rate limiting)
+├── calendar.js           # Public serverless calendar deadlines API (service-role)
+├── discord.js            # Discord interactions webhook (Ed25519)
+└── cron/
+    └── auto-archive.js   # Daily Vercel Cron for archiving expired posts
+
+tests/                    # Automated Test Suite
+└── runner.js             # Zero-dependency test runner (unit, api, security, cron, discord)
 
 scripts/                  
 └── register-discord-commands.js # Script to deploy Discord slash commands

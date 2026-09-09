@@ -1,6 +1,6 @@
 # BatchHub — Architecture Document
 
-> **Version:** 1.4  
+> **Version:** 1.5  
 > **Last Updated:** 2026-09-09
 
 ---
@@ -159,18 +159,19 @@ Rendered on PostPage as high-contrast actionable link cards with external domain
 ```
 <BrowserRouter>
 └── <App>                          // Route definitions (lazy routes + Suspense fallback)
-    ├── <HomePage>                 // "/" — Main student feed
-    │   ├── <Header>               // Sticky nav: logo, calendar nav link, search toggle, admin link
+    ├── <HomePage>                 // "/" — Main student feed (Editorial Elevated)
+    │   ├── <Header>               // Sticky nav: logo, calendar nav link, archive nav link, search toggle, admin link
+    │   ├── Hero Section           // Oversized Playfair title, grain overlay, small-caps tagline, live stats counter
     │   ├── <SearchBar>            // Debounced text input (Ctrl+K shortcut)
     │   ├── <FilterBar>            // Type + Subject pill buttons
-    │   ├── <DeadlineBanner>       // Horizontal scrollable deadline cards
-    │   ├── <NoticesSection>       // Notice & Important posts, highlighted
+    │   ├── <DeadlineBanner>       // Typographic countdown cards (DD:HH:MM) with live ticking & pulse
+    │   ├── <NoticesSection>       // Bento grid layout (lead notice 2-col span), amber accent borders
     │   │   └── <PostCard> × N
-    │   ├── <PinnedSection>        // Pinned posts section
+    │   ├── <PinnedSection>        // Bento grid layout for pinned posts
     │   │   └── <PostCard> × N
-    │   ├── <PostGrid>             // Grid of remaining posts
+    │   ├── <PostGrid>             // Continuous ledger timeline view (gap-0)
     │   │   └── <PostCard> × N
-    │   └── <Footer>
+    │   └── <Footer>               // Editorial signature, quick navigation (Home/Calendar/Archive) with amber hovers
     │
     ├── <CalendarPage> (Lazy)      // "/calendar" — Full-page academic deadlines calendar
     │   ├── <Header>               // Sticky nav with active Calendar link

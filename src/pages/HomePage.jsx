@@ -14,6 +14,27 @@ import { usePosts, useUpcomingDeadlines } from '../hooks/usePosts';
 import { useSubjects } from '../hooks/useSubjects';
 import { APP_NAME, APP_TAGLINE } from '../lib/constants';
 
+/* ── Scroll Reveal Hook ── */
+function useScrollReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll('.scroll-reveal:not(.revealed)');
+    if (!els.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+    );
+    els.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  });
+}
+
 export default function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -70,6 +91,21 @@ export default function HomePage() {
   // Only show structured sections when no filters are active
   const showStructured = !selectedType && !selectedSubject && !debouncedSearch;
 
+  // Live stats for hero
+  const stats = useMemo(() => {
+    const now = new Date();
+    const weekFromNow = new Date(now);
+    weekFromNow.setDate(weekFromNow.getDate() + 7);
+
+    const dueThisWeek = posts.filter((p) => {
+      if (!p.due_date) return false;
+      const d = new Date(p.due_date);
+      return d >= now && d <= weekFromNow;
+    }).length;
+
+    return { total: posts.length, dueThisWeek };
+  }, [posts]);
+
   // Categorise posts for structured "All Updates" view
   const { noticePosts, pinnedPosts, withDeadline, withoutDeadline, remainingPosts } = useMemo(() => {
     if (!showStructured) {
@@ -112,6 +148,9 @@ export default function HomePage() {
     return { noticePosts: notices, pinnedPosts: pinned, withDeadline: hasDue, withoutDeadline: noDue, remainingPosts: [] };
   }, [posts, showStructured]);
 
+  // Activate scroll reveal
+  useScrollReveal();
+
   return (
     <div className="min-h-dvh flex flex-col bg-[var(--color-bg)]">
       <Header
@@ -126,100 +165,117 @@ export default function HomePage() {
         onSearchChange={handleSearch}
       />
 
-      <main className="flex-1 mx-auto w-full max-w-6xl px-3.5 sm:px-4 py-4 sm:py-6 space-y-5 sm:space-y-6">
-        {/* Hero */}
-        <div className="animate-fade-in pt-4 sm:pt-6 pb-2 sm:pb-3">
-          <h1 className="text-[2.25rem] xs:text-[2.75rem] sm:text-[3.25rem] font-display font-semibold text-[var(--color-text)] tracking-[-0.025em] leading-[1.05]">
-            {APP_NAME}
-          </h1>
-          <p className="text-[var(--text-sm)] sm:text-[var(--text-base)] font-light text-[var(--color-text-muted)] mt-2 sm:mt-3 tracking-[0.01em] leading-relaxed">
-            {APP_TAGLINE}
-          </p>
-        </div>
-
-        {/* Deadline banner */}
-        {!deadlinesLoading && deadlines.length > 0 && (
-          <DeadlineBanner deadlines={deadlines} />
-        )}
-
-        {/* Search */}
-        <div className="w-full sm:max-w-md">
-          <SearchBar value={search} onChange={handleSearch} />
-        </div>
-
-        {/* Filters */}
-        <FilterBar
-          selectedType={selectedType}
-          onTypeChange={handleTypeChange}
-          selectedSubject={selectedSubject}
-          onSubjectChange={handleSubjectChange}
-          subjects={subjects}
-        />
-
-        {/* Main content */}
-        {error ? (
-          <ErrorState message={error} onRetry={refetch} />
-        ) : loading ? (
-          <LoadingState />
-        ) : showStructured ? (
-          <>
-            {/* All Updates heading */}
-            {posts.length > 0 && (
-              <div className="flex items-center gap-2 pt-3">
-                <h2 className="text-[var(--text-sm)] font-medium tracking-[0.02em] text-[var(--color-text)]">
-                  All Updates
-                </h2>
-                <span className="text-[var(--text-xs)] font-light text-[var(--color-text-dim)]">
-                  ({posts.length})
+      <main className="flex-1 mx-auto w-full max-w-6xl px-4 sm:px-5 py-4 sm:py-6">
+        {/* ── Hero Section — Editorial Elevated ── */}
+        <div className="animate-fade-in grain-overlay pt-8 sm:pt-12 md:pt-16 pb-6 sm:pb-8 md:pb-10 relative">
+          <div className="relative z-10">
+            <h1 className="text-[3rem] xs:text-[3.5rem] sm:text-[4.5rem] md:text-[var(--text-6xl)] font-display font-semibold text-[var(--color-text)] tracking-[-0.03em] leading-[1.02]">
+              {APP_NAME}
+            </h1>
+            {/* Thin rule separator */}
+            <div className="w-16 sm:w-24 h-[1px] bg-[var(--color-amber)] mt-4 sm:mt-5 mb-3 sm:mb-4" />
+            <p className="text-[var(--text-sm)] sm:text-[var(--text-base)] font-light text-[var(--color-text-muted)] tracking-[0.02em] leading-relaxed uppercase" style={{ fontVariant: 'all-small-caps' }}>
+              {APP_TAGLINE}
+            </p>
+            {/* Live stats */}
+            {!loading && posts.length > 0 && (
+              <div className="flex items-center gap-3 sm:gap-4 mt-4 sm:mt-5">
+                <span className="text-[10px] sm:text-[var(--text-xs)] font-mono tracking-[0.06em] uppercase text-[var(--color-text-dim)]">
+                  {stats.total} active
                 </span>
+                {stats.dueThisWeek > 0 && (
+                  <>
+                    <span className="text-[var(--color-border-light)]">·</span>
+                    <span className="text-[10px] sm:text-[var(--text-xs)] font-mono tracking-[0.06em] uppercase text-[var(--color-amber)]">
+                      {stats.dueThisWeek} due this week
+                    </span>
+                  </>
+                )}
               </div>
             )}
+          </div>
+        </div>
 
-            {/* 1. Notices & Important — highlighted section */}
-            <NoticesSection posts={noticePosts} />
+        <div className="space-y-8 sm:space-y-10 md:space-y-12">
+          {/* ── Deadline Banner ── */}
+          {!deadlinesLoading && deadlines.length > 0 && (
+            <div className="scroll-reveal">
+              <DeadlineBanner deadlines={deadlines} />
+            </div>
+          )}
 
-            {/* 2. Pinned posts */}
-            <PinnedSection posts={pinnedPosts} />
+          {/* ── Search & Filters ── */}
+          <div className="space-y-3 sm:space-y-4">
+            <div className="w-full sm:max-w-md">
+              <SearchBar value={search} onChange={handleSearch} />
+            </div>
+            <FilterBar
+              selectedType={selectedType}
+              onTypeChange={handleTypeChange}
+              selectedSubject={selectedSubject}
+              onSubjectChange={handleSubjectChange}
+              subjects={subjects}
+            />
+          </div>
 
-            {/* 3. Posts with due dates — ascending by deadline */}
-            {withDeadline.length > 0 && (
-              <div className="space-y-0">
-                <div className="flex items-center gap-2 mb-3">
-                  <h3 className="text-[10px] font-medium text-[var(--color-text-dim)] tracking-[0.1em] uppercase">
-                    Upcoming Deadlines
-                  </h3>
-                  <span className="text-[10px] font-light text-[var(--color-text-dim)]">
-                    ({withDeadline.length})
-                  </span>
+          {/* ── Main Content ── */}
+          {error ? (
+            <ErrorState message={error} onRetry={refetch} />
+          ) : loading ? (
+            <LoadingState />
+          ) : showStructured ? (
+            <div className="space-y-8 sm:space-y-10 md:space-y-12">
+              {/* All Updates heading */}
+              {posts.length > 0 && (
+                <div className="section-divider">
+                  <span>All Updates · {posts.length}</span>
                 </div>
-                <PostGrid posts={withDeadline} loading={false} />
-              </div>
-            )}
+              )}
 
-            {/* 4. Posts without due dates — FCFS (created_at ascending) */}
-            {withoutDeadline.length > 0 && (
-              <div className="space-y-0">
-                <div className="flex items-center gap-2 mb-3">
-                  <h3 className="text-[10px] font-medium text-[var(--color-text-dim)] tracking-[0.1em] uppercase">
-                    General Updates
-                  </h3>
-                  <span className="text-[10px] font-light text-[var(--color-text-dim)]">
-                    ({withoutDeadline.length})
-                  </span>
+              {/* 1. Notices & Important — highlighted section */}
+              {noticePosts.length > 0 && (
+                <div className="scroll-reveal">
+                  <NoticesSection posts={noticePosts} />
                 </div>
-                <PostGrid posts={withoutDeadline} loading={false} />
-              </div>
-            )}
+              )}
 
-            {/* Empty state when no posts at all */}
-            {posts.length === 0 && (
-              <PostGrid posts={[]} loading={false} />
-            )}
-          </>
-        ) : (
-          /* Filtered view — flat list, no sections */
-          <PostGrid posts={remainingPosts.length > 0 ? remainingPosts : posts} loading={loading} />
-        )}
+              {/* 2. Pinned posts */}
+              {pinnedPosts.length > 0 && (
+                <div className="scroll-reveal">
+                  <PinnedSection posts={pinnedPosts} />
+                </div>
+              )}
+
+              {/* 3. Posts with due dates — ascending by deadline */}
+              {withDeadline.length > 0 && (
+                <div className="scroll-reveal">
+                  <div className="section-divider mb-5 sm:mb-6">
+                    <span>Upcoming Deadlines · {withDeadline.length}</span>
+                  </div>
+                  <PostGrid posts={withDeadline} loading={false} />
+                </div>
+              )}
+
+              {/* 4. Posts without due dates — FCFS (created_at ascending) */}
+              {withoutDeadline.length > 0 && (
+                <div className="scroll-reveal">
+                  <div className="section-divider mb-5 sm:mb-6">
+                    <span>General Updates · {withoutDeadline.length}</span>
+                  </div>
+                  <PostGrid posts={withoutDeadline} loading={false} />
+                </div>
+              )}
+
+              {/* Empty state when no posts at all */}
+              {posts.length === 0 && (
+                <PostGrid posts={[]} loading={false} />
+              )}
+            </div>
+          ) : (
+            /* Filtered view — flat list, no sections */
+            <PostGrid posts={remainingPosts.length > 0 ? remainingPosts : posts} loading={loading} />
+          )}
+        </div>
       </main>
 
       <Footer />

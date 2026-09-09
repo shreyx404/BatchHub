@@ -1,6 +1,6 @@
 # BatchHub — Requirements Specification
 
-> **Version:** 1.4  
+> **Version:** 1.5  
 > **Last Updated:** 2026-09-09
 
 ---
@@ -12,7 +12,9 @@
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
 | FR-001 | Display published posts in a structured feed with sections: Notices & Important → Pinned → Deadline-sorted → General | P0 | ✅ Implemented |
+| FR-001a | Bento grid presentation for Notices (lead notice spans 2 columns) and Pinned sections (3+ posts) with amber left border | P1 | ✅ Implemented |
 | FR-002 | Show an upcoming deadlines banner with countdown timers at the top of the feed | P0 | ✅ Implemented |
+| FR-002a | Typographic countdown cards in Deadline Banner displaying live-ticking DD:HH:MM numeric blocks with count-pulse animations | P0 | ✅ Implemented |
 | FR-003 | Visually highlight urgent deadlines (< 48 hours remaining) with inverted styling | P0 | ✅ Implemented |
 | FR-004 | Automatically unpin posts whose `pinned_until` duration or `due_date` has passed (client-side dynamic unpinning) | P1 | ✅ Implemented |
 | FR-005 | Provide debounced search (300 ms) across `title` and `content` fields with `Ctrl + K` shortcut | P0 | ✅ Implemented |
@@ -21,6 +23,7 @@
 | FR-008 | Collapse structured sections into a flat list when any filter or search is active | P1 | ✅ Implemented |
 | FR-009 | Show "Overdue" label on post cards whose deadline has passed | P1 | ✅ Implemented |
 | FR-010 | Display post count next to section headings | P2 | ✅ Implemented |
+| FR-010i | Continuous ledger timeline layout in `PostGrid` (`gap-0`) with seamless borders and diamond node markers | P1 | ✅ Implemented |
 
 ### 1.1a Past Events & Deliverables Archive (Student View)
 
@@ -139,6 +142,9 @@
 | FR-062 | Mobile-optimized `PostTable` with touch-scrollable status filters and full-width card action buttons | P1 | ✅ Implemented |
 | FR-063 | Bottom-sheet dialog presentation and touch-friendly close button in `Modal` | P1 | ✅ Implemented |
 | FR-064 | Responsive typography scaling across hero headings, post detail headers, and stats counters | P1 | ✅ Implemented |
+| FR-065 | Editorial Elevated design system tokens: 5-level surface ladder (`#000000` to `#141414`), warm amber accents (`#D4A574`), section dividers with diamond markers, and film grain texture overlay | P0 | ✅ Implemented |
+| FR-066 | Live batch stats counter in hero header (`LIVE` indicator with green pulse dot, active deliverables count, and subjects count) | P1 | ✅ Implemented |
+| FR-067 | Enriched footer navigation bar with quick routes (Home, Calendar, Archive), warm amber hover transitions, and batch signature | P1 | ✅ Implemented |
 
 ---
 
@@ -174,7 +180,7 @@
 | NFR-015 | Mobile-first responsive design | Fully usable from 320px screen width |
 | NFR-016 | Accessibility: Focus outlines | All interactive elements have visible `focus-visible` outlines |
 | NFR-017 | Accessibility: ARIA labels | Search toggle, admin buttons have `aria-label` attributes |
-| NFR-018 | Smooth animations | Fade-in, staggered children, and hover transitions using `cubic-bezier` easing |
+| NFR-018 | Smooth animations | Fade-in, staggered children, count-pulse, diamond-pulse, film grain, and scroll-reveal using `cubic-bezier` easing |
 
 ### 2.4 Reliability
 

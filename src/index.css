@@ -1,21 +1,21 @@
 @import "tailwindcss";
 
 /* ============================================================
-   BatchHub Design System — Premium Typographic Edition
+   BatchHub Design System — Editorial Elevated Edition
    ============================================================ */
 
 @theme {
-  /* ── Color Palette ── */
+  /* ── Color Palette — Surface Ladder ── */
   --color-black: #000000;
   --color-white: #ffffff;
 
-  --color-bg: #000000;
-  --color-surface: #000000;
-  --color-surface-2: #0f0f0f;
-  --color-surface-3: #1a1a1a;
+  --color-bg: #050505;
+  --color-surface: #050505;
+  --color-surface-2: #0c0c0c;
+  --color-surface-3: #141414;
   
-  --color-border: #1f1f1f;
-  --color-border-light: #333333;
+  --color-border: #1a1a1a;
+  --color-border-light: #2a2a2a;
   
   --color-text: #f5f5f4;
   --color-text-muted: #a8a29e;
@@ -25,6 +25,11 @@
   --color-accent-hover: #e7e5e4;
   --color-accent-dim: #a8a29e;
   --color-accent-glow: rgba(245, 245, 244, 0.08);
+
+  /* ── Warm Amber Accent — used sparingly ── */
+  --color-amber: #D4A574;
+  --color-amber-dim: rgba(212, 165, 116, 0.12);
+  --color-amber-glow: rgba(212, 165, 116, 0.25);
 
   /* Content type colors */
   --color-assignment: #f5f5f4;
@@ -49,6 +54,7 @@
   --text-3xl: 2.125rem;     /* 34px */
   --text-4xl: 2.75rem;      /* 44px */
   --text-5xl: 3.5rem;       /* 56px */
+  --text-6xl: 5rem;          /* 80px — hero display */
 
   /* ── Radius ── */
   --radius-sm: 0px;
@@ -82,7 +88,7 @@
 }
 
 ::selection {
-  background: rgba(245, 245, 244, 0.15);
+  background: rgba(212, 165, 116, 0.25);
   color: var(--color-text);
 }
 
@@ -114,7 +120,7 @@ body {
 
 /* ── Caret ── */
 input, textarea {
-  caret-color: var(--color-text);
+  caret-color: var(--color-amber);
 }
 
 /* ============================================================
@@ -189,12 +195,49 @@ h3 {
   50% { opacity: 1; }
 }
 
+@keyframes scroll-reveal {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-2%, -2%); }
+  20% { transform: translate(2%, 2%); }
+  30% { transform: translate(-1%, 3%); }
+  40% { transform: translate(3%, -1%); }
+  50% { transform: translate(-3%, 1%); }
+  60% { transform: translate(1%, -3%); }
+  70% { transform: translate(-2%, 2%); }
+  80% { transform: translate(2%, -2%); }
+  90% { transform: translate(-1%, 1%); }
+}
+
+@keyframes count-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes diamond-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.4); opacity: 1; }
+}
+
 .animate-fade-in {
   animation: fade-in 0.5s var(--ease-out-expo) both;
 }
 
 .animate-fade-in-up {
   animation: fade-in-up 0.7s var(--ease-out-expo) both;
+}
+
+/* Scroll reveal — triggered by JS IntersectionObserver */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+}
+.scroll-reveal.revealed {
+  animation: scroll-reveal 0.6s var(--ease-out-expo) both;
 }
 
 /* Staggered children animation */
@@ -216,17 +259,68 @@ h3 {
    ============================================================ */
 
 .glass {
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(5, 5, 5, 0.8);
   backdrop-filter: blur(16px) saturate(1.5);
   -webkit-backdrop-filter: blur(16px) saturate(1.5);
   border-bottom: 1px solid var(--color-border);
 }
 
 .glass-strong {
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(5, 5, 5, 0.88);
   backdrop-filter: blur(24px) saturate(1.8);
   -webkit-backdrop-filter: blur(24px) saturate(1.8);
   border-bottom: 1px solid var(--color-border);
+}
+
+/* ============================================================
+   Grain Overlay — subtle film grain for hero sections
+   ============================================================ */
+
+.grain-overlay {
+  position: relative;
+  overflow: hidden;
+}
+
+.grain-overlay::after {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  animation: grain 8s steps(10) infinite;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.5;
+}
+
+/* ============================================================
+   Section Divider — editorial rule with centered label
+   ============================================================ */
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.25rem 0;
+}
+
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.section-divider span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+  white-space: nowrap;
 }
 
 /* ============================================================
@@ -330,7 +424,7 @@ h3 {
 }
 
 .prose blockquote {
-  border-left: 2px solid var(--color-border-light);
+  border-left: 2px solid var(--color-amber);
   padding-left: 1.25em;
   color: var(--color-text-dim);
   margin-bottom: 1.15em;
@@ -346,16 +440,16 @@ h3 {
 }
 
 .prose a {
-  color: var(--color-text);
+  color: var(--color-amber);
   text-decoration: underline;
   text-underline-offset: 4px;
   text-decoration-thickness: 1px;
-  text-decoration-color: var(--color-border-light);
+  text-decoration-color: var(--color-amber-dim);
   transition: text-decoration-color 0.3s var(--ease-smooth);
 }
 
 .prose a:hover {
-  text-decoration-color: var(--color-text);
+  text-decoration-color: var(--color-amber);
 }
 
 .prose table {
@@ -461,7 +555,7 @@ h3 {
 
 .input-field:focus {
   outline: none;
-  border-color: var(--color-border-light);
+  border-color: var(--color-amber);
   background-color: var(--color-surface-2);
 }
 
@@ -500,7 +594,7 @@ textarea.input-field {
 }
 
 .day-cell {
-  background-color: #050505;
+  background-color: var(--color-bg);
   min-height: 54px;
   transition: background-color 0.15s ease, outline-color 0.15s ease;
   -webkit-tap-highlight-color: transparent;
@@ -519,20 +613,20 @@ textarea.input-field {
 }
 
 .day-cell:hover {
-  background-color: #0d0d0d;
+  background-color: var(--color-surface-2);
 }
 
 .day-cell:active {
-  background-color: #141414;
+  background-color: var(--color-surface-3);
 }
 
 .day-cell-other {
-  background-color: #000000;
+  background-color: #020202;
   opacity: 0.3;
 }
 
 .day-cell-today {
-  background-color: #0c0c0e;
+  background-color: #0a0a0e;
   position: relative;
 }
 
@@ -543,12 +637,12 @@ textarea.input-field {
   left: 0;
   right: 0;
   height: 2px;
-  background: var(--color-text);
+  background: var(--color-amber);
 }
 
 .day-cell-selected {
-  background-color: #121218;
-  outline: 1.5px solid var(--color-text);
+  background-color: rgba(212, 165, 116, 0.06);
+  outline: 1.5px solid var(--color-amber);
   outline-offset: -1.5px;
 }
 

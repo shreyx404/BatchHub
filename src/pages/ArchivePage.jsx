@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Archive } from 'lucide-react';
 import Header from '../components/layout/Header';
@@ -12,6 +12,27 @@ import ErrorState from '../components/ui/ErrorState';
 import EmptyState from '../components/ui/EmptyState';
 import { useArchivePosts } from '../hooks/useArchivePosts';
 import { useSubjects } from '../hooks/useSubjects';
+
+/* ── Scroll Reveal Hook ── */
+function useScrollReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll('.scroll-reveal:not(.revealed)');
+    if (!els.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+    );
+    els.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  });
+}
 
 export default function ArchivePage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -73,6 +94,8 @@ export default function ArchivePage() {
   const { posts, totalCount, loading, error, refetch } = useArchivePosts(filters, sortBy);
   const { subjects } = useSubjects();
 
+  useScrollReveal();
+
   return (
     <div className="min-h-dvh flex flex-col bg-[var(--color-bg)]">
       <Header
@@ -87,58 +110,72 @@ export default function ArchivePage() {
         onSearchChange={handleSearch}
       />
 
-      <main className="flex-1 mx-auto w-full max-w-6xl px-3.5 sm:px-4 py-4 sm:py-6 space-y-5 sm:space-y-6">
-        {/* Page heading */}
-        <div className="animate-fade-in pt-4 sm:pt-6 pb-2 sm:pb-3">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[var(--color-surface-2)] border border-[var(--color-border)] flex items-center justify-center">
-              <Archive size={18} className="text-[var(--color-text-dim)]" />
+      <main className="flex-1 mx-auto w-full max-w-6xl px-4 sm:px-5 py-4 sm:py-6">
+        {/* ── Archive Hero — differentiated from home ── */}
+        <div className="animate-fade-in pt-6 sm:pt-10 md:pt-12 pb-6 sm:pb-8">
+          <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[var(--color-surface-2)] border border-[var(--color-border)] flex items-center justify-center">
+              <Archive size={20} className="text-[var(--color-text-dim)]" />
             </div>
-            <h1 className="text-[2.25rem] xs:text-[2.75rem] sm:text-[3.25rem] font-display font-semibold text-[var(--color-text)] tracking-[-0.025em] leading-[1.05]">
-              Archive
-            </h1>
+            <div>
+              <h1 className="text-[2rem] xs:text-[2.5rem] sm:text-[3rem] md:text-[3.5rem] font-display font-semibold text-[var(--color-text-muted)] tracking-[-0.025em] leading-[1.05]">
+                Archive
+              </h1>
+            </div>
           </div>
-          <p className="text-[var(--text-sm)] sm:text-[var(--text-base)] font-light text-[var(--color-text-muted)] mt-2 sm:mt-3 tracking-[0.01em] leading-relaxed">
-            Past events, expired deadlines, and completed assignments.
+          {/* Thin rule */}
+          <div className="w-12 sm:w-16 h-[1px] bg-[var(--color-border-light)] mb-3" />
+          <p className="text-[var(--text-sm)] sm:text-[var(--text-base)] font-light text-[var(--color-text-dim)] tracking-[0.01em] leading-relaxed max-w-lg">
+            Past events, expired deadlines, and completed assignments — preserved for reference.
           </p>
         </div>
 
-        {/* Search */}
-        <div className="w-full sm:max-w-md">
-          <SearchBar value={search} onChange={handleSearch} placeholder="Search archived posts... (Ctrl + K)" />
+        <div className="space-y-6 sm:space-y-8 md:space-y-10">
+          {/* ── Search & Filters ── */}
+          <div className="space-y-3 sm:space-y-4">
+            <div className="w-full sm:max-w-md">
+              <SearchBar value={search} onChange={handleSearch} placeholder="Search archived posts... (Ctrl + K)" />
+            </div>
+            <FilterBar
+              selectedType={selectedType}
+              onTypeChange={handleTypeChange}
+              selectedSubject={selectedSubject}
+              onSubjectChange={handleSubjectChange}
+              subjects={subjects}
+            />
+          </div>
+
+          {/* ── Sort & Results ── */}
+          <div>
+            <ArchiveSortBar
+              sortBy={sortBy}
+              onSortChange={handleSortChange}
+              totalCount={totalCount}
+              loading={loading}
+            />
+
+            <div className="section-divider mt-4 sm:mt-5 mb-5 sm:mb-6">
+              <span>Archived Results</span>
+            </div>
+          </div>
+
+          {/* ── Content ── */}
+          {error ? (
+            <ErrorState message={error} onRetry={refetch} />
+          ) : loading ? (
+            <LoadingState />
+          ) : posts.length === 0 ? (
+            <EmptyState
+              icon={Archive}
+              title="No archived posts"
+              description="There are no archived events matching your filters. Try broadening your search."
+            />
+          ) : (
+            <div className="scroll-reveal opacity-90">
+              <PostGrid posts={posts} loading={false} />
+            </div>
+          )}
         </div>
-
-        {/* Filters */}
-        <FilterBar
-          selectedType={selectedType}
-          onTypeChange={handleTypeChange}
-          selectedSubject={selectedSubject}
-          onSubjectChange={handleSubjectChange}
-          subjects={subjects}
-        />
-
-        {/* Sort bar */}
-        <ArchiveSortBar
-          sortBy={sortBy}
-          onSortChange={handleSortChange}
-          totalCount={totalCount}
-          loading={loading}
-        />
-
-        {/* Results */}
-        {error ? (
-          <ErrorState message={error} onRetry={refetch} />
-        ) : loading ? (
-          <LoadingState />
-        ) : posts.length === 0 ? (
-          <EmptyState
-            icon={Archive}
-            title="No archived posts"
-            description="There are no archived events matching your filters. Try broadening your search."
-          />
-        ) : (
-          <PostGrid posts={posts} loading={false} />
-        )}
       </main>
 
       <Footer />

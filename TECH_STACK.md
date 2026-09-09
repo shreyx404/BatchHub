@@ -1,6 +1,6 @@
 # BatchHub — Technology Stack
 
-> **Version:** 1.6  
+> **Version:** 1.7  
 > **Last Updated:** 2026-09-09
 
 ---
@@ -77,9 +77,9 @@ BatchHub is built with a modern JAMstack architecture: a React SPA frontend host
 
 | Font | Family | Usage |
 |------|--------|-------|
-| **Playfair Display** | Serif | Headings (`h1`–`h4`), display text, post titles |
+| **Playfair Display** | Serif | Headings (`h1`–`h4`), display text, oversized hero, post titles |
 | **Inter** | Sans-serif | Body text, labels, UI elements, meta information |
-| **SF Mono / Consolas** | Monospace | Timestamps, code blocks, technical labels |
+| **SF Mono / Consolas** | Monospace | Timestamps, code blocks, technical labels, countdown units |
 
 ### Type Scale
 
@@ -90,45 +90,54 @@ BatchHub is built with a modern JAMstack architecture: a React SPA frontend host
 | `--text-base` | 15px | Default body text |
 | `--text-lg` | 17px | Blockquotes, emphasized body |
 | `--text-xl` | 20px | H3, sub-headings |
-| `--text-2xl` | 26px | H2, stat numbers |
+| `--text-2xl` | 26px | H2, stat numbers, PostCard titles |
 | `--text-3xl` | 34px | H1 in prose |
 | `--text-4xl` | 44px | Hero heading (mobile) |
-| `--text-5xl` | 56px | Hero heading (desktop) |
+| `--text-5xl` | 56px | Hero heading (tablet) |
+| `--text-6xl` | 72px | Oversized editorial hero heading (desktop) |
 
-### Colour Palette
+### Colour Palette & Surface Elevation Ladder
 
 | Token | Value | Role |
 |-------|-------|------|
-| `--color-bg` | `#000000` | Page background |
-| `--color-surface` | `#000000` | Card/component background |
-| `--color-surface-2` | `#0f0f0f` | Elevated surfaces |
-| `--color-surface-3` | `#1a1a1a` | Highest elevation |
-| `--color-border` | `#1f1f1f` | Subtle borders |
+| `--color-bg` | `#000000` | Deepest page background (pure black) |
+| `--color-surface` | `#050505` | Primary content surface |
+| `--color-surface-2` | `#0A0A0A` | Elevated card containers / subsurfaces |
+| `--color-surface-3` | `#111111` | Highest elevation / inputs / pills |
+| `--color-surface-hover` | `#141414` | Interactive hover highlight |
+| `--color-border` | `#1f1f1f` | Subtle structural borders |
 | `--color-border-light` | `#333333` | Visible borders, dividers |
+| `--color-amber` | `#D4A574` | Warm amber accent for focal hierarchy, urgency, and rules |
+| `--color-amber-dim` | `rgba(212, 165, 116, 0.15)` | Amber background fills and selection tint |
+| `--color-amber-glow` | `rgba(212, 165, 116, 0.08)` | Ambient glow on active cards and countdown units |
 | `--color-text` | `#f5f5f4` | Primary text (warm white) |
 | `--color-text-muted` | `#a8a29e` | Secondary text |
 | `--color-text-dim` | `#78716c` | Tertiary / placeholder text |
 | `--color-accent` | `#f5f5f4` | Buttons, interactive accents |
 
-### Visual Effects
+### Visual Effects & Micro-Interactions
 
 | Effect | Implementation |
 |--------|----------------|
-| **Glass morphism** | `.glass` / `.glass-strong` with `backdrop-filter: blur()` |
+| **Glass morphism** | `.glass` / `.glass-strong` with `backdrop-filter: blur()` and amber tint highlights |
+| **Section Dividers** | `.section-divider` editorial thin rules with centered diamond marker (`◇`) |
+| **Film Grain Overlay** | `.grain-overlay` subtle textured animation for organic editorial depth |
+| **Scroll Reveal** | `.scroll-reveal` with IntersectionObserver entry animations |
+| **Typographic Countdown** | Large `DD:HH:MM` numeric blocks with ticking count-pulse micro-animation |
+| **Bento Grid Hierarchy** | 2-column span for primary notice and pinned cards |
+| **Diamond Pulse** | Breathing amber glow on urgent deadlines (`animate-diamond-pulse`) |
 | **Skeleton loaders** | CSS shimmer animation with gradient sweep |
-| **Staggered animations** | `.stagger-children` with incremental `animation-delay` (50ms steps) |
-| **Micro-interactions** | Hover transforms (`translateY`, `translateX`), border glow, opacity transitions |
-| **Ledger design** | Post cards use a vertical timeline with diamond node markers |
+| **Ledger design** | Post cards use a continuous vertical timeline with diamond node markers (`gap-0`) |
 
 ### Design Principles
 
 | Principle | Implementation |
 |-----------|----------------|
-| **Editorial / Magazine feel** | Serif headings, generous whitespace, refined type scale |
-| **Monochromatic** | Black/white/stone colour palette with no per-type color coding |
-| **Sharp geometry** | All border-radius tokens set to `0px` (square corners) |
-| **Dark-first** | Entire design built for dark backgrounds |
-| **Information density** | Compact cards with just enough metadata; expanded detail on click |
+| **Editorial Elevated** | Oversized serif headings, generous negative space, film grain, and small-caps tracking |
+| **Monochromatic + Amber** | Monochromatic baseline accented with warm amber (`#D4A574`) strictly for focal points & urgency |
+| **Sharp geometry** | All border-radius tokens strictly set to `0px` (square corners) |
+| **Surface Depth** | 5-level surface elevation ladder providing visual hierarchy without borders clutter |
+| **Mobile & Tablet Ergonomics** | Fluid typography, edge-to-edge touch scrolling, and 44px minimum touch targets |
 
 ---
 

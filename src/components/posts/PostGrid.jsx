@@ -14,7 +14,7 @@ export default function PostGrid({ posts, loading }) {
   }
 
   return (
-    <div className="flex flex-col gap-6 max-w-3xl mx-auto stagger-children w-full">
+    <div className="flex flex-col gap-0 max-w-3xl mx-auto stagger-children w-full">
       {posts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}

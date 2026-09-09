@@ -13,8 +13,8 @@ export default function PostCard({ post }) {
   const linkCount = post.links?.length || 0;
 
   const subjectColor = post.subjects?.color || null;
-  const hoverBorderColor = subjectColor || 'var(--color-text)';
-  const hoverGlowColor = subjectColor ? `${subjectColor}55` : 'rgba(245, 245, 244, 0.15)';
+  const hoverBorderColor = subjectColor || 'var(--color-amber)';
+  const hoverGlowColor = subjectColor ? `${subjectColor}55` : 'var(--color-amber-glow)';
 
   const cleanPreview = post.content
     ? post.content
@@ -33,33 +33,46 @@ export default function PostCard({ post }) {
   return (
     <Link
       to={`/post/${post.id}`}
-      className="group block relative pl-4 sm:pl-6 py-4 sm:py-6 border-l border-[var(--color-border)] transition-all duration-300 hover:bg-[var(--color-surface-2)] hover:-translate-y-0.5 hover:translate-x-0.5 active:bg-[var(--color-surface-3)]"
+      className="group block relative pl-5 sm:pl-7 py-5 sm:py-7 border-l border-[var(--color-border)] transition-all duration-300 hover:-translate-y-0.5 hover:translate-x-0.5 active:bg-[var(--color-surface-3)]"
       style={{
         '--hover-border-color': hoverBorderColor,
         '--hover-glow-color': hoverGlowColor,
+        backgroundImage: 'linear-gradient(90deg, transparent, transparent)',
+        transition: 'background-image 0.5s ease, transform 0.3s ease, background-color 0.3s ease',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundImage = `linear-gradient(90deg, ${subjectColor ? subjectColor + '08' : 'rgba(212, 165, 116, 0.04)'}, transparent 70%)`;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundImage = 'linear-gradient(90deg, transparent, transparent)';
       }}
     >
       {/* Ledger Node Marker */}
       <div 
-        className="absolute left-[-4px] top-[22px] sm:top-[30px] w-[7px] h-[7px] bg-[var(--color-border-light)] transition-colors duration-300 group-hover:bg-[var(--hover-border-color)]"
-        style={{ clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }}
+        className={`absolute left-[-4px] top-[26px] sm:top-[34px] w-[7px] h-[7px] transition-colors duration-300 group-hover:bg-[var(--hover-border-color)] ${
+          isUrgent ? 'bg-[var(--color-amber)]' : 'bg-[var(--color-border-light)]'
+        }`}
+        style={{
+          clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
+          ...(isUrgent ? { animation: 'diamond-pulse 2s ease-in-out infinite' } : {}),
+        }}
       />
       {/* Ledger glowing line overlay */}
       <div 
         className="absolute left-[-1px] top-0 bottom-0 w-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         style={{
           backgroundColor: hoverBorderColor,
-          boxShadow: subjectColor ? `0 0 8px ${subjectColor}` : '0 0 6px rgba(245, 245, 244, 0.3)',
+          boxShadow: subjectColor ? `0 0 8px ${subjectColor}` : '0 0 8px var(--color-amber-glow)',
         }}
       />
 
-      <div className="flex flex-col gap-2.5 sm:gap-3.5">
+      <div className="flex flex-col gap-3 sm:gap-4">
         {/* Badges row */}
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           <Badge type={post.type} />
           {post.subjects && <Badge subject={post.subjects} />}
           {post.is_pinned && (
-            <span className="flex items-center gap-1 text-[9.5px] sm:text-[10px] font-medium tracking-[0.08em] uppercase text-[var(--color-accent)]">
+            <span className="flex items-center gap-1 text-[9.5px] sm:text-[10px] font-medium tracking-[0.08em] uppercase text-[var(--color-amber)]">
               <Pin size={10} className="rotate-45" />
               Pinned
             </span>
@@ -67,7 +80,7 @@ export default function PostCard({ post }) {
         </div>
 
         {/* Title — Playfair Display, generous size, tight leading */}
-        <h3 className="font-display font-medium text-[1.25rem] xs:text-[1.4rem] sm:text-[1.75rem] text-[var(--color-text)] transition-colors duration-500 leading-[1.15] tracking-[-0.015em] group-hover:text-[var(--hover-border-color)]">
+        <h3 className="font-display font-medium text-[1.35rem] xs:text-[1.5rem] sm:text-[2rem] text-[var(--color-text)] transition-colors duration-500 leading-[1.12] tracking-[-0.015em] group-hover:text-[var(--hover-border-color)]">
           {post.title}
         </h3>
 
@@ -79,21 +92,31 @@ export default function PostCard({ post }) {
         )}
 
         {/* Meta row */}
-        <div className="flex items-center justify-between mt-1 pt-3 border-t border-[var(--color-border)] border-dashed">
-          <div className="flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.06em] text-[var(--color-text-dim)]">
+        <div className="flex items-center justify-between mt-1.5 pt-3.5 border-t border-[var(--color-border)] border-dashed">
+          <div className="flex items-center gap-3 sm:gap-4 font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.06em] text-[var(--color-text-dim)] flex-wrap">
             {/* Due date & Time */}
             {hasDueDate && (
               <span
                 className={`flex items-center gap-1.5 ${
                   isOverdue || isUrgent
-                    ? 'text-[var(--color-deadline)] font-semibold'
+                    ? 'text-[var(--color-amber)] font-semibold'
                     : 'text-[var(--color-text-muted)]'
                 }`}
               >
                 <Clock size={11} />
                 {isOverdue
-                  ? `Overdue: ${format(dueDate, 'dd-MM-yyyy · h:mm a')}`
-                  : `Due: ${format(dueDate, 'dd-MM-yyyy · h:mm a')} (${formatDistanceToNow(dueDate, { addSuffix: true })})`}
+                  ? `Overdue: ${format(dueDate, 'dd MMM · h:mm a')}`
+                  : `Due: ${format(dueDate, 'dd MMM · h:mm a')}`}
+                <span className="hidden sm:inline text-[var(--color-text-dim)]">
+                  ({formatDistanceToNow(dueDate, { addSuffix: true })})
+                </span>
+              </span>
+            )}
+
+            {/* Created date */}
+            {!hasDueDate && post.created_at && (
+              <span className="flex items-center gap-1.5 text-[var(--color-text-dim)]">
+                {format(new Date(post.created_at), 'dd MMM yyyy')}
               </span>
             )}
 
@@ -108,7 +131,7 @@ export default function PostCard({ post }) {
 
           <ArrowUpRight
             size={14}
-            className="text-[var(--color-border-light)] group-hover:text-[var(--hover-border-color)] transition-all duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            className="text-[var(--color-border-light)] group-hover:text-[var(--hover-border-color)] transition-all duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0"
           />
         </div>
       </div>

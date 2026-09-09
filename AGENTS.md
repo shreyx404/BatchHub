@@ -1,6 +1,6 @@
 # BatchHub — AI Agent Guidelines
 
-> **Version:** 1.6  
+> **Version:** 1.7  
 > **Last Updated:** 2026-09-09
 
 This file provides context and rules for AI coding agents working on the BatchHub codebase.
@@ -13,7 +13,7 @@ This file provides context and rules for AI coding agents working on the BatchHu
 
 - **Frontend:** React 19 SPA with Vite 6, Tailwind CSS v4, React Router v7 (with route code splitting)
 - **Backend:** Supabase (PostgreSQL) with Vercel Serverless Functions
-- **Design:** Dark editorial aesthetic — Playfair Display headings, Inter body, monochromatic palette, square corners (0px border-radius)
+- **Design:** Editorial Elevated dark aesthetic — Playfair Display headings, Inter body, surface elevation ladder (`#000000` to `#141414`), monochromatic baseline with warm amber accents (`#D4A574`) for focal hierarchy and urgency, square corners (0px border-radius)
 
 ---
 
@@ -93,7 +93,10 @@ scripts/
 
 - **Tailwind CSS v4** with `@theme` block in `index.css` for design tokens
 - Use CSS variables from the design system (`var(--color-*)`, `var(--text-*)`)
-- Custom utility classes defined in `index.css`: `.glass`, `.skeleton`, `.prose`, `.input-field`, `.line-clamp-*`, `.scrollbar-hide`
+- Surface elevation ladder: `--color-bg` (`#000000`), `--color-surface` (`#050505`), `--color-surface-2` (`#0A0A0A`), `--color-surface-3` (`#111111`), `--color-surface-hover` (`#141414`)
+- Warm amber accent tokens: `--color-amber` (`#D4A574`), `--color-amber-dim`, `--color-amber-glow` for subtle focal points and urgent deliverable highlights
+- Custom utility classes defined in `index.css`: `.glass`, `.glass-strong`, `.skeleton`, `.prose`, `.input-field`, `.line-clamp-*`, `.scrollbar-hide`, `.section-divider`, `.grain-overlay`, `.scroll-reveal`
+- CSS animations: `animate-fade-in`, `stagger-children`, `animate-count-pulse`, `animate-diamond-pulse`, `scroll-reveal`
 - Prefer inline Tailwind classes over creating new CSS classes
 - Border-radius tokens are all `0px` (sharp/square aesthetic) — **do not add rounded corners**
 
@@ -103,7 +106,7 @@ scripts/
 - Loading/error/empty states are handled by dedicated UI components
 - Admin mutations go through `adminRequest()` which calls `/api/admin`
 - Toast notifications via `react-hot-toast` for all user-facing feedback
-- Animations use CSS (`animate-fade-in`, `stagger-children`) — no JS animation libraries
+- Animations use CSS (`animate-fade-in`, `stagger-children`, `count-pulse`, `diamond-pulse`) — no JS animation libraries
 
 ---
 
@@ -181,6 +184,7 @@ When adding a new feature, follow this checklist:
 | Forgetting demo mode fallback | Always add `if (!isSupabaseConfigured())` branch |
 | Adding rounded corners | All `--radius-*` tokens are `0px` — this is intentional |
 | Using colourful type badges | The design is monochromatic — types use `var(--color-text)` variants |
+| Overusing warm amber accent | Use `--color-amber` sparingly (focal highlights, urgency, thin rules, subtle hover glow) to preserve monochromatic editorial baseline |
 | Direct Supabase writes from client | Route all mutations through `/api/admin` |
 | Hardcoding the app name | Use `APP_NAME` and `APP_TAGLINE` from `constants.js` |
 | Using `useEffect` for data fetching without cleanup | Follow the patterns in existing hooks |

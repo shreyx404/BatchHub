@@ -1,6 +1,6 @@
 # BatchHub — Product Requirements Document (PRD)
 
-> **Version:** 1.4  
+> **Version:** 1.5  
 > **Last Updated:** 2026-09-09  
 > **Status:** Living Document
 
@@ -52,6 +52,7 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 | F-08b | **Mobile & Tablet Optimization** | End-to-end responsive design with safe area insets (`viewport-fit=cover`), touch-action manipulation, inertia scrolling, touch targets (≥40–44px), mobile-stacked link editors, sticky bottom submit action bar, bottom-sheet modals, and fluid typography |
 | F-08c | **Contained Agenda Scroll & Default Today Selection** | Isolated viewport-bounded scroll container for Agenda views with sticky date group headers and default selection to TODAY for instant deliverable inspection across both Student and Admin calendars |
 | F-08d | **Past Events & Deliverables Archive** | Dedicated full-page archive section (`/archive`) accessible via header navigation for browsing, searching (`Ctrl + K`), filtering (by content type and subject), and sorting (Recent, Oldest, Due Date, A → Z) past events, expired deadlines, and completed assignments. Synchronizes search, filter, and sort state with URL query parameters for direct sharing and back/forward navigation. |
+| F-08e | **Editorial Elevated Design System** | Dark editorial aesthetic upgraded with 5-tier surface elevation ladder (`#000000` to `#141414`), warm amber accent tokens (`#D4A574`) for subtle focal hierarchy and urgency, oversized Playfair Display hero with live batch statistics counter, typographic countdown cards (`DD:HH:MM`) with live ticking, Bento grid layouts in notices & pinned feeds, continuous ledger timeline (`gap-0`), section dividers with diamond markers, and historical styling for the archive page. |
 
 ### 3.2 Admin Dashboard (Password-Protected)
 
