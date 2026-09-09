@@ -64,7 +64,7 @@ export default function CalendarWeekView({
                     <span
                       className={`text-[12px] sm:text-[var(--text-sm)] font-mono ${
                         todayDay
-                          ? 'bg-[var(--color-text)] text-[var(--color-bg)] px-1.5 py-0.5 font-bold'
+                          ? 'badge-inverse px-1.5 py-0.5 font-bold inline-block'
                           : isSelected
                             ? 'text-[var(--color-text)] font-bold underline underline-offset-4'
                             : 'text-[var(--color-text)] font-medium'

@@ -62,7 +62,7 @@ export default function CalendarAgendaView({
         {selectedSubject && (
           <button
             onClick={() => onSubjectChange(null)}
-            className="px-3.5 py-2 min-h-[38px] text-[var(--text-xs)] font-mono bg-[var(--color-text)] text-[var(--color-bg)] font-semibold hover:opacity-90 transition-opacity"
+            className="badge-inverse px-3.5 py-2 min-h-[38px] text-[var(--text-xs)] font-mono font-semibold hover:opacity-90 transition-opacity"
           >
             Clear Subject Filter
           </button>
@@ -86,7 +86,7 @@ export default function CalendarAgendaView({
                   {format(group.date, 'EEEE, MMMM d, yyyy')}
                 </span>
                 {todayGroup && (
-                  <span className="px-2 py-0.5 text-[9px] font-mono font-bold bg-[var(--color-text)] text-[var(--color-bg)] uppercase">
+                  <span className="badge-inverse px-2 py-0.5 text-[9px] font-mono font-bold uppercase inline-block">
                     TODAY
                   </span>
                 )}
@@ -227,7 +227,7 @@ function AgendaPostCard({ post, isAdmin }) {
           )}
           <Link
             to={`/post/${post.id}`}
-            className="px-4 py-2 min-h-[38px] flex items-center justify-center gap-1.5 text-[var(--text-xs)] transition-opacity bg-[var(--color-text)] text-[var(--color-bg)] font-semibold hover:opacity-90 active:opacity-80"
+            className="btn-primary px-4 py-2 min-h-[38px] flex items-center justify-center gap-1.5 text-[var(--text-xs)] font-semibold transition-opacity hover:opacity-90 active:opacity-80"
           >
             <span>View Details</span>
             <ArrowRight size={13} />

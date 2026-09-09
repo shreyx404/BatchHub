@@ -357,7 +357,7 @@ function InspectorCard({ post, isAdmin }) {
             className={`px-3.5 py-1.5 min-h-[34px] flex items-center justify-center font-semibold text-[var(--text-xs)] transition-colors ${
               isFaded
                 ? 'bg-[var(--color-surface-2)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] border border-[var(--color-border)]'
-                : 'bg-[var(--color-text)] text-[var(--color-bg)] hover:opacity-90'
+                : 'btn-primary hover:opacity-90'
             }`}
           >
             <span>View Details</span>

@@ -268,7 +268,7 @@ export default function AdminLogin({ onLogin }) {
           <button
             type="submit"
             disabled={loading || isLocked || (TURNSTILE_SITE_KEY && !turnstileReady)}
-            className="w-full h-11 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-accent-text)] text-[var(--text-sm)] font-semibold transition-colors duration-300 flex items-center justify-center gap-2 tracking-[0.005em]"
+            className="btn-primary w-full h-11 disabled:opacity-50 disabled:cursor-not-allowed text-[var(--text-sm)] font-semibold transition-colors duration-300 flex items-center justify-center gap-2 tracking-[0.005em]"
           >
             {loading ? (
               <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />

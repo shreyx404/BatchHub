@@ -196,7 +196,7 @@ export default function PostPage() {
         <div className="pt-6 border-t border-[var(--color-border)]">
           <button
             onClick={handleShare}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] active:scale-[0.99] text-[var(--color-accent-text)] text-[var(--text-sm)] font-semibold transition-all min-h-[44px]"
+            className="btn-primary w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 active:scale-[0.99] text-[var(--text-sm)] font-semibold transition-all min-h-[44px]"
           >
             <Share2 size={16} />
             Share Post

@@ -170,7 +170,7 @@ function AdminDashboard() {
         <h2 className="text-lg sm:text-xl font-display font-medium text-[var(--color-text)] tracking-[-0.01em]">Dashboard</h2>
         <button
           onClick={() => navigate('/admin/create')}
-          className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 min-h-[38px] bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] active:scale-[0.98] text-[var(--color-accent-text)] text-[var(--text-xs)] sm:text-[var(--text-sm)] font-medium transition-all tracking-[0.005em]"
+          className="btn-primary flex items-center gap-1.5 px-3.5 sm:px-4 py-2 min-h-[38px] active:scale-[0.98] text-[var(--text-xs)] sm:text-[var(--text-sm)] font-medium transition-all tracking-[0.005em]"
         >
           <Plus size={14} />
           New Post

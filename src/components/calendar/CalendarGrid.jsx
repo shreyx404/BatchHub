@@ -107,7 +107,7 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
                 <span
                   className={`text-[10px] sm:text-[var(--text-xs)] font-mono ${
                     cell.isToday
-                      ? 'bg-[var(--color-text)] text-[var(--color-bg)] px-1 sm:px-1.5 py-0.2 sm:py-0.5 font-bold'
+                      ? 'badge-inverse px-1 sm:px-1.5 py-0.2 sm:py-0.5 font-bold inline-block'
                       : cell.isCurrentMonth
                         ? 'text-[var(--color-text-muted)]'
                         : 'text-[var(--color-text-dim)]'

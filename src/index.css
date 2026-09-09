@@ -768,6 +768,39 @@ textarea.input-field {
   color: var(--color-text);
 }
 
+/* ── High-Contrast Action & Inverted Badges ── */
+.btn-primary {
+  background-color: var(--color-accent) !important;
+  color: var(--color-accent-text) !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-accent-hover) !important;
+}
+
+.btn-primary,
+.btn-primary * {
+  color: var(--color-accent-text) !important;
+}
+
+.btn-primary svg {
+  stroke: var(--color-accent-text) !important;
+}
+
+.badge-inverse {
+  background-color: var(--color-text) !important;
+  color: var(--color-bg) !important;
+}
+
+.badge-inverse,
+.badge-inverse * {
+  color: var(--color-bg) !important;
+}
+
+.badge-inverse svg {
+  stroke: var(--color-bg) !important;
+}
+
 /* ── High-Contrast Utilities ── */
 .text-black {
   color: #000000 !important;

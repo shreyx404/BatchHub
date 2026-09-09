@@ -81,7 +81,7 @@ export default function CalendarControls({
               onClick={() => onViewModeChange('month')}
               className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 min-h-[38px] text-[10.5px] sm:text-[var(--text-xs)] font-mono transition-colors text-center ${
                 viewMode === 'month'
-                  ? 'bg-[var(--color-text)] text-[var(--color-bg)] font-bold'
+                  ? 'badge-inverse font-bold'
                   : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)]'
               }`}
             >
@@ -91,7 +91,7 @@ export default function CalendarControls({
               onClick={() => onViewModeChange('week')}
               className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 min-h-[38px] text-[10.5px] sm:text-[var(--text-xs)] font-mono transition-colors text-center ${
                 viewMode === 'week'
-                  ? 'bg-[var(--color-text)] text-[var(--color-bg)] font-bold'
+                  ? 'badge-inverse font-bold'
                   : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)]'
               }`}
             >
@@ -101,7 +101,7 @@ export default function CalendarControls({
               onClick={() => onViewModeChange('agenda')}
               className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 min-h-[38px] text-[10.5px] sm:text-[var(--text-xs)] font-mono transition-colors text-center ${
                 viewMode === 'agenda'
-                  ? 'bg-[var(--color-text)] text-[var(--color-bg)] font-bold'
+                  ? 'badge-inverse font-bold'
                   : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)]'
               }`}
             >
@@ -121,7 +121,7 @@ export default function CalendarControls({
             onClick={() => onStatusFilterChange('all')}
             className={`px-2.5 py-1 min-h-[30px] text-[10.5px] sm:text-[11px] font-mono uppercase tracking-wider transition-colors whitespace-nowrap active:scale-[0.98] ${
               statusFilter === 'all'
-                ? 'bg-[var(--color-text)] text-[var(--color-bg)] font-bold'
+                ? 'badge-inverse font-bold'
                 : 'bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)]'
             }`}
           >
@@ -131,7 +131,7 @@ export default function CalendarControls({
             onClick={() => onStatusFilterChange('published')}
             className={`px-2.5 py-1 min-h-[30px] text-[10.5px] sm:text-[11px] font-mono uppercase tracking-wider transition-colors whitespace-nowrap active:scale-[0.98] ${
               statusFilter === 'published'
-                ? 'bg-[var(--color-text)] text-[var(--color-bg)] font-bold'
+                ? 'badge-inverse font-bold'
                 : 'bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)]'
             }`}
           >
@@ -151,7 +151,7 @@ export default function CalendarControls({
             onClick={() => onStatusFilterChange('archived')}
             className={`px-2.5 py-1 min-h-[30px] text-[10.5px] sm:text-[11px] font-mono uppercase tracking-wider transition-colors whitespace-nowrap active:scale-[0.98] ${
               statusFilter === 'archived'
-                ? 'bg-[#8888a0] text-black font-bold'
+                ? 'bg-zinc-600 text-white font-bold'
                 : 'bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)]'
             }`}
           >
@@ -181,7 +181,7 @@ export default function CalendarControls({
           onClick={() => onSubjectChange(null)}
           className={`px-2.5 sm:px-3 py-1 sm:py-1.5 min-h-[32px] sm:min-h-[34px] text-[11px] sm:text-[var(--text-xs)] font-medium whitespace-nowrap transition-colors active:scale-[0.98] ${
             !selectedSubject
-              ? 'bg-[var(--color-text)] text-[var(--color-bg)] font-semibold border border-[var(--color-text)]'
+              ? 'badge-inverse font-semibold border border-[var(--color-text)]'
               : 'bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-light)] hover:text-[var(--color-text)] active:bg-[var(--color-surface)]'
           }`}
         >
@@ -193,7 +193,7 @@ export default function CalendarControls({
             onClick={() => onSubjectChange(selectedSubject === subject.id ? null : subject.id)}
             className={`px-2.5 sm:px-3 py-1 sm:py-1.5 min-h-[32px] sm:min-h-[34px] text-[11px] sm:text-[var(--text-xs)] whitespace-nowrap transition-colors active:scale-[0.98] ${
               selectedSubject === subject.id
-                ? 'bg-[var(--color-text)] text-[var(--color-bg)] font-semibold border border-[var(--color-text)]'
+                ? 'badge-inverse font-semibold border border-[var(--color-text)]'
                 : 'bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-light)] hover:text-[var(--color-text)] active:bg-[var(--color-surface)]'
             }`}
           >
