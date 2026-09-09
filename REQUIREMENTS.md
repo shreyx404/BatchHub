@@ -1,7 +1,7 @@
 # BatchHub — Requirements Specification
 
-> **Version:** 1.3  
-> **Last Updated:** 2026-08-31
+> **Version:** 1.4  
+> **Last Updated:** 2026-09-09
 
 ---
 
@@ -21,6 +21,19 @@
 | FR-008 | Collapse structured sections into a flat list when any filter or search is active | P1 | ✅ Implemented |
 | FR-009 | Show "Overdue" label on post cards whose deadline has passed | P1 | ✅ Implemented |
 | FR-010 | Display post count next to section headings | P2 | ✅ Implemented |
+
+### 1.1a Past Events & Deliverables Archive (Student View)
+
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| FR-010a | Provide a dedicated full-page archive section at `/archive` for past events, expired deadlines, and completed assignments | P0 | ✅ Implemented |
+| FR-010b | Provide debounced full-text search (`Ctrl + K`) across archived post titles and content | P0 | ✅ Implemented |
+| FR-010c | Allow filtering archived posts by content type (assignment, lab, notice, deadline, resource, important) | P0 | ✅ Implemented |
+| FR-010d | Allow filtering archived posts by academic subject | P0 | ✅ Implemented |
+| FR-010e | Support multi-criteria sorting: Recent (`updated_at` desc), Oldest (`updated_at` asc), Due Date (`due_date` desc), and Alphabetical A → Z (`title` asc) | P0 | ✅ Implemented |
+| FR-010f | Synchronize active search query, type filter, subject filter, and sort option with browser URL parameters (`?type=...&subject=...&q=...&sort=...`) | P1 | ✅ Implemented |
+| FR-010g | Render Archive navigation icon in Header bar between Calendar and Admin Settings with active route indicator | P1 | ✅ Implemented |
+| FR-010h | Display total count of matching archived posts and an archive-tailored empty state | P1 | ✅ Implemented |
 
 ### 1.2 Post Detail Page
 

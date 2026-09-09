@@ -1,7 +1,7 @@
 # BatchHub — Task Breakdown
 
-> **Version:** 1.2  
-> **Last Updated:** 2026-08-22  
+> **Version:** 1.4  
+> **Last Updated:** 2026-09-09  
 > **Status Legend:** ✅ Done · 🔲 Planned · 🚧 In Progress
 
 ---
@@ -179,6 +179,7 @@
 - [x] **T-107** — Default Selected Date to TODAY for Student & Admin Calendar: Initialized `selectedDate` state to today's date key (`format(new Date(), 'yyyy-MM-dd')`) in `CalendarPage.jsx` and `AdminCalendar.jsx`. Automatically highlights today's cell/column in Month and Week views and loads today's deliverables/empty inspection card directly in the sidebar on initial page visit.
 - [x] **T-108** — PostForm Admin Enhancements (Tags Removal, Pin Duration & Dynamic Unpinning, Rearrangable Links): Removed Tags input section from `PostForm.jsx` so administrators no longer need to manage tags on posts while safely preserving legacy tags on existing posts. Added Pin Duration controls with presets (`Indefinite`, `Until Due Date`, `24 Hours`, `3 Days`, `1 Week`, `2 Weeks`, and `Custom Date`) with live formatted expiration feedback. Added `pinned_until TIMESTAMPTZ` column to `supabase/schema.sql`, whitelisted in `api/admin.js`, and integrated with dynamic unpinning in `src/lib/api.js`. Added rearrangable links in `PostForm.jsx` with index badges (`01`, `02`), accessible `Move Up` / `Move Down` buttons, and HTML5 drag-and-drop reordering. Updated `PostTable.jsx` to render pin expiration badges, and added automated unit tests in `tests/unit/api.test.js` (38/38 passing).
 - [x] **T-109** — Remove publication date & time across student and admin views: Removed "Publication Date & Time" input field from `PostForm.jsx`, consolidating the row into a clean Due Date & Status pair. Removed `Posted: ...` timestamp from `PostTable.jsx` rows, `PostCard.jsx` feed cards, and `PostPage.jsx` detail header meta, keeping focus strictly on post badges, content, and deliverable deadlines. Verified with 38/38 passing unit tests and end-to-end browser subagent inspections.
+- [x] **T-110** — Student-Facing Past Events & Deliverables Archive Page (`/archive`): Built dedicated full-page archive explorer for students to discover, search (`Ctrl + K`), filter (by content type and subject), and sort (Recent, Oldest, Due Date, A → Z) past events, expired deadlines, and completed assignments. Leveraged existing public RLS policy (`status IN ('published', 'archived')`) requiring zero backend schema adjustments. Created `useArchivePosts` custom hook with client-side sorting algorithms, `ArchiveSortBar` component with active styling and result count, `ArchivePage` full view, `/archive` lazy route in `App.jsx`, Archive icon navigation in `Header.jsx` with active route indicator, `ARCHIVE_SORT_OPTIONS` in `src/lib/constants.js`, and expanded archived demo fixtures in `src/lib/demoData.js`. Verified with 39/39 passing automated tests and browser UI verification.
 
 ---
 

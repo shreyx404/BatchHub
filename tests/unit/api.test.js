@@ -174,6 +174,15 @@ describe('Dual-Mode API & Data Layer (Demo Fallback Mode)', () => {
         assert.ok(matchesTitle || matchesContent, 'Search result must contain query in title or content');
       }
     });
+
+    it('should fetch archived posts when status: "archived" is specified', async () => {
+      const archivedPosts = await fetchPosts({ status: 'archived' });
+      assert.ok(Array.isArray(archivedPosts));
+      assert.ok(archivedPosts.length > 0, 'Should return archived posts from demo data');
+      for (const p of archivedPosts) {
+        assert.equal(p.status, 'archived');
+      }
+    });
   });
 
   describe('fetchUpcomingDeadlines', () => {

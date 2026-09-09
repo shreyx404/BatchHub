@@ -54,6 +54,14 @@ export const POST_STATUSES = {
   archived: { label: 'Archived', color: '#8888a0' },
 };
 
+/* ── Archive Sort Options ── */
+export const ARCHIVE_SORT_OPTIONS = [
+  { value: 'newest', label: 'Recent' },
+  { value: 'oldest', label: 'Oldest' },
+  { value: 'due-date', label: 'Due Date' },
+  { value: 'title-az', label: 'A → Z' },
+];
+
 /* ── App Info ── */
 export const APP_NAME = 'BatchHub';
 export const APP_TAGLINE = 'One organized place for everything your batch needs to know.';

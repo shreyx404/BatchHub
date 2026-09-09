@@ -1,11 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Search, X, Settings, CalendarClock } from 'lucide-react';
+import { Search, X, Settings, CalendarClock, Archive } from 'lucide-react';
 import { APP_NAME } from '../../lib/constants';
 
 export default function Header({ searchOpen, onToggleSearch, onSearchChange, searchValue }) {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
   const isCalendar = location.pathname === '/calendar';
+  const isArchive = location.pathname === '/archive';
 
   return (
     <header className="sticky top-0 z-50 glass-strong border-b border-[var(--color-border)] pt-safe">
@@ -70,6 +71,20 @@ export default function Header({ searchOpen, onToggleSearch, onSearchChange, sea
                 title="Academic Calendar"
               >
                 <CalendarClock size={18} />
+              </Link>
+
+              {/* Archive Button */}
+              <Link
+                to="/archive"
+                className={`p-2 min-h-[40px] min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors ${
+                  isArchive
+                    ? 'text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border-light)]'
+                    : 'text-[var(--color-text-dim)] hover:text-[var(--color-text-muted)]'
+                }`}
+                aria-label="Archive"
+                title="Archive"
+              >
+                <Archive size={18} />
               </Link>
             </>
           )}

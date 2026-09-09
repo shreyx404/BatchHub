@@ -1,7 +1,7 @@
 # BatchHub — Architecture Document
 
-> **Version:** 1.3  
-> **Last Updated:** 2026-08-31
+> **Version:** 1.4  
+> **Last Updated:** 2026-09-09
 
 ---
 
@@ -17,18 +17,22 @@
 │  │                       │    │  ┌────────────┐              │  │
 │  │  • HomePage           │    │  │ admin.js   │ ← Admin CRUD │  │
 │  │  • CalendarPage (Lazy)│    │  │            │   + Auth      │  │
-│  │  • PostPage (Lazy)    │    │  └────────────┘              │  │
-│  │  • AdminPage (Lazy)   │    │  ┌────────────┐              │  │
-│  │  • NotFoundPage (Lazy)│    │  │ calendar.js│ ← Calendar   │  │
-│  │                       │    │  └────────────┘   Deadlines  │  │
-│  │  Reads via anon key / ┼───►│  ┌────────────┐              │  │
-│  │  public endpoints     │    │  │ discord.js │ ← Webhook     │  │
-│  │                       │    │  │            │   + Sig       │  │
+│  │  • ArchivePage (Lazy) │    │  └────────────┘              │  │
+│  │  • PostPage (Lazy)    │    │  ┌────────────┐              │  │
+│  │  • AdminPage (Lazy)   │    │  │ calendar.js│ ← Calendar   │  │
+│  │  • NotFoundPage (Lazy)│    │  └────────────┘   Deadlines  │  │
+│  │                       │    │  ┌────────────┐              │  │
+│  │  Reads via anon key / ┼───►│  │ discord.js │ ← Webhook     │  │
+│  │  public endpoints     │    │  │            │   + Sig       │  │
 │  │                       │    │  └────────────┘   Verify     │  │
+│  │  Archived posts read  │    │                              │  │
+│  │  directly via RLS     │    │                              │  │
 │  └───────────────────────┘    └──────────┬───────────────────┘  │
 │                                          │                      │
 └──────────────────────────────────────────┼──────────────────────┘
-                                  ### 2.1 Student Reading Posts
+```
+
+### 2.1 Student Reading Posts
 
 ```
 Student Browser
@@ -47,6 +51,28 @@ Response → Client-side processing:
     • Dynamic unpinning (posts with expired pinned_until duration or overdue due_date lose is_pinned)
     • Re-sorting (pinned first, then by created_at)
     • Categorisation into sections (notices, pinned, deadline-sorted, general)
+```
+
+### 2.1a Student Reading Archived Posts (/archive)
+
+```
+Student Browser (/archive)
+    │
+    ▼
+React App (client - useArchivePosts)
+    │  Uses VITE_SUPABASE_ANON_KEY (fetchPosts({ status: 'archived', type, subjectId, search }))
+    ▼
+Supabase PostgREST API
+    │  RLS Policy: SELECT WHERE status IN ('published', 'archived')
+    ▼
+PostgreSQL (posts + subjects joined WHERE status = 'archived')
+    │
+    ▼
+Response → Client-side multi-criteria sorting:
+    • 'newest': updated_at DESC (most recently archived)
+    • 'oldest': updated_at ASC
+    • 'due-date': due_date DESC (most recent deliverables first)
+    • 'title-az': title ASC
 ```
 
 ### 2.2 Admin Authentication & Operations
@@ -155,6 +181,15 @@ Rendered on PostPage as high-contrast actionable link cards with external domain
     │   ├── <CalendarSidebar>      // Sticky selected date inspector (all posts combined & time-sorted) + upcoming 7 days queue
     │   └── <Footer>
     │
+    ├── <ArchivePage> (Lazy)       // "/archive" — Full-page past & archived events browser
+    │   ├── <Header>               // Sticky nav with active Archive link
+    │   ├── <SearchBar>            // Debounced text input (Ctrl+K shortcut)
+    │   ├── <FilterBar>            // Type + Subject pill buttons
+    │   ├── <ArchiveSortBar>       // Sort pills (Recent, Oldest, Due Date, A→Z) + result count indicator
+    │   ├── <PostGrid>             // Grid of matching archived posts (or EmptyState)
+    │   │   └── <PostCard> × N
+    │   └── <Footer>
+    │
     ├── <PostPage> (Lazy)          // "/post/:id" — Full post detail
     │   ├── <NavBar>               // Back navigation
     │   ├── <Badge> × N            // Type + Subject badges
@@ -187,6 +222,7 @@ BatchHub uses **local component state + custom hooks** — no global state libra
 | `usePosts(filters)` | `hooks/usePosts.js` | Fetches published posts with filters; provides `posts`, `loading`, `error`, `refetch` |
 | `useUpcomingDeadlines()` | `hooks/usePosts.js` | Fetches posts with future `due_date`, sorted ascending |
 | `useCalendarPosts(year, month, options)` | `hooks/useCalendar.js` | Fetches posts with `due_date` falling within the month for calendar grid views (supports `includeDrafts` and `status` options) |
+| `useArchivePosts(filters, sortBy)` | `hooks/useArchivePosts.js` | Fetches archived deliverables (`status='archived'`) with client-side sorting (newest, oldest, due-date, title-az) |
 | `usePost(id)` | `hooks/usePost.js` | Fetches a single post by UUID |
 | `useSubjects()` | `hooks/useSubjects.js` | Fetches all subjects sorted by name |
 | `useAdmin()` | `hooks/useAdmin.js` | Manages auth state: `isAuthenticated`, `login()`, `logout()` with instant demo bypass |

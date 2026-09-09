@@ -1,7 +1,7 @@
 # BatchHub — Technology Stack
 
-> **Version:** 1.5  
-> **Last Updated:** 2026-09-06
+> **Version:** 1.6  
+> **Last Updated:** 2026-09-09
 
 ---
 
@@ -17,7 +17,7 @@ BatchHub is built with a modern JAMstack architecture: a React SPA frontend host
 |------------|---------|---------|------------|
 | **React** | 19.1 | UI component library | Industry standard, large ecosystem, hooks-based architecture |
 | **Vite** | 6.3 | Build tool & dev server | Instant HMR, fast builds, native ES modules support |
-| **React Router** | 7.6 | Client-side routing | SPA navigation with `lazy()` route splitting and Suspense fallback |
+| **React Router** | 7.6 | Client-side routing | SPA navigation with `lazy()` route splitting and Suspense fallback (`/`, `/calendar`, `/archive`, `/post/:id`, `/admin/*`) |
 | **Tailwind CSS** | 4.1 | Utility-first CSS framework | Rapid styling with custom design tokens via `@theme` directive |
 | **Lucide React** | 0.511 | Icon library | Consistent, tree-shakeable SVG icons |
 | **React Markdown** | 10.1 | Markdown rendering | Safe rendering of user-authored content with element filtering |
@@ -147,7 +147,7 @@ BatchHub is built with a modern JAMstack architecture: a React SPA frontend host
 | **Discord webhook** | Ed25519 signature verification via `tweetnacl` |
 | **File uploads** | UUID-prefixed filenames, character sanitisation |
 | **HTTP headers** | CSP (including Cloudflare Turnstile), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy` |
-| **Database access** | Row Level Security: anon = read published only; service role = full access |
+| **Database access** | Row Level Security: anon = read published & archived posts; service role = full access |
 
 ---
 

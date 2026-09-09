@@ -1,7 +1,7 @@
 # BatchHub — AI Agent Guidelines
 
-> **Version:** 1.5  
-> **Last Updated:** 2026-09-06
+> **Version:** 1.6  
+> **Last Updated:** 2026-09-09
 
 This file provides context and rules for AI coding agents working on the BatchHub codebase.
 
@@ -27,7 +27,7 @@ src/
 ├── lib/
 │   ├── supabase.js       # Supabase client init (returns null if not configured)
 │   ├── api.js            # ALL data fetching — dual-mode (Supabase + demo fallback)
-│   ├── constants.js      # Content types, statuses, app metadata
+│   ├── constants.js      # Content types, statuses, app metadata, sort options
 │   ├── demoData.js       # In-memory mock data for demo mode
 │   └── fingerprint.js    # Client device fingerprinting (hardware & canvas hashing)
 ├── hooks/
@@ -35,16 +35,18 @@ src/
 │   ├── usePost.js        # usePost(id)
 │   ├── useSubjects.js    # useSubjects()
 │   ├── useCalendar.js    # useCalendarPosts(year, month)
+│   ├── useArchivePosts.js# useArchivePosts(filters, sortBy) — archived post query & multi-sort
 │   └── useAdmin.js       # useAdmin() — auth state + login/logout + 24h lockout (instant demo bypass)
 ├── components/
 │   ├── layout/           # Header, Footer
-│   ├── ui/               # Badge, SearchBar, FilterBar, Modal, LoadingState, ErrorState, EmptyState
+│   ├── ui/               # Badge, SearchBar, FilterBar, ArchiveSortBar, Modal, LoadingState, ErrorState, EmptyState
 │   ├── posts/            # PostCard, PostGrid, DeadlineBanner, PinnedSection, NoticesSection
 │   ├── calendar/         # CalendarGrid, CalendarWeekView, CalendarAgendaView, CalendarSidebar, CalendarControls
 │   └── admin/            # AdminLogin, AdminSidebar, PostForm, PostTable, SubjectManager, AdminCalendar
 └── pages/
     ├── HomePage.jsx      # Student feed with structured sections
     ├── CalendarPage.jsx  # Full-page deadlines calendar (Month, Week, Agenda) with sidebar inspector
+    ├── ArchivePage.jsx   # Full-page past & archived events browser with search, filters & sorting
     ├── PostPage.jsx      # Full post detail view
     ├── AdminPage.jsx     # Admin dashboard with nested routes & live student preview
     └── NotFoundPage.jsx  # 404 page
