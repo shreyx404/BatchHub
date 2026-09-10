@@ -222,5 +222,47 @@ describe('Admin Serverless API (/api/admin) — Security & Rate Limiting Tests',
       assert.equal(result.statusCode, 400);
       assert.match(result.responseData?.error, /Unknown action/i);
     });
+
+    it('should reject getSetting with disallowed setting key', async () => {
+      const { req, res } = createMockReqRes({
+        ip: '10.0.1.3',
+        headers: { authorization: `Bearer ${TEST_ADMIN_PASSWORD}` },
+        body: { action: 'getSetting', payload: { key: 'secret_internal_key' } },
+      });
+      await adminHandler(req, res);
+      const result = res._getResult();
+
+      assert.equal(result.statusCode, 400);
+      assert.match(result.responseData?.error, /Invalid or disallowed setting key/i);
+    });
+
+    it('should reject updateSetting with disallowed setting key', async () => {
+      const { req, res } = createMockReqRes({
+        ip: '10.0.1.4',
+        headers: { authorization: `Bearer ${TEST_ADMIN_PASSWORD}` },
+        body: { action: 'updateSetting', payload: { key: 'disallowed_key', value: 'http://test.com' } },
+      });
+      await adminHandler(req, res);
+      const result = res._getResult();
+
+      assert.equal(result.statusCode, 400);
+      assert.match(result.responseData?.error, /Invalid or disallowed setting key/i);
+    });
+
+    it('should reject updateSetting for college_material_url if not http/https URL', async () => {
+      const { req, res } = createMockReqRes({
+        ip: '10.0.1.5',
+        headers: { authorization: `Bearer ${TEST_ADMIN_PASSWORD}` },
+        body: { action: 'updateSetting', payload: { key: 'college_material_url', value: 'javascript:alert(1)' } },
+      });
+      await adminHandler(req, res);
+      const result = res._getResult();
+
+      assert.equal(result.statusCode, 400);
+      assert.match(result.responseData?.error, /URL must begin with http:\/\/ or https:\/\//i);
+    });
   });
 });
+
+
+

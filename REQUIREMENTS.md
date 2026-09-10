@@ -1,7 +1,7 @@
 # BatchHub — Requirements Specification
 
-> **Version:** 1.6  
-> **Last Updated:** 2026-09-09
+> **Version:** 1.7  
+> **Last Updated:** 2026-09-10
 
 ---
 
@@ -25,6 +25,8 @@
 | FR-010 | Display post count next to section headings | P2 | ✅ Implemented |
 | FR-010i | Continuous ledger timeline layout in `PostGrid` (`gap-0`) with seamless borders and diamond node markers | P1 | ✅ Implemented |
 | FR-010j | Dark / Light theme toggle with anti-flash script in `index.html`, `localStorage` persistence, system preference listener, and sharp `<ThemeToggle />` button in header, admin bar, and login screen | P0 | ✅ Implemented |
+| FR-010k | Prominent College Study Material navigation button in top header located between Archive and Theme toggle, redirecting students directly to the batch's centralized Google Drive folder in a new tab (`target="_blank" rel="noopener noreferrer"`) | P0 | ✅ Implemented |
+
 
 ### 1.1a Past Events & Deliverables Archive (Student View)
 
@@ -97,7 +99,15 @@
 | FR-040 | Edit existing subjects | P0 | ✅ Implemented |
 | FR-041 | Delete subjects (associated posts get `subject_id = NULL` via `ON DELETE SET NULL`) | P0 | ✅ Implemented |
 
+### 1.6a App Settings & System Configuration (Admin)
+
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| FR-041n | Dedicated Admin Settings section at `/admin/settings` accessible from sidebar navigation and dashboard quick actions to manage global batch configurations | P0 | ✅ Implemented |
+| FR-041o | Allow administrators to view, test ("Test Link"), reset to default, and update the College Study Material URL with strict HTTP/HTTPS validation and real-time cross-component synchronization | P0 | ✅ Implemented |
+
 ### 1.7 Academic Deadlines Calendar View
+
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|

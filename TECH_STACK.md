@@ -1,7 +1,7 @@
 # BatchHub — Technology Stack
 
-> **Version:** 1.8  
-> **Last Updated:** 2026-09-09
+> **Version:** 1.9  
+> **Last Updated:** 2026-09-10
 
 ---
 
@@ -37,7 +37,9 @@ BatchHub is built with a modern JAMstack architecture: a React SPA frontend host
 | **Supabase** | Managed PostgreSQL + Auth + Realtime | Zero server management; built-in RLS, RESTful API |
 | **PostgreSQL** | Relational database | Strong typing, array columns (`TEXT[]`), JSONB support (`links`), full-text search (GIN indexes), triggers |
 | **Supabase JS Client** | 2.49 | Official SDK for both client (anon key) and server (service role key) access |
+| **app_settings** | Database Table | Persistent key-value store for global batch configurations (College Material Google Drive URL) |
 | **admin_login_attempts** | Database Table | Persistent site-wide login attempt logging for 24-hour rate limiting & audit |
+
 
 ---
 

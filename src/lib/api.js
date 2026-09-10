@@ -1,5 +1,7 @@
 import { supabase, isSupabaseConfigured } from './supabase.js';
-import { DEMO_POSTS, DEMO_SUBJECTS } from './demoData.js';
+import { DEMO_POSTS, DEMO_SUBJECTS, DEMO_SETTINGS } from './demoData.js';
+import { DEFAULT_COLLEGE_MATERIAL_URL, SETTING_KEYS } from './constants.js';
+
 
 async function adminRequest(action, payload) {
   const token = sessionStorage.getItem('batchhub_admin_token');
@@ -365,8 +367,50 @@ export async function deleteSubject(id) {
 }
 
 /* ============================================================
+   App Settings API
+   ============================================================ */
+
+export async function fetchSetting(key, defaultValue = null) {
+  if (!isSupabaseConfigured()) {
+    return DEMO_SETTINGS[key] ?? defaultValue;
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('app_settings')
+      .select('value')
+      .eq('key', key)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data?.value ?? defaultValue;
+  } catch (err) {
+    console.error(`Failed to fetch setting "${key}":`, err);
+    return defaultValue;
+  }
+}
+
+export async function updateSetting(key, value) {
+  if (!isSupabaseConfigured()) {
+    DEMO_SETTINGS[key] = value;
+    return { key, value, updated_at: new Date().toISOString() };
+  }
+
+  return await adminRequest('updateSetting', { key, value });
+}
+
+export async function fetchCollegeMaterialUrl() {
+  return await fetchSetting(SETTING_KEYS.COLLEGE_MATERIAL_URL, DEFAULT_COLLEGE_MATERIAL_URL);
+}
+
+export async function updateCollegeMaterialUrl(url) {
+  return await updateSetting(SETTING_KEYS.COLLEGE_MATERIAL_URL, url);
+}
+
+/* ============================================================
    Helpers
    ============================================================ */
+
 
 function filterDemoPosts({ type, subjectId, search, status }) {
   let filtered = DEMO_POSTS.filter((p) => p.status === status);

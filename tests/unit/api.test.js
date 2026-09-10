@@ -13,9 +13,15 @@ import {
   fetchSubjects,
   createSubject,
   updateSubject,
-  deleteSubject
+  deleteSubject,
+  fetchCollegeMaterialUrl,
+  updateCollegeMaterialUrl,
+  fetchSetting,
+  updateSetting,
 } from '../../src/lib/api.js';
-import { DEMO_POSTS, DEMO_SUBJECTS } from '../../src/lib/demoData.js';
+import { DEMO_POSTS, DEMO_SUBJECTS, DEMO_SETTINGS } from '../../src/lib/demoData.js';
+import { DEFAULT_COLLEGE_MATERIAL_URL } from '../../src/lib/constants.js';
+
 
 describe('Dual-Mode API & Data Layer (Demo Fallback Mode)', () => {
   // Snapshot initial demo data length to avoid cross-test pollution
@@ -376,4 +382,35 @@ describe('Dual-Mode API & Data Layer (Demo Fallback Mode)', () => {
       assert.ok(!subjectsAfterDelete.some(s => s.id === createdSubjectId));
     });
   });
+
+  describe('App Settings & College Material URL', () => {
+    it('should return default college material URL when not explicitly set', async () => {
+      const url = await fetchCollegeMaterialUrl();
+      assert.equal(url, DEFAULT_COLLEGE_MATERIAL_URL);
+    });
+
+    it('should update college material URL and persist in demo settings', async () => {
+      const newUrl = 'https://drive.google.com/drive/folders/test-updated-batch-drive';
+      await updateCollegeMaterialUrl(newUrl);
+
+      const fetchedUrl = await fetchCollegeMaterialUrl();
+      assert.equal(fetchedUrl, newUrl);
+
+      // Restore default
+      await updateCollegeMaterialUrl(DEFAULT_COLLEGE_MATERIAL_URL);
+      const restoredUrl = await fetchCollegeMaterialUrl();
+      assert.equal(restoredUrl, DEFAULT_COLLEGE_MATERIAL_URL);
+    });
+
+    it('should support generic fetchSetting and updateSetting', async () => {
+      const defaultValue = 'fallback_val';
+      const fetched = await fetchSetting('non_existent_key', defaultValue);
+      assert.equal(fetched, defaultValue);
+
+      await updateSetting('custom_test_key', 'custom_value');
+      const updatedFetched = await fetchSetting('custom_test_key');
+      assert.equal(updatedFetched, 'custom_value');
+    });
+  });
 });
+

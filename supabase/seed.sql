@@ -101,3 +101,11 @@ INSERT INTO posts (title, content, type, subject_id, is_pinned, status, due_date
   ARRAY['normalization', 'graded'],
   '[]'
 );
+
+-- ============================================================
+-- APP SETTINGS SEED
+-- ============================================================
+INSERT INTO app_settings (key, value) VALUES
+  ('college_material_url', 'https://drive.google.com/drive/folders/1MukhwWiRG7CTsOmi2a__buSqKY_HcQXy?usp=drive_link')
+ON CONFLICT (key) DO NOTHING;
+

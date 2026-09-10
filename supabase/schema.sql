@@ -131,3 +131,20 @@ ALTER TABLE admin_login_attempts ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Service role full access login_attempts" ON admin_login_attempts
   FOR ALL USING (auth.role() = 'service_role');
+
+-- ============================================================
+-- APP SETTINGS TABLE (Key-Value Config)
+-- Stores customizable global links and configurations
+-- ============================================================
+CREATE TABLE IF NOT EXISTS app_settings (
+  key        TEXT PRIMARY KEY,
+  value      TEXT NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- RLS: Public read (anon can SELECT), Service role full access
+ALTER TABLE app_settings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public read app_settings"  ON app_settings  FOR SELECT USING (true);
+CREATE POLICY "Service role full access app_settings" ON app_settings FOR ALL USING (auth.role() = 'service_role');
+

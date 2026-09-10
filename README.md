@@ -7,6 +7,7 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 ## Features
 
 ### Students
+- 📁 **College Study Material Drive Button:** Permanent navigation button in the top header located between Archive and Theme toggle, redirecting students directly to the batch's centralized Google Drive folder for semester materials, notes, syllabus, and study resources in a new tab
 - 🌗 **Dark / Light Theme Toggle:** Seamless dual-theme support switching between Editorial Elevated Dark gallery mode (`#050505`) and pristine Editorial Paper Light mode (`#F8F7F4`), featuring zero-flicker startup anti-flash script, system scheme detection, and persistent state
 - 📰 **Editorial Elevated Design:** Dark editorial aesthetic with 5-tier surface elevation ladder (`#000000` to `#141414`), warm amber accents (`#D4A574` / `#A86A24`), oversized Playfair Display hero with live stats counter, section dividers with diamond markers (`◇`), and film grain texture overlay
 - ⏱️ **Typographic Countdown Cards:** Live-ticking `DD:HH:MM` numeric blocks in the upcoming deadlines banner with count-pulse animations and urgent diamond glows
@@ -28,6 +29,7 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 ### Admin (BR)
 - 🔐 Password-protected admin dashboard backed by a secure Serverless API
 - 🛡️ 4-Tier Security Fortress: Cloudflare Turnstile bot verification, Device Fingerprinting, 10-attempt 24-hour lockout, and 30/day global rate limiting
+- ⚙️ **App Settings & Material Link Manager:** Dedicated `/admin/settings` management view to configure, test in a new tab, reset to default, and update the global College Study Material URL with instant real-time sync across all mounted headers
 - 👁️ Live "Student View" preview embedded directly inside the Admin Dashboard overview
 - 🗓️ Integrated multi-mode Admin Calendar view (`/admin/calendar`) with status filters (All, Upcoming, Past Due, Archived, Drafts), quick New Deadline action, and direct edit shortcuts
 - ✏️ Create, edit, publish, archive, and 1-click restore posts with timezone-safe date picking
@@ -37,6 +39,7 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 - 🔗 Add and rearrange labeled resource links & attachments (drag-and-drop handles & Move Up/Down buttons)
 - ⏱️ Configure pin duration presets (Indefinite, Until Due Date, 24 Hours, 3 Days, 1 Week, 2 Weeks, Custom Date) with dynamic unpinning
 - 🤖 Discord Bot Integration: Use slash commands to post instantly from Discord
+
 
 ## Content Types
 

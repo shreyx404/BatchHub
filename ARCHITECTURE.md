@@ -150,6 +150,24 @@ Payload stored in posts.links (JSONB: [{ label, url }])
 Rendered on PostPage as high-contrast actionable link cards with external domain icons
 ```
 
+### 2.5 College Study Material Link Flow
+
+```
+Student clicks College Study Material icon (between Archive & Theme toggle in Header)
+    │
+    ▼
+Reads active URL from useCollegeMaterial() hook (defaulting to batch Google Drive folder)
+    │
+    ▼
+Opens centralized Google Drive / vault directly in a secure new tab (target="_blank" rel="noopener noreferrer")
+    │
+    ▲ (Dynamic admin update)
+Admin changes URL in /admin/settings → api/admin updateSetting → Supabase app_settings table
+    │
+    ▼
+Cross-component event sync (batchhub_material_url_changed) immediately updates mounted Header
+```
+
 ---
 
 ## 3. Frontend Architecture
@@ -160,7 +178,8 @@ Rendered on PostPage as high-contrast actionable link cards with external domain
 <BrowserRouter>
 └── <App>                          // Route definitions (lazy routes + Suspense fallback)
     ├── <HomePage>                 // "/" — Main student feed (Editorial Elevated)
-    │   ├── <Header>               // Sticky nav: logo, calendar nav link, archive nav link, search toggle, admin link
+    │   ├── <Header>               // Sticky nav: logo, calendar link, archive link, college material drive link, theme toggle, search toggle, admin link
+
     │   ├── Hero Section           // Oversized Playfair title, grain overlay, small-caps tagline, live stats counter
     │   ├── <SearchBar>            // Debounced text input (Ctrl+K shortcut)
     │   ├── <FilterBar>            // Type + Subject pill buttons
@@ -201,7 +220,7 @@ Rendered on PostPage as high-contrast actionable link cards with external domain
     │
     ├── <AdminPage> (Lazy)         // "/admin/*" — Protected dashboard
     │   ├── <AdminLogin>           // Password gate (Turnstile protected)
-    │   ├── <AdminSidebar>         // Navigation sidebar (Dashboard, Create, Posts, Subjects, Calendar)
+    │   ├── <AdminSidebar>         // Navigation sidebar (Dashboard, Create, Posts, Subjects, Calendar, Settings)
     │   └── Nested routes:
     │       ├── <AdminDashboard>   // "/admin" — Stats + quick actions + live Student View feed preview
     │       ├── <PostForm>         // "/admin/create" — New post
@@ -209,7 +228,8 @@ Rendered on PostPage as high-contrast actionable link cards with external domain
     │       │   └── <PostForm>
     │       ├── <PostTable>        // "/admin/posts" — All posts list (status filter, created/due date sort)
     │       ├── <SubjectManager>   // "/admin/subjects" — CRUD subjects
-    │       └── <AdminCalendar>    // "/admin/calendar" — Dedicated calendar view in admin (Month/Week/Agenda)
+    │       ├── <AdminCalendar>    // "/admin/calendar" — Dedicated calendar view in admin (Month/Week/Agenda)
+    │       └── <SettingsManager>  // "/admin/settings" — Configure global links (College Study Material Google Drive URL)
     │
     └── <NotFoundPage> (Lazy)      // "*" — 404
 ```
@@ -224,10 +244,12 @@ BatchHub uses **local component state + custom hooks** — no global state libra
 | `useUpcomingDeadlines()` | `hooks/usePosts.js` | Fetches posts with future `due_date`, sorted ascending |
 | `useCalendarPosts(year, month, options)` | `hooks/useCalendar.js` | Fetches posts with `due_date` falling within the month for calendar grid views (supports `includeDrafts` and `status` options) |
 | `useArchivePosts(filters, sortBy)` | `hooks/useArchivePosts.js` | Fetches archived deliverables (`status='archived'`) with client-side sorting (newest, oldest, due-date, title-az) |
+| `useCollegeMaterial()` | `hooks/useCollegeMaterial.js` | Provides active College Study Material Drive URL with module cache & real-time sync |
 | `usePost(id)` | `hooks/usePost.js` | Fetches a single post by UUID |
 | `useSubjects()` | `hooks/useSubjects.js` | Fetches all subjects sorted by name |
 | `useAdmin()` | `hooks/useAdmin.js` | Manages auth state: `isAuthenticated`, `login()`, `logout()` with instant demo bypass |
 | `useTheme()` | `context/ThemeContext.jsx` | Manages theme state (`dark`, `light`, `system`), persistence in `localStorage`, and DOM attribute syncing |
+
 
 ### 3.3 API Layer (`lib/api.js`)
 
@@ -273,6 +295,8 @@ The admin endpoint uses a single `POST` with an `action` field to route requests
 | `updateSubject` | `{id, updates}` | Update + return |
 | `deleteSubject` | `{id}` | Delete row |
 | `autoArchiveExpired` | _(none)_ | Archive published posts with `due_date` > 24h past |
+| `getSetting` | `{key}` | Select global app setting from `app_settings` |
+| `updateSetting` | `{key, value}` | Upsert validated setting into `app_settings` |
 
 ### 4.3 Security Layers
  
@@ -318,9 +342,15 @@ subjects (1) ──────────< (N) posts
                               │ created_at
                               │ updated_at (trigger)
 
+app_settings (standalone key-value store)
+    │ key (PK, TEXT)
+    │ value (TEXT)
+    │ updated_at (TIMESTAMPTZ)
+
 admin_login_attempts (standalone log table)
     │ id (PK, UUID)
     │ ip (TEXT)
+
     │ fingerprint (TEXT)
     │ success (BOOLEAN)
     │ attempted_at (TIMESTAMPTZ)

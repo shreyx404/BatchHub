@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { Routes, Route, useNavigate, useParams } from 'react-router-dom';
-import { Menu, FileText, BookOpen, Plus, TrendingUp, Eye, Archive } from 'lucide-react';
+import { Menu, FileText, BookOpen, Plus, TrendingUp, Eye, Archive, FolderOpen } from 'lucide-react';
 import ThemeToggle from '../components/ui/ThemeToggle';
 import AdminLogin from '../components/admin/AdminLogin';
 import AdminSidebar from '../components/admin/AdminSidebar';
@@ -9,6 +9,8 @@ import PostForm from '../components/admin/PostForm';
 import PostTable from '../components/admin/PostTable';
 import SubjectManager from '../components/admin/SubjectManager';
 import AdminCalendar from '../components/admin/AdminCalendar';
+import SettingsManager from '../components/admin/SettingsManager';
+
 import DeadlineBanner from '../components/posts/DeadlineBanner';
 import NoticesSection from '../components/posts/NoticesSection';
 import PinnedSection from '../components/posts/PinnedSection';
@@ -71,7 +73,9 @@ export default function AdminPage() {
             <Route path="/posts" element={<PostTable />} />
             <Route path="/subjects" element={<SubjectManager />} />
             <Route path="/calendar" element={<AdminCalendar />} />
+            <Route path="/settings" element={<SettingsManager />} />
           </Routes>
+
         </main>
       </div>
     </div>
@@ -197,7 +201,7 @@ function AdminDashboard() {
       </div>
 
       {/* Quick actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <QuickAction
           icon={Plus}
           label="Create New Post"
@@ -210,7 +214,14 @@ function AdminDashboard() {
           description="View, edit, or archive existing posts"
           onClick={() => navigate('/admin/posts')}
         />
+        <QuickAction
+          icon={FolderOpen}
+          label="College Material Link"
+          description="Update Google Drive study material link"
+          onClick={() => navigate('/admin/settings')}
+        />
       </div>
+
 
       {/* ── Student View Preview ── */}
       <div className="border border-[var(--color-border)] bg-[var(--color-bg)] overflow-hidden">

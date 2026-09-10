@@ -65,3 +65,11 @@ export const ARCHIVE_SORT_OPTIONS = [
 /* ── App Info ── */
 export const APP_NAME = 'BatchHub';
 export const APP_TAGLINE = 'One organized place for everything your batch needs to know.';
+
+/* ── App Settings & Material Links ── */
+export const DEFAULT_COLLEGE_MATERIAL_URL = 'https://drive.google.com/drive/folders/1MukhwWiRG7CTsOmi2a__buSqKY_HcQXy?usp=drive_link';
+
+export const SETTING_KEYS = {
+  COLLEGE_MATERIAL_URL: 'college_material_url',
+};
+

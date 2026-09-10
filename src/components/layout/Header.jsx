@@ -1,13 +1,16 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Search, X, Settings, CalendarClock, Archive } from 'lucide-react';
+import { Search, X, Settings, CalendarClock, Archive, FolderOpen } from 'lucide-react';
 import ThemeToggle from '../ui/ThemeToggle';
 import { APP_NAME } from '../../lib/constants';
+import { useCollegeMaterial } from '../../hooks/useCollegeMaterial';
 
 export default function Header({ searchOpen, onToggleSearch, onSearchChange, searchValue }) {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
   const isCalendar = location.pathname === '/calendar';
   const isArchive = location.pathname === '/archive';
+  const { materialUrl } = useCollegeMaterial();
+
 
   return (
     <header className="sticky top-0 z-50 glass-strong border-b border-[var(--color-border)] pt-safe">
@@ -87,8 +90,22 @@ export default function Header({ searchOpen, onToggleSearch, onSearchChange, sea
               >
                 <Archive size={18} />
               </Link>
+
+              {/* College Study Material Drive Link (between Archive & Theme Toggle) */}
+              <a
+                href={materialUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 min-h-[40px] min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors text-[var(--color-text-dim)] hover:text-[var(--color-text)]"
+                aria-label="College Study Material & Resources"
+                title="College Study Material (Google Drive)"
+              >
+                <FolderOpen size={18} />
+              </a>
+
               {/* Theme Toggle */}
               <ThemeToggle />
+
 
               {/* Admin Settings Button */}
               <Link

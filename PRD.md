@@ -1,7 +1,7 @@
 # BatchHub — Product Requirements Document (PRD)
 
-> **Version:** 1.6  
-> **Last Updated:** 2026-09-09  
+> **Version:** 1.7  
+> **Last Updated:** 2026-09-10  
 > **Status:** Living Document
 
 ---
@@ -54,6 +54,7 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 | F-08d | **Past Events & Deliverables Archive** | Dedicated full-page archive section (`/archive`) accessible via header navigation for browsing, searching (`Ctrl + K`), filtering (by content type and subject), and sorting (Recent, Oldest, Due Date, A → Z) past events, expired deadlines, and completed assignments. Synchronizes search, filter, and sort state with URL query parameters for direct sharing and back/forward navigation. |
 | F-08e | **Editorial Elevated Design System** | Dark editorial aesthetic upgraded with 5-tier surface elevation ladder (`#000000` to `#141414`), warm amber accent tokens (`#D4A574`) for subtle focal hierarchy and urgency, oversized Playfair Display hero with live batch statistics counter, typographic countdown cards (`DD:HH:MM`) with live ticking, Bento grid layouts in notices & pinned feeds, continuous ledger timeline (`gap-0`), section dividers with diamond markers, and historical styling for the archive page. |
 | F-08f | **Dark / Light Theme Toggle** | Dual-theme system featuring the baseline dark editorial aesthetic alongside a light editorial paper aesthetic (`#F8F7F4` linen background, `#FFFFFF` cards, `#181716` deep charcoal typography, `#A86A24` calibrated amber ink). Zero-flicker anti-flash startup script in `index.html`, `localStorage` persistence under `batchhub_theme`, dynamic OS preference listener, and sharp `<ThemeToggle />` controls with Sun/Moon animations in header navigation, admin dashboard, and login screen. |
+| F-08g | **College Study Material Header Button** | Permanent header navigation button located between **Archive** and the **Theme toggle**, redirecting students directly to the batch's centralized Google Drive repository for semester materials, notes, syllabus, and study resources in a new tab (`target="_blank" rel="noopener noreferrer"`). |
 
 ### 3.2 Admin Dashboard (Password-Protected)
 
@@ -66,6 +67,8 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 | F-13 | **Resource Links & Attachments** | Add and rearrange labeled resource links (Google Drive, Classroom, PDFs, GitHub) using drag-and-drop handles or 1-click Move Up / Move Down buttons |
 | F-14 | **Metadata & Pin Duration Management** | Pin duration presets (`Indefinite`, `Until Due Date`, `24 Hours`, `3 Days`, `1 Week`, `2 Weeks`, `Custom Date`) with live expiration preview, external links (label + URL pairs with sequence reordering), due dates, and status control (tag input omitted for streamlined publishing) |
 | F-14a | **Admin Calendar View** | Dedicated multi-mode calendar view in Admin Dashboard (`/admin/calendar`) accessible from sidebar navigation for inspecting batch deliverables in Month, Week, and Agenda modes, featuring status filters for matrix views (`All`, `Upcoming`, `Past Due`, `Archived`, `Drafts`), upcoming queue, and direct "Edit Post" shortcuts (with past/archived items excluded in Agenda mode) |
+| F-14b | **App Settings & Material Link Manager** | Dedicated admin settings view (`/admin/settings`) accessible from sidebar and dashboard quick actions to manage system configurations, test links in a new tab, reset to defaults, and update the global College Study Material URL with instant real-time sync across all mounted headers. |
+
 
 ### 3.3 Discord Bot Integration (Optional)
 

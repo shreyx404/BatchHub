@@ -277,4 +277,10 @@ const DEMO_POSTS = [
   },
 ];
 
-export { DEMO_SUBJECTS, DEMO_POSTS };
+const DEMO_SETTINGS = {
+  college_material_url: 'https://drive.google.com/drive/folders/1MukhwWiRG7CTsOmi2a__buSqKY_HcQXy?usp=drive_link',
+};
+
+export { DEMO_SUBJECTS, DEMO_POSTS, DEMO_SETTINGS };
+
+

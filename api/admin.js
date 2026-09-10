@@ -162,6 +162,7 @@ function timingSafeCompare(a, b) {
 // ── Payload validators (whitelist allowed fields) ──────────────
 const POST_FIELDS = ['title', 'content', 'type', 'subject_id', 'is_pinned', 'pinned_until', 'status', 'due_date', 'created_at', 'tags', 'links'];
 const SUBJECT_FIELDS = ['name', 'code', 'color'];
+const ALLOWED_SETTING_KEYS = ['college_material_url'];
 
 function pick(obj, fields) {
   if (!obj || typeof obj !== 'object') return {};
@@ -171,6 +172,7 @@ function pick(obj, fields) {
   }
   return result;
 }
+
 
 // ── CORS helper ────────────────────────────────────────────────
 function setCorsHeaders(req, res) {
@@ -314,15 +316,42 @@ export default async function handler(req, res) {
     'deleteSubject',
     'getCalendarDeadlines',
     'autoArchiveExpired',
+    'getSetting',
+    'updateSetting',
   ];
 
   if (!VALID_ACTIONS.includes(action)) {
     return res.status(400).json({ error: 'Unknown action.' });
   }
 
+  // Early validation of action payloads
+  if (action === 'getSetting') {
+    const key = payload?.key;
+    if (!key || !ALLOWED_SETTING_KEYS.includes(key)) {
+      return res.status(400).json({ error: 'Invalid or disallowed setting key.' });
+    }
+  }
+
+  if (action === 'updateSetting') {
+    const { key, value } = payload || {};
+    if (!key || !ALLOWED_SETTING_KEYS.includes(key)) {
+      return res.status(400).json({ error: 'Invalid or disallowed setting key.' });
+    }
+    if (typeof value !== 'string') {
+      return res.status(400).json({ error: 'Setting value must be a string.' });
+    }
+    const trimmed = value.trim();
+    if (key === 'college_material_url') {
+      if (!/^https?:\/\//i.test(trimmed)) {
+        return res.status(400).json({ error: 'URL must begin with http:// or https://' });
+      }
+    }
+  }
+
   if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
     return res.status(500).json({ error: 'Server missing Supabase keys.' });
   }
+
 
   if (!supabase) {
     supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
@@ -403,9 +432,43 @@ export default async function handler(req, res) {
           .select('id, title');
         break;
       }
+      case 'getSetting': {
+        const key = payload?.key;
+        if (!key || !ALLOWED_SETTING_KEYS.includes(key)) {
+          return res.status(400).json({ error: 'Invalid or disallowed setting key.' });
+        }
+        result = await supabase
+          .from('app_settings')
+          .select('*')
+          .eq('key', key)
+          .maybeSingle();
+        break;
+      }
+      case 'updateSetting': {
+        const { key, value } = payload || {};
+        if (!key || !ALLOWED_SETTING_KEYS.includes(key)) {
+          return res.status(400).json({ error: 'Invalid or disallowed setting key.' });
+        }
+        if (typeof value !== 'string') {
+          return res.status(400).json({ error: 'Setting value must be a string.' });
+        }
+        const trimmed = value.trim();
+        if (key === 'college_material_url') {
+          if (!/^https?:\/\//i.test(trimmed)) {
+            return res.status(400).json({ error: 'URL must begin with http:// or https://' });
+          }
+        }
+        result = await supabase
+          .from('app_settings')
+          .upsert({ key, value: trimmed, updated_at: new Date().toISOString() }, { onConflict: 'key' })
+          .select()
+          .single();
+        break;
+      }
       default:
         return res.status(400).json({ error: 'Unknown action.' });
     }
+
 
     if (result.error) {
       throw result.error;

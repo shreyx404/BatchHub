@@ -1,7 +1,7 @@
 # BatchHub — AI Agent Guidelines
 
-> **Version:** 1.8  
-> **Last Updated:** 2026-09-09
+> **Version:** 1.9  
+> **Last Updated:** 2026-09-10
 
 This file provides context and rules for AI coding agents working on the BatchHub codebase.
 
@@ -29,8 +29,8 @@ src/
 ├── lib/
 │   ├── supabase.js       # Supabase client init (returns null if not configured)
 │   ├── api.js            # ALL data fetching — dual-mode (Supabase + demo fallback)
-│   ├── constants.js      # Content types, statuses, app metadata, sort options
-│   ├── demoData.js       # In-memory mock data for demo mode
+│   ├── constants.js      # Content types, statuses, app metadata, sort options, default material URL
+│   ├── demoData.js       # In-memory mock data & settings for demo mode
 │   └── fingerprint.js    # Client device fingerprinting (hardware & canvas hashing)
 ├── hooks/
 │   ├── usePosts.js       # usePosts(filters), useUpcomingDeadlines()
@@ -38,13 +38,14 @@ src/
 │   ├── useSubjects.js    # useSubjects()
 │   ├── useCalendar.js    # useCalendarPosts(year, month)
 │   ├── useArchivePosts.js# useArchivePosts(filters, sortBy) — archived post query & multi-sort
+│   ├── useCollegeMaterial.js# useCollegeMaterial() — reactive college study material URL state & sync
 │   └── useAdmin.js       # useAdmin() — auth state + login/logout + 24h lockout (instant demo bypass)
 ├── components/
 │   ├── layout/           # Header, Footer
 │   ├── ui/               # Badge, SearchBar, FilterBar, ArchiveSortBar, ThemeToggle, Modal, LoadingState, ErrorState, EmptyState
 │   ├── posts/            # PostCard, PostGrid, DeadlineBanner, PinnedSection, NoticesSection
 │   ├── calendar/         # CalendarGrid, CalendarWeekView, CalendarAgendaView, CalendarSidebar, CalendarControls
-│   └── admin/            # AdminLogin, AdminSidebar, PostForm, PostTable, SubjectManager, AdminCalendar
+│   └── admin/            # AdminLogin, AdminSidebar, PostForm, PostTable, SubjectManager, AdminCalendar, SettingsManager
 └── pages/
     ├── HomePage.jsx      # Student feed with structured sections
     ├── CalendarPage.jsx  # Full-page deadlines calendar (Month, Week, Agenda) with sidebar inspector

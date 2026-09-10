@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, FilePlus, FileText, BookOpen,
-  CalendarClock, LogOut, X
+  CalendarClock, SlidersHorizontal, LogOut, X
 } from 'lucide-react';
 import { APP_NAME } from '../../lib/constants';
 
@@ -12,7 +12,9 @@ const NAV_ITEMS = [
   { to: '/admin/posts', icon: FileText, label: 'All Posts' },
   { to: '/admin/subjects', icon: BookOpen, label: 'Subjects' },
   { to: '/admin/calendar', icon: CalendarClock, label: 'Calendar' },
+  { to: '/admin/settings', icon: SlidersHorizontal, label: 'Settings' },
 ];
+
 
 export default function AdminSidebar({ isOpen, onClose, onLogout }) {
   useEffect(() => {
