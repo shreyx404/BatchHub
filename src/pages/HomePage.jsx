@@ -43,7 +43,6 @@ export default function HomePage() {
   const initialSubject = searchParams.get('subject') || null;
   const initialQuery = searchParams.get('q') || '';
 
-  const [searchOpen, setSearchOpen] = useState(Boolean(initialQuery));
   const [search, setSearch] = useState(initialQuery);
   const [debouncedSearch, setDebouncedSearch] = useState(initialQuery);
   const [selectedType, setSelectedType] = useState(initialType);
@@ -153,17 +152,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-dvh flex flex-col bg-[var(--color-bg)]">
-      <Header
-        searchOpen={searchOpen}
-        onToggleSearch={() => {
-          setSearchOpen(!searchOpen);
-          if (searchOpen) {
-            handleSearch('');
-          }
-        }}
-        searchValue={search}
-        onSearchChange={handleSearch}
-      />
+      <Header />
 
       <main className="flex-1 mx-auto w-full max-w-6xl px-4 sm:px-5 py-4 sm:py-6">
         {/* ── Hero Section — Editorial Elevated ── */}

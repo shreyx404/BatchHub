@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useMemo, useRef, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
 import { format, startOfWeek, endOfWeek, isSameMonth, isSameYear } from 'date-fns';
 
 function formatWeekRange(date) {
@@ -30,7 +30,46 @@ export default function CalendarControls({
   statusFilter = 'all',
   onStatusFilterChange,
   statusCounts = {},
+  search = '',
+  onSearchChange,
+  searchOpen = false,
+  onToggleSearch,
 }) {
+  const searchInputRef = useRef(null);
+
+  // Auto-focus input when search is opened
+  useEffect(() => {
+    if (searchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [searchOpen]);
+
+  // Keyboard shortcut: Ctrl+K or Cmd+K opens/focuses search, Esc clears or closes
+  useEffect(() => {
+    if (!onSearchChange) return;
+
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        if (!searchOpen && onToggleSearch) {
+          onToggleSearch();
+        }
+        setTimeout(() => {
+          searchInputRef.current?.focus();
+        }, 30);
+      } else if (e.key === 'Escape' && (searchOpen || search)) {
+        if (search) {
+          onSearchChange('');
+        } else if (onToggleSearch) {
+          onToggleSearch();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [searchOpen, search, onSearchChange, onToggleSearch]);
+
   // Label for date navigator depending on active view mode
   const dateLabel = useMemo(() => {
     if (!currentDate) return '';
@@ -66,14 +105,35 @@ export default function CalendarControls({
           </button>
         </div>
 
-        {/* Action Group: TODAY + View Mode Switcher */}
-        <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
+        {/* Action Group: TODAY + SEARCH + View Mode Switcher */}
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
           <button
             onClick={onToday}
             className="px-3.5 py-2 min-h-[38px] text-[11px] sm:text-[var(--text-xs)] font-mono bg-[var(--color-surface-3)] border border-[var(--color-border-light)] text-[var(--color-text)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface)] transition-colors"
           >
             TODAY
           </button>
+
+          {/* Search Button / Option */}
+          {onSearchChange && (
+            <button
+              type="button"
+              onClick={onToggleSearch}
+              className={`px-3 py-2 min-h-[38px] text-[11px] sm:text-[var(--text-xs)] font-mono flex items-center gap-1.5 transition-colors border ${
+                searchOpen || search
+                  ? 'bg-[var(--color-surface-3)] border-[var(--color-amber)] text-[var(--color-amber)] font-bold'
+                  : 'bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)]'
+              }`}
+              aria-label={searchOpen ? 'Close search' : 'Search deadlines'}
+              title="Search deadlines (Ctrl + K)"
+            >
+              <Search size={13} />
+              <span>SEARCH</span>
+              {search && (
+                <span className="w-1.5 h-1.5 bg-[var(--color-amber)] ml-0.5" />
+              )}
+            </button>
+          )}
 
           {/* View Mode Toggle: [ MONTH | WEEK | AGENDA ] */}
           <div className="flex items-center bg-[var(--color-surface)] border border-[var(--color-border)] divide-x divide-[var(--color-border)] grow sm:grow-0 justify-center">
@@ -110,6 +170,58 @@ export default function CalendarControls({
           </div>
         </div>
       </div>
+
+      {/* Expandable Search Bar */}
+      {onSearchChange && (searchOpen || search) && (
+        <div className="flex items-center gap-2 animate-fade-in pt-0.5 pb-0.5">
+          <div className="relative flex-1 group">
+            <Search
+              size={14}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-text-dim)] group-focus-within:text-[var(--color-amber)] transition-colors"
+            />
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={search}
+              onChange={(e) => onSearchChange(e.target.value)}
+              placeholder="Search deadlines, subjects, or tags... (Ctrl + K / Esc)"
+              className="w-full h-10 pl-9 pr-24 bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--text-xs)] sm:text-[var(--text-sm)] text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] focus:outline-none focus:border-[var(--color-amber)] transition-colors tracking-[0.005em]"
+            />
+            {search ? (
+              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+                <span className="text-[10px] font-mono text-[var(--color-amber)] bg-[var(--color-surface-2)] border border-[var(--color-border)] px-1.5 py-0.5">
+                  {totalPosts} {totalPosts === 1 ? 'match' : 'matches'}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => onSearchChange('')}
+                  className="p-1 min-h-[24px] min-w-[24px] flex items-center justify-center text-[var(--color-text-dim)] hover:text-[var(--color-text)] transition-colors"
+                  aria-label="Clear search input"
+                  title="Clear search"
+                >
+                  <X size={13} />
+                </button>
+              </div>
+            ) : (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none hidden sm:flex items-center gap-0.5 text-[10px] font-mono text-[var(--color-text-dim)] bg-[var(--color-surface-2)] border border-[var(--color-border)] px-1.5 py-0.5">
+                <span>Ctrl</span>
+                <span>K</span>
+              </div>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              onSearchChange('');
+              if (onToggleSearch) onToggleSearch();
+            }}
+            className="px-3 py-2 min-h-[40px] text-[10.5px] font-mono uppercase bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-3)] transition-colors shrink-0"
+            title="Close search"
+          >
+            Close
+          </button>
+        </div>
+      )}
 
       {/* Optional Status Filters for Admin / Detailed View */}
       {showStatusFilters && onStatusFilterChange && (

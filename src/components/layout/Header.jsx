@@ -1,10 +1,10 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Search, X, Settings, CalendarClock, Archive, FolderOpen } from 'lucide-react';
+import { Settings, CalendarClock, Archive, FolderOpen } from 'lucide-react';
 import ThemeToggle from '../ui/ThemeToggle';
 import { APP_NAME } from '../../lib/constants';
 import { useCollegeMaterial } from '../../hooks/useCollegeMaterial';
 
-export default function Header({ searchOpen, onToggleSearch, onSearchChange, searchValue }) {
+export default function Header() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
   const isCalendar = location.pathname === '/calendar';
@@ -29,41 +29,11 @@ export default function Header({ searchOpen, onToggleSearch, onSearchChange, sea
           </span>
         </Link>
 
-        {/* Right actions: Search | Calendar | Gear */}
+        {/* Right actions: Calendar | Archive | Material | Theme | Gear */}
         <div className="flex items-center gap-1 sm:gap-1.5">
           {!isAdmin && (
             <>
-              {searchOpen ? (
-                <div className="flex items-center gap-1.5 animate-fade-in">
-                  <input
-                    id="header-search"
-                    type="text"
-                    value={searchValue}
-                    onChange={(e) => onSearchChange(e.target.value)}
-                    placeholder="Search updates..."
-                    autoFocus
-                    className="w-32 xs:w-44 sm:w-60 h-9 px-2.5 sm:px-3 bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--text-xs)] sm:text-[var(--text-sm)] text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] focus:outline-none focus:border-[var(--color-border-light)] transition-colors tracking-[0.005em]"
-                  />
-                  <button
-                    onClick={onToggleSearch}
-                    className="p-2 min-h-[38px] min-w-[38px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors text-[var(--color-text-muted)]"
-                    aria-label="Close search"
-                  >
-                    <X size={18} />
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={onToggleSearch}
-                  className="p-2 min-h-[40px] min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
-                  aria-label="Open search"
-                  title="Search"
-                >
-                  <Search size={18} />
-                </button>
-              )}
-
-              {/* Calendar Button (between Search and Gear) */}
+              {/* Calendar Button */}
               <Link
                 to="/calendar"
                 className={`p-2 min-h-[40px] min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors ${

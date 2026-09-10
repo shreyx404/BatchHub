@@ -37,12 +37,19 @@ export default function CalendarPage() {
     }
     if (search.trim()) {
       const q = search.toLowerCase().trim();
-      result = result.filter(
-        (p) =>
+      const subjectMap = new Map((subjects || []).map((s) => [s.id, s]));
+      result = result.filter((p) => {
+        const subj = p.subject_id ? subjectMap.get(p.subject_id) : null;
+        return (
           p.title?.toLowerCase().includes(q) ||
           p.content?.toLowerCase().includes(q) ||
-          p.tags?.some((t) => t.toLowerCase().includes(q))
-      );
+          p.tags?.some((t) => t.toLowerCase().includes(q)) ||
+          subj?.name?.toLowerCase().includes(q) ||
+          subj?.code?.toLowerCase().includes(q) ||
+          p.subjects?.name?.toLowerCase().includes(q) ||
+          p.subjects?.code?.toLowerCase().includes(q)
+        );
+      });
     }
     if (viewMode === 'agenda') {
       result = result.filter((p) => {
@@ -54,7 +61,7 @@ export default function CalendarPage() {
       });
     }
     return result;
-  }, [posts, selectedSubject, search, viewMode]);
+  }, [posts, selectedSubject, search, viewMode, subjects]);
 
   // Group posts by date key (YYYY-MM-DD)
   const postsByDate = useMemo(() => {
@@ -127,15 +134,7 @@ export default function CalendarPage() {
 
   return (
     <div className="min-h-dvh flex flex-col bg-[var(--color-bg)]">
-      <Header
-        searchOpen={searchOpen}
-        onToggleSearch={() => {
-          setSearchOpen(!searchOpen);
-          if (searchOpen) setSearch('');
-        }}
-        searchValue={search}
-        onSearchChange={setSearch}
-      />
+      <Header />
 
       <main className="flex-1 mx-auto w-full max-w-[1400px] px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-5">
         {/* Page Title & Controls */}
@@ -162,6 +161,10 @@ export default function CalendarPage() {
             onSubjectChange={setSelectedSubject}
             postCountBySubject={postCountBySubject}
             totalPosts={filteredPosts.length}
+            search={search}
+            onSearchChange={setSearch}
+            searchOpen={searchOpen}
+            onToggleSearch={() => setSearchOpen((prev) => !prev)}
           />
         </div>
 
