@@ -69,9 +69,10 @@ export default function CalendarSidebar({
                   <button
                     onClick={() => onSelectDate(null)}
                     title="Clear selected date"
-                    className="text-[var(--color-text-dim)] hover:text-[var(--color-text)] transition-colors p-0.5"
+                    className="text-[var(--color-text-dim)] hover:text-[var(--color-text)] transition-colors p-1 min-h-[36px] min-w-[36px] flex items-center justify-center"
+                    aria-label="Clear selected date"
                   >
-                    <X size={12} />
+                    <X size={13} />
                   </button>
                 )}
               </div>
@@ -98,9 +99,10 @@ export default function CalendarSidebar({
                 <button
                   onClick={() => onSelectDate(null)}
                   title="Clear selected date"
-                  className="text-[var(--color-text-dim)] hover:text-[var(--color-text)] transition-colors p-0.5"
+                  className="text-[var(--color-text-dim)] hover:text-[var(--color-text)] transition-colors p-1 min-h-[36px] min-w-[36px] flex items-center justify-center"
+                  aria-label="Clear selected date"
                 >
-                  <X size={12} />
+                  <X size={13} />
                 </button>
               )}
             </div>
@@ -317,10 +319,10 @@ function InspectorCard({ post, isAdmin }) {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`flex items-center justify-between p-2.5 sm:p-3 min-h-[38px] border transition-colors ${
+              className={`flex items-center justify-between p-2.5 sm:p-3 min-h-[42px] sm:min-h-[38px] border transition-colors active:bg-[var(--color-surface-3)] ${
                 isFaded
                   ? 'bg-[var(--color-surface-2)] border-[var(--color-border)] text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)]'
-                  : 'bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-text)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] text-[var(--text-xs)] text-[var(--color-text)]'
+                  : 'bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-text)] hover:bg-[var(--color-surface-2)] text-[var(--text-xs)] text-[var(--color-text)]'
               }`}
             >
               <div className="flex items-center gap-2 truncate">
@@ -346,7 +348,7 @@ function InspectorCard({ post, isAdmin }) {
           {isAdmin && (
             <Link
               to={`/admin/edit/${post.id}`}
-              className={`px-3 py-1.5 min-h-[34px] flex items-center gap-1.5 text-[var(--text-xs)] font-mono font-semibold border transition-colors ${
+              className={`px-3 py-2 min-h-[40px] sm:min-h-[34px] flex items-center gap-1.5 text-[var(--text-xs)] font-mono font-semibold border transition-colors active:scale-[0.98] ${
                 isFaded
                   ? 'bg-[var(--color-surface-2)] border-[var(--color-border)] text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)]'
                   : 'bg-[var(--color-surface-3)] border border-[var(--color-border-light)] hover:border-[var(--color-text)] text-[var(--color-text)] hover:text-[var(--color-text)]'
@@ -359,7 +361,7 @@ function InspectorCard({ post, isAdmin }) {
 
           <Link
             to={`/post/${post.id}`}
-            className={`px-3.5 py-1.5 min-h-[34px] flex items-center justify-center font-semibold text-[var(--text-xs)] transition-colors ${
+            className={`px-4 py-2 min-h-[40px] sm:min-h-[34px] flex items-center justify-center font-semibold text-[var(--text-xs)] transition-colors active:scale-[0.98] ${
               isFaded
                 ? 'bg-[var(--color-surface-2)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] border border-[var(--color-border)]'
                 : 'btn-primary hover:opacity-90'

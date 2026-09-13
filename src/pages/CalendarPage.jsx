@@ -122,15 +122,15 @@ export default function CalendarPage() {
 
   const handleSelectDate = useCallback((dateKey) => {
     setSelectedDate(dateKey);
-    if (window.innerWidth < 1024) {
+    if (window.innerWidth < 1024 && viewMode === 'month') {
       setTimeout(() => {
         const el = document.getElementById('calendar-inspector-target');
         if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }, 50);
     }
-  }, []);
+  }, [viewMode]);
 
   return (
     <div className="min-h-dvh flex flex-col bg-[var(--color-bg)]">

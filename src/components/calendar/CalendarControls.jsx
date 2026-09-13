@@ -84,62 +84,52 @@ export default function CalendarControls({
       {/* Navigator & View Mode Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between lg:justify-end gap-2 sm:gap-3">
         
-        {/* Date Navigator */}
-        <div className="flex items-center bg-[var(--color-surface)] border border-[var(--color-border)] w-full sm:w-auto justify-between">
+        {/* Row 1 on Mobile: Date Navigator + TODAY Button */}
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="flex items-center bg-[var(--color-surface)] border border-[var(--color-border)] flex-1 sm:flex-initial sm:w-auto justify-between">
+            <button
+              onClick={onPrev}
+              className="px-3 py-2 min-h-[40px] min-w-[40px] sm:min-h-[38px] sm:min-w-[38px] flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] border-r border-[var(--color-border)] transition-colors"
+              aria-label={viewMode === 'week' ? 'Previous week' : 'Previous month'}
+            >
+              <ChevronLeft size={14} />
+            </button>
+            <span className="px-3 sm:px-4 py-2 text-[11px] sm:text-[var(--text-xs)] font-mono font-medium tracking-wider text-[var(--color-text)] uppercase select-none grow text-center min-w-[120px] sm:min-w-[160px]">
+              {dateLabel}
+            </span>
+            <button
+              onClick={onNext}
+              className="px-3 py-2 min-h-[40px] min-w-[40px] sm:min-h-[38px] sm:min-w-[38px] flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] border-l border-[var(--color-border)] transition-colors"
+              aria-label={viewMode === 'week' ? 'Next week' : 'Next month'}
+            >
+              <ChevronRight size={14} />
+            </button>
+          </div>
+
+          {/* Today button on mobile sits directly next to navigator */}
           <button
-            onClick={onPrev}
-            className="px-3 py-2 min-h-[38px] min-w-[38px] flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] border-r border-[var(--color-border)] transition-colors"
-            aria-label={viewMode === 'week' ? 'Previous week' : 'Previous month'}
+            onClick={onToday}
+            className="sm:hidden px-3.5 py-2 min-h-[40px] text-[11px] font-mono bg-[var(--color-surface-3)] border border-[var(--color-border-light)] text-[var(--color-text)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface)] transition-colors shrink-0"
           >
-            <ChevronLeft size={14} />
-          </button>
-          <span className="px-3 sm:px-4 py-2 text-[11px] sm:text-[var(--text-xs)] font-mono font-medium tracking-wider text-[var(--color-text)] uppercase select-none grow text-center min-w-[120px] sm:min-w-[160px]">
-            {dateLabel}
-          </span>
-          <button
-            onClick={onNext}
-            className="px-3 py-2 min-h-[38px] min-w-[38px] flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] border-l border-[var(--color-border)] transition-colors"
-            aria-label={viewMode === 'week' ? 'Next week' : 'Next month'}
-          >
-            <ChevronRight size={14} />
+            TODAY
           </button>
         </div>
 
-        {/* Action Group: TODAY + SEARCH + View Mode Switcher */}
-        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
+        {/* Action Group: View Mode Switcher + SEARCH (plus desktop TODAY button) */}
+        <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
+          {/* Desktop TODAY button */}
           <button
             onClick={onToday}
-            className="px-3.5 py-2 min-h-[38px] text-[11px] sm:text-[var(--text-xs)] font-mono bg-[var(--color-surface-3)] border border-[var(--color-border-light)] text-[var(--color-text)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface)] transition-colors"
+            className="hidden sm:inline-block px-3.5 py-2 min-h-[38px] text-[11px] sm:text-[var(--text-xs)] font-mono bg-[var(--color-surface-3)] border border-[var(--color-border-light)] text-[var(--color-text)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface)] transition-colors"
           >
             TODAY
           </button>
 
-          {/* Search Button / Option */}
-          {onSearchChange && (
-            <button
-              type="button"
-              onClick={onToggleSearch}
-              className={`px-3 py-2 min-h-[38px] text-[11px] sm:text-[var(--text-xs)] font-mono flex items-center gap-1.5 transition-colors border ${
-                searchOpen || search
-                  ? 'bg-[var(--color-surface-3)] border-[var(--color-amber)] text-[var(--color-amber)] font-bold'
-                  : 'bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)]'
-              }`}
-              aria-label={searchOpen ? 'Close search' : 'Search deadlines'}
-              title="Search deadlines (Ctrl + K)"
-            >
-              <Search size={13} />
-              <span>SEARCH</span>
-              {search && (
-                <span className="w-1.5 h-1.5 bg-[var(--color-amber)] ml-0.5" />
-              )}
-            </button>
-          )}
-
           {/* View Mode Toggle: [ MONTH | WEEK | AGENDA ] */}
-          <div className="flex items-center bg-[var(--color-surface)] border border-[var(--color-border)] divide-x divide-[var(--color-border)] grow sm:grow-0 justify-center">
+          <div className="flex items-center bg-[var(--color-surface)] border border-[var(--color-border)] divide-x divide-[var(--color-border)] flex-1 sm:flex-initial sm:grow-0 justify-center">
             <button
               onClick={() => onViewModeChange('month')}
-              className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 min-h-[38px] text-[10.5px] sm:text-[var(--text-xs)] font-mono transition-colors text-center ${
+              className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 min-h-[40px] sm:min-h-[38px] text-[10.5px] sm:text-[var(--text-xs)] font-mono transition-colors text-center ${
                 viewMode === 'month'
                   ? 'badge-inverse font-bold'
                   : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)]'
@@ -149,7 +139,7 @@ export default function CalendarControls({
             </button>
             <button
               onClick={() => onViewModeChange('week')}
-              className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 min-h-[38px] text-[10.5px] sm:text-[var(--text-xs)] font-mono transition-colors text-center ${
+              className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 min-h-[40px] sm:min-h-[38px] text-[10.5px] sm:text-[var(--text-xs)] font-mono transition-colors text-center ${
                 viewMode === 'week'
                   ? 'badge-inverse font-bold'
                   : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)]'
@@ -159,7 +149,7 @@ export default function CalendarControls({
             </button>
             <button
               onClick={() => onViewModeChange('agenda')}
-              className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 min-h-[38px] text-[10.5px] sm:text-[var(--text-xs)] font-mono transition-colors text-center ${
+              className={`flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 min-h-[40px] sm:min-h-[38px] text-[10.5px] sm:text-[var(--text-xs)] font-mono transition-colors text-center ${
                 viewMode === 'agenda'
                   ? 'badge-inverse font-bold'
                   : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)]'
@@ -168,6 +158,27 @@ export default function CalendarControls({
               AGENDA
             </button>
           </div>
+
+          {/* Search Button */}
+          {onSearchChange && (
+            <button
+              type="button"
+              onClick={onToggleSearch}
+              className={`px-3 py-2 min-h-[40px] sm:min-h-[38px] text-[11px] sm:text-[var(--text-xs)] font-mono flex items-center justify-center gap-1.5 transition-colors border shrink-0 ${
+                searchOpen || search
+                  ? 'bg-[var(--color-surface-3)] border-[var(--color-amber)] text-[var(--color-amber)] font-bold'
+                  : 'bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)]'
+              }`}
+              aria-label={searchOpen ? 'Close search' : 'Search deadlines'}
+              title="Search deadlines (Ctrl + K)"
+            >
+              <Search size={13} />
+              <span className="hidden xs:inline">SEARCH</span>
+              {search && (
+                <span className="w-1.5 h-1.5 bg-[var(--color-amber)] ml-0.5" />
+              )}
+            </button>
+          )}
         </div>
       </div>
 
@@ -291,7 +302,7 @@ export default function CalendarControls({
         </span>
         <button
           onClick={() => onSubjectChange(null)}
-          className={`px-2.5 sm:px-3 py-1 sm:py-1.5 min-h-[32px] sm:min-h-[34px] text-[11px] sm:text-[var(--text-xs)] font-medium whitespace-nowrap transition-colors active:scale-[0.98] ${
+          className={`px-2.5 sm:px-3 py-1 sm:py-1.5 min-h-[36px] sm:min-h-[34px] text-[11px] sm:text-[var(--text-xs)] font-medium whitespace-nowrap transition-colors active:scale-[0.98] ${
             !selectedSubject
               ? 'badge-inverse font-semibold border border-[var(--color-text)]'
               : 'bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-light)] hover:text-[var(--color-text)] active:bg-[var(--color-surface)]'
@@ -303,7 +314,7 @@ export default function CalendarControls({
           <button
             key={subject.id}
             onClick={() => onSubjectChange(selectedSubject === subject.id ? null : subject.id)}
-            className={`px-2.5 sm:px-3 py-1 sm:py-1.5 min-h-[32px] sm:min-h-[34px] text-[11px] sm:text-[var(--text-xs)] whitespace-nowrap transition-colors active:scale-[0.98] ${
+            className={`px-2.5 sm:px-3 py-1 sm:py-1.5 min-h-[36px] sm:min-h-[34px] text-[11px] sm:text-[var(--text-xs)] whitespace-nowrap transition-colors active:scale-[0.98] ${
               selectedSubject === subject.id
                 ? 'badge-inverse font-semibold border border-[var(--color-text)]'
                 : 'bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-light)] hover:text-[var(--color-text)] active:bg-[var(--color-surface)]'

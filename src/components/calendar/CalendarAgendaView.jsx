@@ -72,7 +72,7 @@ export default function CalendarAgendaView({
   }
 
   return (
-    <div className="space-y-6 animate-fade-in overflow-y-auto overscroll-y-contain max-h-[calc(100dvh-200px)] pr-2 focus:outline-none">
+    <div className="space-y-6 animate-fade-in pr-0 lg:pr-2 focus:outline-none lg:overflow-y-auto lg:overscroll-y-contain lg:max-h-[calc(100dvh-200px)]">
       {groupedByDate.map((group) => {
         const todayGroup = isToday(group.date);
         const tomorrowGroup = isTomorrow(group.date);
@@ -205,10 +205,10 @@ function AgendaPostCard({ post, isAdmin }) {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 min-h-[32px] border text-[11px] transition-colors bg-[var(--color-surface-2)] border-[var(--color-border)] hover:border-[var(--color-border-light)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 min-h-[38px] border text-[11px] transition-colors bg-[var(--color-surface-2)] border-[var(--color-border)] hover:border-[var(--color-border-light)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] active:bg-[var(--color-surface-3)]"
                 >
                   <span className="text-[9px] font-mono text-[var(--color-text-dim)]">↗</span>
-                  <span className="truncate max-w-[200px]">{link.label}</span>
+                  <span className="truncate max-w-[220px]">{link.label}</span>
                 </a>
               ))}
             </div>
@@ -216,18 +216,18 @@ function AgendaPostCard({ post, isAdmin }) {
         </div>
 
         {/* Action Buttons */}
-        <div className="shrink-0 flex items-center gap-2 lg:self-center pt-2 lg:pt-0 border-t lg:border-t-0 border-[var(--color-border)]">
+        <div className="shrink-0 flex items-center gap-2 lg:self-center pt-3 lg:pt-0 border-t lg:border-t-0 border-[var(--color-border)] w-full lg:w-auto justify-end">
           {isAdmin && (
             <Link
               to={`/admin/edit/${post.id}`}
-              className="px-3 py-2 min-h-[38px] flex items-center justify-center gap-1 text-[var(--text-xs)] font-mono font-semibold border transition-colors bg-[var(--color-surface-3)] border-[var(--color-border-light)] hover:border-[var(--color-text)] text-[var(--color-text)] hover:text-[var(--color-text)]"
+              className="px-3 py-2 min-h-[42px] sm:min-h-[38px] flex items-center justify-center gap-1 text-[var(--text-xs)] font-mono font-semibold border transition-colors bg-[var(--color-surface-3)] border-[var(--color-border-light)] hover:border-[var(--color-text)] text-[var(--color-text)] hover:text-[var(--color-text)] active:scale-[0.98]"
             >
               <span>Edit</span>
             </Link>
           )}
           <Link
             to={`/post/${post.id}`}
-            className="btn-primary px-4 py-2 min-h-[38px] flex items-center justify-center gap-1.5 text-[var(--text-xs)] font-semibold transition-opacity hover:opacity-90 active:opacity-80"
+            className="btn-primary px-4 py-2 min-h-[42px] sm:min-h-[38px] flex items-center justify-center gap-1.5 text-[var(--text-xs)] font-semibold transition-opacity hover:opacity-90 active:scale-[0.98] w-full sm:w-auto"
           >
             <span>View Details</span>
             <ArrowRight size={13} />

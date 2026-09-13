@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
+
 /* ============================================================
    BatchHub Design System — Editorial Elevated Edition
    ============================================================ */
@@ -885,6 +887,20 @@ textarea.input-field {
   border-color: #7F1D1D;
   border-left: 3px solid #EF4444;
   color: #FFFFFF;
+}
+
+:root[data-theme="dark"] .event-chip-urgent span,
+:root[data-theme="dark"] .event-chip-urgent h4,
+:root[data-theme="dark"] .event-chip-urgent p,
+.dark .event-chip-urgent span,
+.dark .event-chip-urgent h4,
+.dark .event-chip-urgent p {
+  color: #FFFFFF !important;
+}
+
+:root[data-theme="dark"] .event-chip-urgent .chip-countdown,
+.dark .event-chip-urgent .chip-countdown {
+  color: #FECACA !important;
 }
 
 .event-chip-draft {

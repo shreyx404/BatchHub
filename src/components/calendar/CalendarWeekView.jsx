@@ -9,7 +9,6 @@ import {
   isPast,
 } from 'date-fns';
 import { Link } from 'react-router-dom';
-import { CONTENT_TYPES } from '../../lib/constants';
 
 export default function CalendarWeekView({
   currentDate,
@@ -24,124 +23,274 @@ export default function CalendarWeekView({
     return eachDayOfInterval({ start, end });
   }, [currentDate]);
 
+  // Handle mobile day selection + scroll to that day
+  const handleMobileDaySelect = (dateKey) => {
+    onSelectDate(dateKey);
+    const el = document.getElementById(`mobile-week-day-${dateKey}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <div className="border border-[var(--color-border)] flex flex-col bg-[var(--color-bg)] animate-fade-in overflow-hidden">
-      {/* Scrollable Container for Mobile / Tablet responsiveness with touch momentum */}
-      <div className="overflow-x-auto touch-scroll touch-pan-x">
-        <div className="min-w-[840px] md:min-w-0">
-          {/* Week Day Header */}
-          <div className="grid grid-cols-7 bg-[var(--color-surface-2)] border-b border-[var(--color-border)] text-center divide-x divide-[var(--color-border)]">
-            {weekDays.map((day) => {
-              const todayDay = isToday(day);
-              const dateKey = format(day, 'yyyy-MM-dd');
-              const isSelected = selectedDate === dateKey;
+      
+      {/* ─────────────────────────────────────────────────────────────
+          MOBILE & TABLET PORTRAIT VIEW (< 1024px):
+          1. Sleek 7-day selector strip across top (no horizontal scroll!)
+          2. Vertical daily schedule with full-width readable cards
+         ───────────────────────────────────────────────────────────── */}
+      <div className="block lg:hidden">
+        {/* Mobile 7-Day Header Strip */}
+        <div className="grid grid-cols-7 bg-[var(--color-surface-2)] border-b border-[var(--color-border)] divide-x divide-[var(--color-border)] text-center">
+          {weekDays.map((day) => {
+            const todayDay = isToday(day);
+            const dateKey = format(day, 'yyyy-MM-dd');
+            const isSelected = selectedDate === dateKey;
+            const dayEvents = postsByDate[dateKey] || [];
+            const hasUrgent = dayEvents.some((p) => {
+              const d = new Date(p.due_date);
+              return p.status !== 'archived' && p.status !== 'draft' && !isPast(d) && differenceInHours(d, new Date()) < 24;
+            });
+            const hasActive = dayEvents.some((p) => {
+              const d = new Date(p.due_date);
+              return p.status !== 'archived' && !isPast(d);
+            });
 
-              return (
-                <div
-                  key={dateKey}
-                  onClick={() => onSelectDate(dateKey)}
-                  className={`py-2.5 px-2 cursor-pointer transition-colors ${
+            return (
+              <button
+                key={dateKey}
+                type="button"
+                onClick={() => handleMobileDaySelect(dateKey)}
+                className={`py-2 px-1 flex flex-col items-center justify-between min-h-[56px] transition-colors relative active:bg-[var(--color-surface-3)] ${
+                  isSelected
+                    ? 'bg-[var(--color-surface-3)]'
+                    : todayDay
+                      ? 'bg-[var(--color-surface)]'
+                      : 'hover:bg-[var(--color-surface-3)]'
+                }`}
+                aria-label={`${format(day, 'EEE d')}, ${dayEvents.length} events`}
+              >
+                {/* Day name */}
+                <span className="text-[9px] font-mono text-[var(--color-text-muted)] uppercase">
+                  {format(day, 'EEE')}
+                </span>
+
+                {/* Day number */}
+                <span
+                  className={`text-[12px] font-mono leading-none my-0.5 ${
                     todayDay
-                      ? 'bg-[var(--color-surface-3)]'
+                      ? 'badge-inverse px-1 py-0.5 font-bold'
                       : isSelected
-                        ? 'bg-[var(--color-surface-3)]'
-                        : 'hover:bg-[var(--color-surface-3)]'
+                        ? 'text-[var(--color-text)] font-bold underline underline-offset-2'
+                        : 'text-[var(--color-text)] font-medium'
                   }`}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      onSelectDate(dateKey);
-                    }
-                  }}
-                  aria-label={`Select ${format(day, 'EEEE, MMM d')}`}
                 >
-                  <div className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider">
-                    {format(day, 'EEE')}
-                  </div>
-                  <div className="mt-1 flex items-center justify-center">
+                  {format(day, 'd')}
+                </span>
+
+                {/* Event Dot Indicators */}
+                <div className="h-2 flex items-center justify-center gap-0.5">
+                  {dayEvents.length > 0 ? (
                     <span
-                      className={`text-[12px] sm:text-[var(--text-sm)] font-mono ${
-                        todayDay
-                          ? 'badge-inverse px-1.5 py-0.5 font-bold inline-block'
-                          : isSelected
-                            ? 'text-[var(--color-text)] font-bold underline underline-offset-4'
-                            : 'text-[var(--color-text)] font-medium'
+                      className={`w-1.5 h-1.5 ${
+                        hasUrgent
+                          ? 'bg-[#ef4444] shadow-[0_0_3px_#ef4444]'
+                          : hasActive
+                            ? 'bg-[var(--color-text)]'
+                            : 'bg-[var(--color-text-dim)] opacity-50'
                       }`}
-                    >
-                      {format(day, 'd')}
-                    </span>
-                  </div>
-                  {todayDay && (
-                    <span className="block mt-0.5 text-[8px] font-mono uppercase tracking-wider text-[var(--color-text)] font-bold">
-                      TODAY
-                    </span>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* 7 Columns for the 7 Days */}
-          <div className="grid grid-cols-7 divide-x divide-[var(--color-border)] bg-[var(--color-bg)] min-h-[380px] sm:min-h-[460px]">
-            {weekDays.map((day) => {
-              const dateKey = format(day, 'yyyy-MM-dd');
-              const events = postsByDate[dateKey] || [];
-              const todayDay = isToday(day);
-              const isSelected = selectedDate === dateKey;
-
-              const colClasses = [
-                'p-2 sm:p-2.5 flex flex-col gap-2 transition-colors relative cursor-pointer',
-                todayDay ? 'bg-[var(--color-surface-2)]' : 'bg-[var(--color-surface)]',
-                isSelected && 'outline outline-[1.5px] outline-[var(--color-text)] -outline-offset-[1.5px] z-10',
-                'hover:bg-[var(--color-surface-2)]',
-              ]
-                .filter(Boolean)
-                .join(' ');
-
-              return (
-                <div
-                  key={dateKey}
-                  className={colClasses}
-                  onClick={() => onSelectDate(dateKey)}
-                  role="region"
-                  aria-label={`${format(day, 'EEEE, MMMM d')}, ${events.length} deadlines`}
-                >
-                  {/* Top Day Accent Line for Today */}
-                  {todayDay && (
-                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-[var(--color-amber)]" />
-                  )}
-
-                  {/* Deadline Cards inside the Day Column */}
-                  {events.length > 0 ? (
-                    <div className="flex flex-col gap-2 flex-1">
-                      {events.map((post) => (
-                        <WeekEventCard
-                          key={post.id}
-                          post={post}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onSelectDate(dateKey);
-                          }}
-                        />
-                      ))}
-                    </div>
+                    />
                   ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center text-center py-6 opacity-30 select-none">
-                      <span className="text-[10px] font-mono text-[var(--color-text-dim)]">
-                        —
-                      </span>
-                    </div>
+                    <span className="w-1.5 h-1.5 opacity-0" />
                   )}
                 </div>
-              );
-            })}
-          </div>
+
+                {/* Top active marker */}
+                {isSelected && (
+                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-[var(--color-amber)]" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Mobile Vertical Schedule List */}
+        <div className="divide-y divide-[var(--color-border)] bg-[var(--color-bg)]">
+          {weekDays.map((day) => {
+            const dateKey = format(day, 'yyyy-MM-dd');
+            const events = postsByDate[dateKey] || [];
+            const todayDay = isToday(day);
+            const isSelected = selectedDate === dateKey;
+
+            return (
+              <div
+                key={dateKey}
+                id={`mobile-week-day-${dateKey}`}
+                className={`p-3 sm:p-4 scroll-mt-14 transition-colors ${
+                  isSelected
+                    ? 'bg-[var(--color-surface-2)]/80'
+                    : todayDay
+                      ? 'bg-[var(--color-surface)]/60'
+                      : ''
+                }`}
+              >
+                {/* Day Header Row */}
+                <div className="flex items-center justify-between gap-2 mb-2.5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--color-text)]">
+                      {format(day, 'EEEE, MMM d')}
+                    </span>
+                    {todayDay && (
+                      <span className="badge-inverse px-1.5 py-0.2 text-[8.5px] font-mono font-bold uppercase">
+                        TODAY
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-[10px] font-mono text-[var(--color-text-dim)]">
+                    {events.length} {events.length === 1 ? 'deliverable' : 'deliverables'}
+                  </span>
+                </div>
+
+                {/* Deadlines for this day */}
+                {events.length > 0 ? (
+                  <div className="flex flex-col gap-2.5">
+                    {events.map((post) => (
+                      <MobileWeekEventCard
+                        key={post.id}
+                        post={post}
+                        onSelect={() => onSelectDate(dateKey)}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="py-2 px-2 text-[10px] font-mono text-[var(--color-text-dim)] opacity-60">
+                    — No deliverables scheduled
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Week Footer / Legend & Touch Scroll Helper */}
+      {/* ─────────────────────────────────────────────────────────────
+          DESKTOP VIEW (>= 1024px):
+          7-Column Timetable Grid alongside Sidebar Inspector
+         ───────────────────────────────────────────────────────────── */}
+      <div className="hidden lg:block">
+        {/* Week Day Header */}
+        <div className="grid grid-cols-7 bg-[var(--color-surface-2)] border-b border-[var(--color-border)] text-center divide-x divide-[var(--color-border)]">
+          {weekDays.map((day) => {
+            const todayDay = isToday(day);
+            const dateKey = format(day, 'yyyy-MM-dd');
+            const isSelected = selectedDate === dateKey;
+
+            return (
+              <div
+                key={dateKey}
+                onClick={() => onSelectDate(dateKey)}
+                className={`py-2.5 px-2 cursor-pointer transition-colors ${
+                  todayDay
+                    ? 'bg-[var(--color-surface-3)]'
+                    : isSelected
+                      ? 'bg-[var(--color-surface-3)]'
+                      : 'hover:bg-[var(--color-surface-3)]'
+                }`}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onSelectDate(dateKey);
+                  }
+                }}
+                aria-label={`Select ${format(day, 'EEEE, MMM d')}`}
+              >
+                <div className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider">
+                  {format(day, 'EEE')}
+                </div>
+                <div className="mt-1 flex items-center justify-center">
+                  <span
+                    className={`text-[12px] sm:text-[var(--text-sm)] font-mono ${
+                      todayDay
+                        ? 'badge-inverse px-1.5 py-0.5 font-bold inline-block'
+                        : isSelected
+                          ? 'text-[var(--color-text)] font-bold underline underline-offset-4'
+                          : 'text-[var(--color-text)] font-medium'
+                    }`}
+                  >
+                    {format(day, 'd')}
+                  </span>
+                </div>
+                {todayDay && (
+                  <span className="block mt-0.5 text-[8px] font-mono uppercase tracking-wider text-[var(--color-text)] font-bold">
+                    TODAY
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* 7 Columns for the 7 Days */}
+        <div className="grid grid-cols-7 divide-x divide-[var(--color-border)] bg-[var(--color-bg)] min-h-[420px]">
+          {weekDays.map((day) => {
+            const dateKey = format(day, 'yyyy-MM-dd');
+            const events = postsByDate[dateKey] || [];
+            const todayDay = isToday(day);
+            const isSelected = selectedDate === dateKey;
+
+            const colClasses = [
+              'p-2 sm:p-2.5 flex flex-col gap-2 transition-colors relative cursor-pointer',
+              todayDay ? 'bg-[var(--color-surface-2)]' : 'bg-[var(--color-surface)]',
+              isSelected && 'outline outline-[1.5px] outline-[var(--color-text)] -outline-offset-[1.5px] z-10',
+              'hover:bg-[var(--color-surface-2)]',
+            ]
+              .filter(Boolean)
+              .join(' ');
+
+            return (
+              <div
+                key={dateKey}
+                className={colClasses}
+                onClick={() => onSelectDate(dateKey)}
+                role="region"
+                aria-label={`${format(day, 'EEEE, MMMM d')}, ${events.length} deadlines`}
+              >
+                {/* Top Day Accent Line for Today */}
+                {todayDay && (
+                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-[var(--color-amber)]" />
+                )}
+
+                {/* Deadline Cards inside the Day Column */}
+                {events.length > 0 ? (
+                  <div className="flex flex-col gap-2 flex-1">
+                    {events.map((post) => (
+                      <WeekEventCard
+                        key={post.id}
+                        post={post}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSelectDate(dateKey);
+                        }}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex-1 flex flex-col items-center justify-center text-center py-6 opacity-30 select-none">
+                    <span className="text-[10px] font-mono text-[var(--color-text-dim)]">
+                      —
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Week Footer / Legend */}
       <div className="px-3 sm:px-4 py-2 sm:py-2.5 bg-[var(--color-surface-2)] border-t border-[var(--color-border)] flex flex-wrap items-center justify-between gap-2 sm:gap-3">
         <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-[var(--color-text-muted)] text-[9px] sm:text-[10px] font-mono">
           <div className="flex items-center gap-1.5">
@@ -154,18 +303,138 @@ export default function CalendarWeekView({
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[var(--color-surface-2)] border border-[var(--color-border)] opacity-60" />
-            <span className="text-[var(--color-text-dim)]">Past / Archived (Greyed Out)</span>
+            <span className="text-[var(--color-text-dim)]">Past / Archived</span>
           </div>
         </div>
         <div className="flex items-center gap-2 text-[9px] sm:text-[10px] font-mono text-[var(--color-text-dim)]">
-          <span className="md:hidden">← Swipe week →</span>
-          <span className="hidden md:inline">Mon – Sun · 7-Day Timetable</span>
+          <span className="lg:hidden">Tap day above to jump</span>
+          <span className="hidden lg:inline">Mon – Sun · 7-Day Timetable</span>
         </div>
       </div>
     </div>
   );
 }
 
+/**
+ * Mobile-specific full-width event card for touch ergonomics
+ */
+function MobileWeekEventCard({ post, onSelect }) {
+  const dueDate = new Date(post.due_date);
+  const now = new Date();
+  const hoursLeft = differenceInHours(dueDate, now);
+  const isArchived = post.status === 'archived';
+  const isDraft = post.status === 'draft';
+  const isOverdue = !isDraft && isPast(dueDate);
+  const isFaded = isArchived || isOverdue;
+  const isUrgent = !isFaded && !isDraft && hoursLeft < 24;
+  const subjectCode = post.subjects?.code || post.subjects?.name || '';
+  const links = post.links || [];
+
+  const cardClass = `p-3 transition-all border ${
+    isUrgent
+      ? 'event-chip-urgent'
+      : isFaded
+        ? 'event-chip-archived'
+        : isDraft
+          ? 'event-chip-draft'
+          : 'event-chip-normal'
+  }`;
+
+  return (
+    <div
+      onClick={onSelect}
+      className={cardClass}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSelect();
+        }
+      }}
+    >
+      {/* Header: Subject & Time */}
+      <div className="flex items-center justify-between text-[9px] font-mono gap-1.5 mb-1.5">
+        <div className="flex items-center gap-1.5 truncate">
+          <span
+            className={`truncate font-bold ${
+              isUrgent
+                ? 'text-red-600 dark:text-white'
+                : isFaded
+                  ? 'text-[var(--color-text-dim)]'
+                  : isDraft
+                    ? 'text-amber-700 dark:text-amber-300'
+                    : 'text-[var(--color-text)]'
+            }`}
+          >
+            {subjectCode}
+          </span>
+          {isUrgent && (
+            <span className="px-1.5 py-0.2 bg-red-600 text-white dark:bg-red-900 dark:text-white text-[8px] font-bold uppercase tracking-wider">
+              URGENT
+            </span>
+          )}
+        </div>
+
+        <span
+          className={`shrink-0 font-medium ${
+            isUrgent
+              ? 'text-red-600 dark:text-white font-semibold'
+              : isFaded
+                ? 'text-[var(--color-text-dim)]'
+                : isDraft
+                  ? 'text-amber-700 dark:text-amber-400'
+                  : 'text-[var(--color-text-muted)]'
+          }`}
+        >
+          {isArchived ? 'Archived' : isDraft ? 'Draft' : format(dueDate, 'h:mm a')}
+        </span>
+      </div>
+
+      {/* Title */}
+      <h4
+        className={`text-[12px] font-medium leading-snug ${
+          isUrgent
+            ? 'text-red-700 dark:text-[#fff] font-semibold'
+            : isFaded
+              ? 'text-[var(--color-text-dim)]'
+              : isDraft
+                ? 'text-amber-800 dark:text-amber-100 font-semibold'
+                : 'text-[var(--color-text)]'
+        }`}
+      >
+        {post.title}
+      </h4>
+
+      {/* Urgency countdown badge */}
+      {isUrgent && (
+        <div className="mt-1 text-[8.5px] font-mono text-red-600 dark:text-[#fecaca] font-semibold flex items-center gap-1">
+          <span>⏳</span>
+          <span>Due in {hoursLeft} hours</span>
+        </div>
+      )}
+
+      {/* Action footer for Mobile: link count and View Details */}
+      <div className="mt-2.5 pt-2 border-t border-[var(--color-border)]/50 flex items-center justify-between text-[9px] font-mono">
+        <span className="text-[var(--color-text-dim)]">
+          {links.length > 0 ? `↗ ${links.length} attached link${links.length > 1 ? 's' : ''}` : ''}
+        </span>
+        <Link
+          to={`/post/${post.id}`}
+          onClick={(e) => e.stopPropagation()}
+          className="min-h-[34px] px-3 py-1 flex items-center gap-1 font-semibold text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border)] hover:border-[var(--color-text)] transition-colors active:bg-[var(--color-surface-3)]"
+        >
+          <span>Details</span>
+          <span>→</span>
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Desktop column chip
+ */
 function WeekEventCard({ post, onClick }) {
   const dueDate = new Date(post.due_date);
   const now = new Date();

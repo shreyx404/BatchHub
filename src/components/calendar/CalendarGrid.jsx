@@ -134,7 +134,7 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
                   return (
                     <span
                       key={idx}
-                      className={`w-1.5 h-1.5 inline-block ${
+                      className={`w-2 h-2 inline-block ${
                         isPostUrgent
                           ? 'bg-[#ef4444] shadow-[0_0_4px_#ef4444]'
                           : isPostDraft
@@ -147,7 +147,7 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
                   );
                 })}
                 {events.length > 3 && (
-                  <span className="text-[7px] font-mono text-[var(--color-text-dim)] font-bold leading-none">
+                  <span className="text-[7.5px] font-mono text-[var(--color-text-dim)] font-bold leading-none">
                     +{events.length - 3}
                   </span>
                 )}

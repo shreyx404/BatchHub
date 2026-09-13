@@ -30,13 +30,13 @@ export default function Header() {
         </Link>
 
         {/* Right actions: Calendar | Archive | Material | Theme | Gear */}
-        <div className="flex items-center gap-1 sm:gap-1.5">
+        <div className="flex items-center gap-0.5 xs:gap-1 sm:gap-1.5">
           {!isAdmin && (
             <>
               {/* Calendar Button */}
               <Link
                 to="/calendar"
-                className={`p-2 min-h-[40px] min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors ${
+                className={`p-1.5 sm:p-2 min-h-[38px] min-w-[38px] sm:min-h-[40px] sm:min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors ${
                   isCalendar
                     ? 'text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border-light)]'
                     : 'text-[var(--color-text-dim)] hover:text-[var(--color-text-muted)]'
@@ -44,13 +44,13 @@ export default function Header() {
                 aria-label="Academic Calendar"
                 title="Academic Calendar"
               >
-                <CalendarClock size={18} />
+                <CalendarClock size={17} className="sm:w-[18px] sm:h-[18px]" />
               </Link>
 
               {/* Archive Button */}
               <Link
                 to="/archive"
-                className={`p-2 min-h-[40px] min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors ${
+                className={`p-1.5 sm:p-2 min-h-[38px] min-w-[38px] sm:min-h-[40px] sm:min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors ${
                   isArchive
                     ? 'text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border-light)]'
                     : 'text-[var(--color-text-dim)] hover:text-[var(--color-text-muted)]'
@@ -58,7 +58,7 @@ export default function Header() {
                 aria-label="Archive"
                 title="Archive"
               >
-                <Archive size={18} />
+                <Archive size={17} className="sm:w-[18px] sm:h-[18px]" />
               </Link>
 
               {/* College Study Material Drive Link (between Archive & Theme Toggle) */}
@@ -66,25 +66,24 @@ export default function Header() {
                 href={materialUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 min-h-[40px] min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors text-[var(--color-text-dim)] hover:text-[var(--color-text)]"
+                className="p-1.5 sm:p-2 min-h-[38px] min-w-[38px] sm:min-h-[40px] sm:min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors text-[var(--color-text-dim)] hover:text-[var(--color-text)]"
                 aria-label="College Study Material & Resources"
                 title="College Study Material (Google Drive)"
               >
-                <FolderOpen size={18} />
+                <FolderOpen size={17} className="sm:w-[18px] sm:h-[18px]" />
               </a>
 
               {/* Theme Toggle */}
               <ThemeToggle />
 
-
               {/* Admin Settings Button */}
               <Link
                 to="/admin"
-                className="p-2 min-h-[40px] min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors text-[var(--color-text-dim)] hover:text-[var(--color-text-muted)]"
+                className="p-1.5 sm:p-2 min-h-[38px] min-w-[38px] sm:min-h-[40px] sm:min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors text-[var(--color-text-dim)] hover:text-[var(--color-text-muted)]"
                 aria-label="Admin Settings"
                 title="Admin Settings"
               >
-                <Settings size={18} />
+                <Settings size={17} className="sm:w-[18px] sm:h-[18px]" />
               </Link>
             </>
           )}
