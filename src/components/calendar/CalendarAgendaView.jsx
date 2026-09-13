@@ -146,10 +146,10 @@ function AgendaPostCard({ post, isAdmin }) {
     <div
       className={`border p-4 sm:p-5 transition-all ${
         isUrgent
-          ? 'bg-red-50/70 dark:bg-[#140a0a] border-red-300 dark:border-[#7f1d1d]'
+          ? 'bg-[var(--color-surface)] dark:bg-[#140a0a] border-red-300 dark:border-[#7f1d1d] border-l-2 border-l-red-500 shadow-sm'
           : isDraft
-            ? 'bg-amber-50/70 dark:bg-[#14120a] border-amber-300 dark:border-[#453610]'
-            : 'bg-[var(--color-surface)] border border-[var(--color-border-light)]'
+            ? 'bg-[var(--color-surface)] dark:bg-[#14120a] border-amber-300 dark:border-[#453610] border-l-2 border-l-amber-500'
+            : 'bg-[var(--color-surface)] border border-[var(--color-border)]'
       }`}
     >
       <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">

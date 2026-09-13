@@ -116,37 +116,37 @@
 
 [data-theme="light"],
 .light {
-  --color-bg: #F8F7F4;
+  --color-bg: #FAFAF9;
   --color-surface: #FFFFFF;
-  --color-surface-2: #F2EFE9;
-  --color-surface-3: #E7E3DA;
-  --color-surface-hover: #DDD8CE;
+  --color-surface-2: #F5F5F3;
+  --color-surface-3: #ECECE9;
+  --color-surface-hover: #E8E8E4;
   
-  --color-border: #D5CFBF;
-  --color-border-light: #C2BAAA;
+  --color-border: #E2E2DC;
+  --color-border-light: #ECECE7;
   
-  --color-text: #181716;
-  --color-text-muted: #4A4640;
-  --color-text-dim: #7A756D;
+  --color-text: #141413;
+  --color-text-muted: #50504C;
+  --color-text-dim: #84847E;
 
-  --color-accent: #181716;
-  --color-accent-hover: #292826;
-  --color-accent-dim: #56524D;
-  --color-accent-glow: rgba(24, 23, 22, 0.06);
+  --color-accent: #141413;
+  --color-accent-hover: #262624;
+  --color-accent-dim: #50504C;
+  --color-accent-glow: rgba(20, 20, 19, 0.04);
   --color-accent-text: #FFFFFF;
 
-  --color-amber: #A86A24;
-  --color-amber-dim: rgba(168, 106, 36, 0.12);
-  --color-amber-glow: rgba(168, 106, 36, 0.20);
+  --color-amber: #92400E;
+  --color-amber-dim: rgba(146, 64, 14, 0.08);
+  --color-amber-glow: rgba(146, 64, 14, 0.16);
 
-  --color-glass: rgba(248, 247, 244, 0.88);
-  --color-glass-strong: rgba(248, 247, 244, 0.94);
-  --grain-opacity: 0.22;
+  --color-glass: rgba(250, 250, 249, 0.90);
+  --color-glass-strong: rgba(250, 250, 249, 0.96);
+  --grain-opacity: 0.15;
 
-  --shadow-modal: 0 0 0 1px var(--color-border), 0 20px 48px rgba(0, 0, 0, 0.12);
+  --shadow-modal: 0 0 0 1px var(--color-border), 0 20px 48px rgba(0, 0, 0, 0.08);
 
-  --day-cell-other-bg: #EFECE5;
-  --day-cell-today-bg: #ECE7DE;
+  --day-cell-other-bg: #FFFFFF;
+  --day-cell-today-bg: #FFFFFF;
 }
 
 /* ============================================================
@@ -688,6 +688,11 @@ textarea.input-field {
   }
 }
 
+[data-theme="light"] .day-cell,
+.light .day-cell {
+  background-color: #FFFFFF;
+}
+
 .day-cell:hover {
   background-color: var(--color-surface-2);
 }
@@ -698,6 +703,9 @@ textarea.input-field {
 
 .day-cell-other {
   background-color: var(--day-cell-other-bg, #020202);
+}
+:root[data-theme="dark"] .day-cell-other,
+.dark .day-cell-other {
   opacity: 0.4;
 }
 
@@ -717,14 +725,12 @@ textarea.input-field {
 }
 
 .day-cell-selected {
-  background-color: rgba(212, 165, 116, 0.06);
-  outline: 1.5px solid var(--color-amber);
-  outline-offset: -1.5px;
+  outline: 2px solid var(--color-amber);
+  outline-offset: -2px;
 }
-
-[data-theme="light"] .day-cell-selected,
-.light .day-cell-selected {
-  background-color: rgba(168, 106, 36, 0.08);
+:root[data-theme="dark"] .day-cell-selected,
+.dark .day-cell-selected {
+  background-color: rgba(212, 165, 116, 0.05);
 }
 
 .event-chip {
@@ -737,40 +743,58 @@ textarea.input-field {
 
 /* ── Event Chip Themes for Calendar Views ── */
 .event-chip-urgent {
-  background-color: #fef2f2;
-  border: 1px solid #fca5a5;
-  color: #b91c1c;
+  background-color: #FFF5F5;
+  border: 1px solid #FECACA;
+  border-left: 3px solid #DC2626;
+  color: #B91C1C;
 }
 :root[data-theme="dark"] .event-chip-urgent,
 .dark .event-chip-urgent {
-  background-color: #1e1010;
-  border-color: #7f1d1d;
-  color: #fca5a5;
+  background-color: #180D0D;
+  border-color: #7F1D1D;
+  border-left: 3px solid #EF4444;
+  color: #FCA5A5;
 }
 
 .event-chip-draft {
-  background-color: #fffbeb;
-  border: 1px solid #fcd34d;
-  color: #92400e;
+  background-color: #FFFDF0;
+  border: 1px solid #FDE68A;
+  border-left: 3px solid #D97706;
+  color: #92400E;
 }
 :root[data-theme="dark"] .event-chip-draft,
 .dark .event-chip-draft {
-  background-color: #14120a;
+  background-color: #14120A;
   border-color: #453610;
-  color: #fbbf24;
+  border-left: 3px solid #D97706;
+  color: #FBBF24;
 }
 
 .event-chip-archived {
+  background-color: #F7F7F6;
+  border: 1px solid #EAEAEA;
+  color: #888882;
+  opacity: 0.65;
+}
+:root[data-theme="dark"] .event-chip-archived,
+.dark .event-chip-archived {
   background-color: var(--color-surface-2);
-  border: 1px solid var(--color-border);
+  border-color: var(--color-border);
   opacity: 0.55;
   color: var(--color-text-dim);
 }
 
 .event-chip-normal {
-  background-color: var(--color-surface-2);
-  border: 1px solid var(--color-border-light);
+  background-color: #F7F7F6;
+  border: 1px solid #E5E5E0;
   color: var(--color-text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+:root[data-theme="dark"] .event-chip-normal,
+.dark .event-chip-normal {
+  background-color: var(--color-surface-2);
+  border-color: var(--color-border-light);
+  box-shadow: none;
 }
 
 /* ── High-Contrast Action & Inverted Badges ── */

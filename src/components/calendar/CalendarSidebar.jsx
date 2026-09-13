@@ -206,20 +206,25 @@ function InspectorCard({ post, isAdmin }) {
     countdownText = formatDistanceToNow(dueDate, { addSuffix: false }) + ' left';
   }
 
-  // Content preview (cleaned Markdown)
+  // Content preview (cleaned Markdown without raw heading lines colliding)
   const cleanSnippet = post.content
-    ? post.content.replace(/[#*`_~>|\-]/g, '').replace(/\s+/g, ' ').trim().substring(0, 180)
+    ? post.content
+        .replace(/^#{1,6}\s+.*$/gm, '')
+        .replace(/[*`_~>|\-]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .substring(0, 180)
     : '';
 
   return (
     <div
       className={`border p-4 sm:p-5 animate-fade-in transition-all ${
         isUrgent
-          ? 'bg-red-50/70 dark:bg-[#140a0a] border-red-300 dark:border-[#7f1d1d] shadow-sm'
+          ? 'bg-[var(--color-surface)] dark:bg-[#140a0a] border-red-300 dark:border-[#7f1d1d] border-t-2 border-t-red-500 shadow-sm'
           : isFaded
             ? 'bg-[var(--color-surface-2)]/60 border border-[var(--color-border)] opacity-70 hover:opacity-100'
             : isDraft
-              ? 'bg-amber-50/70 dark:bg-[#14120a] border-amber-300 dark:border-[#453610]'
+              ? 'bg-[var(--color-surface)] dark:bg-[#14120a] border-amber-300 dark:border-[#453610] border-t-2 border-t-amber-500'
               : 'bg-[var(--color-surface)] border-[var(--color-border-light)]'
       }`}
     >
@@ -227,7 +232,7 @@ function InspectorCard({ post, isAdmin }) {
       <div className="flex items-center justify-between pb-3 mb-3 border-b border-[var(--color-border)] flex-wrap gap-2">
         <div className="flex items-center gap-2 flex-wrap">
           {isUrgent && (
-            <span className="px-2 py-0.5 bg-red-100 dark:bg-red-950 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 text-[9px] font-mono font-bold uppercase tracking-wider">
+            <span className="px-2 py-0.5 bg-red-600 text-white dark:bg-red-950 dark:border dark:border-red-700 dark:text-red-300 text-[9px] font-mono font-bold uppercase tracking-wider">
               URGENT
             </span>
           )}
@@ -315,7 +320,7 @@ function InspectorCard({ post, isAdmin }) {
               className={`flex items-center justify-between p-2.5 sm:p-3 min-h-[38px] border transition-colors ${
                 isFaded
                   ? 'bg-[var(--color-surface-2)] border-[var(--color-border)] text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)]'
-                  : 'bg-[var(--color-surface-3)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] active:bg-[var(--color-surface-2)] text-[var(--text-xs)] text-[var(--color-text)]'
+                  : 'bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-text)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] text-[var(--text-xs)] text-[var(--color-text)]'
               }`}
             >
               <div className="flex items-center gap-2 truncate">

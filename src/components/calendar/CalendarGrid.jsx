@@ -110,13 +110,13 @@ export default function CalendarGrid({ year, month, postsByDate, selectedDate, o
                       ? 'badge-inverse px-1 sm:px-1.5 py-0.2 sm:py-0.5 font-bold inline-block'
                       : cell.isCurrentMonth
                         ? 'text-[var(--color-text-muted)]'
-                        : 'text-[var(--color-text-dim)]'
+                        : 'text-[var(--color-text-dim)] opacity-40'
                   }`}
                 >
                   {String(cell.day).padStart(2, '0')}
                 </span>
                 {cell.isToday && (
-                  <span className="hidden sm:inline text-[8px] font-mono uppercase tracking-wider text-[var(--color-text)] font-bold">
+                  <span className="hidden sm:inline text-[8px] font-mono uppercase tracking-wider text-[var(--color-amber)] font-bold">
                     TODAY
                   </span>
                 )}
