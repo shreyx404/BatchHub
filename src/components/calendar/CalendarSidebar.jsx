@@ -69,7 +69,7 @@ export default function CalendarSidebar({
                   <button
                     onClick={() => onSelectDate(null)}
                     title="Clear selected date"
-                    className="text-[var(--color-text-dim)] hover:text-white transition-colors p-0.5"
+                    className="text-[var(--color-text-dim)] hover:text-[var(--color-text)] transition-colors p-0.5"
                   >
                     <X size={12} />
                   </button>
@@ -98,7 +98,7 @@ export default function CalendarSidebar({
                 <button
                   onClick={() => onSelectDate(null)}
                   title="Clear selected date"
-                  className="text-[var(--color-text-dim)] hover:text-white transition-colors p-0.5"
+                  className="text-[var(--color-text-dim)] hover:text-[var(--color-text)] transition-colors p-0.5"
                 >
                   <X size={12} />
                 </button>
@@ -118,7 +118,7 @@ export default function CalendarSidebar({
                 {onSelectDate && (
                   <button
                     onClick={() => onSelectDate(null)}
-                    className="mt-3.5 px-3 py-1 text-[10px] font-mono border border-[var(--color-border)] bg-[var(--color-surface-3)] text-[var(--color-text-muted)] hover:text-white hover:border-[var(--color-border-light)] transition-colors"
+                    className="mt-3.5 px-3 py-1 text-[10px] font-mono border border-[var(--color-border)] bg-[var(--color-surface-3)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)] transition-colors"
                   >
                     Clear Selection
                   </button>
@@ -259,11 +259,11 @@ function InspectorCard({ post, isAdmin }) {
         <span
           className={`text-[10px] font-mono font-bold ${
             isUrgent
-              ? 'text-red-400'
+              ? 'text-red-500 dark:text-red-400'
               : isFaded
-                ? 'text-[#52525b]'
+                ? 'text-[var(--color-text-dim)]'
                 : isDraft
-                  ? 'text-amber-400'
+                  ? 'text-amber-600 dark:text-amber-400'
                   : 'text-[var(--color-text-muted)]'
           }`}
         >
@@ -276,7 +276,7 @@ function InspectorCard({ post, isAdmin }) {
         {(subjectCode || subjectName) && (
           <span
             className={`text-[10px] font-mono uppercase tracking-wider font-semibold ${
-              isFaded ? 'text-[#52525b]' : 'text-[var(--color-text-dim)]'
+              isFaded ? 'text-[var(--color-text-dim)]' : 'text-[var(--color-text-dim)]'
             }`}
           >
             {subjectCode}{subjectName && subjectCode ? ' · ' : ''}{subjectName}
@@ -292,7 +292,7 @@ function InspectorCard({ post, isAdmin }) {
         {cleanSnippet && (
           <p
             className={`text-[var(--text-xs)] mt-2 leading-relaxed line-clamp-3 ${
-              isFaded ? 'text-[#52525b]' : 'text-[var(--color-text-muted)]'
+              isFaded ? 'text-[var(--color-text-dim)]' : 'text-[var(--color-text-muted)]'
             }`}
           >
             {cleanSnippet}
@@ -314,7 +314,7 @@ function InspectorCard({ post, isAdmin }) {
               rel="noopener noreferrer"
               className={`flex items-center justify-between p-2.5 sm:p-3 min-h-[38px] border transition-colors ${
                 isFaded
-                  ? 'bg-[#0b0b0e] border-[#1f1f26] text-[#71717a] hover:text-white hover:border-[#383845]'
+                  ? 'bg-[var(--color-surface-2)] border-[var(--color-border)] text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:border-[var(--color-border-light)]'
                   : 'bg-[var(--color-surface-3)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] active:bg-[var(--color-surface-2)] text-[var(--text-xs)] text-[var(--color-text)]'
               }`}
             >
@@ -331,7 +331,7 @@ function InspectorCard({ post, isAdmin }) {
       <div className="mt-4 pt-3 border-t border-[var(--color-border)] flex items-center justify-between gap-2 flex-wrap">
         <span
           className={`text-[10px] font-mono uppercase tracking-wider ${
-            isFaded ? 'text-[#52525b]' : 'text-[var(--color-text-dim)]'
+            isFaded ? 'text-[var(--color-text-dim)]' : 'text-[var(--color-text-dim)]'
           }`}
         >
           {typeConfig?.label || post.type}
@@ -395,22 +395,22 @@ function QueueItem({ post, isAdmin, isPastOrArchived = false, onSelectDate }) {
       <div className="flex items-center justify-between text-[9px] font-mono mb-1 gap-1">
         <div className="flex items-center gap-1.5 truncate">
           {isArchived ? (
-            <span className="px-1.5 py-0.2 bg-[#121218] border border-[#272733] text-[#71717a] font-bold uppercase">
+            <span className="px-1.5 py-0.2 bg-[var(--color-surface-3)] border border-[var(--color-border)] text-[var(--color-text-dim)] font-bold uppercase">
               ARCHIVED
             </span>
           ) : isDraft ? (
-            <span className="px-1.5 py-0.2 bg-amber-950/80 border border-amber-800 text-amber-300 font-bold uppercase">
+            <span className="px-1.5 py-0.2 bg-amber-100 dark:bg-amber-950/80 border border-amber-300 dark:border-amber-800 text-amber-700 dark:text-amber-300 font-bold uppercase">
               DRAFT
             </span>
           ) : isOverdue ? (
-            <span className="px-1.5 py-0.2 bg-[#1a0f0f] border border-[#3b1a1a] text-[#8e5252] font-bold uppercase">
+            <span className="px-1.5 py-0.2 bg-red-100/60 dark:bg-[#1a0f0f] border border-red-200 dark:border-[#3b1a1a] text-red-600 dark:text-[#8e5252] font-bold uppercase">
               PAST DUE
             </span>
           ) : null}
 
           <span
             className={`font-medium truncate ${
-              isFaded ? 'text-[#52525b]' : 'text-[var(--color-text-muted)]'
+              isFaded ? 'text-[var(--color-text-dim)]' : 'text-[var(--color-text-muted)]'
             }`}
           >
             {subjectCode}{subjectCode && ' · '}{typeConfig?.label || post.type}
@@ -419,7 +419,7 @@ function QueueItem({ post, isAdmin, isPastOrArchived = false, onSelectDate }) {
 
         <span
           className={`shrink-0 transition-colors ${
-            isFaded ? 'text-[#3f3f46] group-hover:text-[#a1a1aa]' : 'text-[var(--color-text-dim)] group-hover:text-[var(--color-text)]'
+            isFaded ? 'text-[var(--color-text-dim)] group-hover:text-[var(--color-text-muted)]' : 'text-[var(--color-text-dim)] group-hover:text-[var(--color-text)]'
           }`}
         >
           {format(dueDate, 'MMM d, h:mm a')}
@@ -427,7 +427,7 @@ function QueueItem({ post, isAdmin, isPastOrArchived = false, onSelectDate }) {
       </div>
 
       <p
-        className={`text-[var(--text-xs)] truncate transition-colors ${
+        className={`text-[var(--text-xs)] truncate transition-colors font-display ${
           isFaded ? 'text-[var(--color-text-dim)] font-normal group-hover:text-[var(--color-text)]' : 'text-[var(--color-text)] font-medium'
         }`}
       >

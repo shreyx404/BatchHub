@@ -18,7 +18,33 @@ const getRelativeDate = (offsetDays, offsetHours = 0) => {
   return d.toISOString();
 };
 
+// Helper to get a deadline for today (e.g. 23:59 tonight)
+const getTodayDeadline = (hours = 23, minutes = 59) => {
+  const d = new Date();
+  d.setHours(hours, minutes, 0, 0);
+  return d.toISOString();
+};
+
 const DEMO_POSTS = [
+  {
+    id: 'post-today',
+    title: '⚡ Urgent: DCN Wireshark Lab Analysis Report',
+    content: `## Lab Submission Guidelines\n\nPlease submit your completed **Wireshark Packet Analysis** report before midnight today.\n\n### Required Deliverables:\n- TCP 3-way handshake screenshot with sequence numbers annotated\n- Round-trip time (RTT) calculation and congestion graph export\n- Answers to questions 1–5 in the official departmental submission template\n\nLate submissions past **11:59 PM** will incur a 20% penalty per department policy.`,
+    type: 'assignment',
+    subject_id: 'subj-dcn',
+    is_pinned: false,
+    status: 'published',
+    due_date: getTodayDeadline(23, 59),
+    tags: ['dcn', 'assignment', 'urgent', 'lab'],
+    links: [
+      { label: 'Upload Portal (Classroom)', url: 'https://classroom.google.com' },
+      { label: 'Lab Report Template (.docx)', url: 'https://example.com/template.docx' },
+      { label: 'Wireshark Trace File (.pcapng)', url: 'https://example.com/capture.pcapng' },
+    ],
+    created_at: getRelativeDate(0, -6),
+    updated_at: getRelativeDate(0, -1),
+    subjects: DEMO_SUBJECTS[3],
+  },
   {
     id: 'post-1',
     title: '⚠️ Mid-Semester Exam Guidelines & Seating Arrangement',

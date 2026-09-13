@@ -120,14 +120,14 @@
   --color-surface: #FFFFFF;
   --color-surface-2: #F2EFE9;
   --color-surface-3: #E7E3DA;
-  --color-surface-hover: #EBE7DF;
+  --color-surface-hover: #DDD8CE;
   
-  --color-border: #DCD7CE;
-  --color-border-light: #CFC9BD;
+  --color-border: #D5CFBF;
+  --color-border-light: #C2BAAA;
   
   --color-text: #181716;
-  --color-text-muted: #56524D;
-  --color-text-dim: #827C74;
+  --color-text-muted: #4A4640;
+  --color-text-dim: #7A756D;
 
   --color-accent: #181716;
   --color-accent-hover: #292826;
@@ -722,6 +722,11 @@ textarea.input-field {
   outline-offset: -1.5px;
 }
 
+[data-theme="light"] .day-cell-selected,
+.light .day-cell-selected {
+  background-color: rgba(168, 106, 36, 0.08);
+}
+
 .event-chip {
   transition: transform 0.1s ease, border-color 0.15s ease;
 }
@@ -732,8 +737,8 @@ textarea.input-field {
 
 /* ── Event Chip Themes for Calendar Views ── */
 .event-chip-urgent {
-  background-color: rgba(239, 68, 68, 0.12);
-  border: 1px solid #ef4444;
+  background-color: #fef2f2;
+  border: 1px solid #fca5a5;
   color: #b91c1c;
 }
 :root[data-theme="dark"] .event-chip-urgent,
@@ -744,8 +749,8 @@ textarea.input-field {
 }
 
 .event-chip-draft {
-  background-color: rgba(217, 119, 6, 0.12);
-  border: 1px solid #d97706;
+  background-color: #fffbeb;
+  border: 1px solid #fcd34d;
   color: #92400e;
 }
 :root[data-theme="dark"] .event-chip-draft,
