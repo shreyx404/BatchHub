@@ -206,7 +206,7 @@ function WeekEventCard({ post, onClick }) {
         <span
           className={`truncate font-bold ${
             isUrgent
-              ? 'text-red-600 dark:text-[#fca5a5]'
+              ? 'text-red-600 dark:text-white'
               : isFaded
                 ? 'text-[var(--color-text-dim)]'
                 : isDraft
@@ -219,7 +219,7 @@ function WeekEventCard({ post, onClick }) {
         <span
           className={`shrink-0 font-medium ${
             isUrgent
-              ? 'text-red-600 dark:text-[#fca5a5]'
+              ? 'text-red-600 dark:text-white'
               : isFaded
                 ? 'text-[var(--color-text-dim)]'
                 : isDraft
@@ -235,7 +235,7 @@ function WeekEventCard({ post, onClick }) {
       <h4
         className={`text-[10.5px] sm:text-[11px] font-medium leading-snug line-clamp-2 ${
           isUrgent
-            ? 'text-red-700 dark:text-white font-semibold'
+            ? 'text-red-700 dark:text-[#fff] font-semibold'
             : isFaded
               ? 'text-[var(--color-text-dim)]'
               : isDraft
@@ -248,7 +248,7 @@ function WeekEventCard({ post, onClick }) {
 
       {/* Urgency Badge or Countdown */}
       {isUrgent && (
-        <div className="mt-1.5 text-[8px] font-mono text-red-600 dark:text-[#f87171] font-semibold flex items-center gap-1">
+        <div className="mt-1.5 text-[8px] font-mono text-red-600 dark:text-[#fecaca] font-semibold flex items-center gap-1">
           <span>⏳</span>
           <span>In {hoursLeft}h</span>
         </div>

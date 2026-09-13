@@ -217,7 +217,7 @@ function EventChip({ post }) {
         <span
           className={`truncate font-bold ${
             isUrgent
-              ? 'text-red-600 dark:text-[#fca5a5]'
+              ? 'text-red-600 dark:text-white'
               : isFaded
                 ? 'text-[var(--color-text-dim)]'
                 : isDraft
@@ -230,7 +230,7 @@ function EventChip({ post }) {
         <span
           className={`shrink-0 font-medium ${
             isUrgent
-              ? 'text-red-600 dark:text-[#fca5a5]'
+              ? 'text-red-600 dark:text-white'
               : isFaded
                 ? 'text-[var(--color-text-dim)]'
                 : isDraft
@@ -244,7 +244,7 @@ function EventChip({ post }) {
       <p
         className={`text-[9.5px] sm:text-[10px] font-medium truncate mt-0.5 ${
           isUrgent
-            ? 'text-red-700 dark:text-white font-semibold'
+            ? 'text-red-700 dark:text-[#fff] font-semibold'
             : isFaded
               ? 'text-[var(--color-text-dim)]'
               : isDraft
@@ -255,7 +255,7 @@ function EventChip({ post }) {
         {post.title}
       </p>
       {isUrgent && (
-        <div className="mt-0.5 text-[7px] sm:text-[8px] font-mono text-red-600 dark:text-[#f87171] font-semibold">
+        <div className="mt-0.5 text-[7px] sm:text-[8px] font-mono text-red-600 dark:text-[#fecaca] font-semibold">
           ⏳ In {hoursLeft}h
         </div>
       )}
