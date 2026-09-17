@@ -36,6 +36,7 @@ src/
 │   ├── usePosts.js       # usePosts(filters), useUpcomingDeadlines()
 │   ├── usePost.js        # usePost(id)
 │   ├── useSubjects.js    # useSubjects()
+│   ├── useNotes.js       # useNotes({ search, subjectId }) — notes gallery query
 │   ├── useCalendar.js    # useCalendarPosts(year, month)
 │   ├── useArchivePosts.js# useArchivePosts(filters, sortBy) — archived post query & multi-sort
 │   ├── useCollegeMaterial.js# useCollegeMaterial() — reactive college study material URL state & sync
@@ -44,12 +45,14 @@ src/
 │   ├── layout/           # Header, Footer
 │   ├── ui/               # Badge, SearchBar, FilterBar, ArchiveSortBar, ThemeToggle, Modal, LoadingState, ErrorState, EmptyState
 │   ├── posts/            # PostCard, PostGrid, DeadlineBanner, PinnedSection, NoticesSection
+│   ├── notes/            # NoteCard — gallery card for externally-hosted study notes
 │   ├── calendar/         # CalendarGrid, CalendarWeekView, CalendarAgendaView, CalendarSidebar, CalendarControls
-│   └── admin/            # AdminLogin, AdminSidebar, PostForm, PostTable, SubjectManager, AdminCalendar, SettingsManager
+│   └── admin/            # AdminLogin, AdminSidebar, PostForm, PostTable, SubjectManager, NotesManager, AdminCalendar, SettingsManager
 └── pages/
     ├── HomePage.jsx      # Student feed with structured sections
     ├── CalendarPage.jsx  # Full-page deadlines calendar (Month, Week, Agenda) with sidebar inspector
     ├── ArchivePage.jsx   # Full-page past & archived events browser with search, filters & sorting
+    ├── NotesPage.jsx     # Study notes gallery — links to externally-hosted HTML notes
     ├── PostPage.jsx      # Full post detail view
     ├── AdminPage.jsx     # Admin dashboard with nested routes & live student preview
     └── NotFoundPage.jsx  # 404 page
@@ -118,7 +121,7 @@ scripts/
 ### 4.1 Always Dual-Mode
 
 Every function in `lib/api.js` MUST check `isSupabaseConfigured()` first:
-- If **false** → operate on `DEMO_POSTS` / `DEMO_SUBJECTS` arrays in memory
+- If **false** → operate on `DEMO_POSTS` / `DEMO_SUBJECTS` / `DEMO_NOTES` arrays in memory
 - If **true** → use the Supabase client
 
 ### 4.2 Admin Operations
@@ -160,6 +163,7 @@ BatchHub unifies attachments and resource references into standard `{ label, url
 - `posts.status` is constrained to: `published`, `draft`, `archived`
 - `attachments` cascade-delete when their parent post is deleted
 - `subject_id` is set to NULL when a subject is deleted (`ON DELETE SET NULL`)
+- `notes` table stores admin-managed study notes with external URLs; `subject_id` FK to `subjects` (`ON DELETE SET NULL`)
 
 ---
 

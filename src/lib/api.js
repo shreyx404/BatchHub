@@ -1,5 +1,5 @@
 import { supabase, isSupabaseConfigured } from './supabase.js';
-import { DEMO_POSTS, DEMO_SUBJECTS, DEMO_SETTINGS } from './demoData.js';
+import { DEMO_POSTS, DEMO_SUBJECTS, DEMO_NOTES, DEMO_SETTINGS } from './demoData.js';
 import { DEFAULT_COLLEGE_MATERIAL_URL, SETTING_KEYS } from './constants.js';
 
 
@@ -405,6 +405,106 @@ export async function fetchCollegeMaterialUrl() {
 
 export async function updateCollegeMaterialUrl(url) {
   return await updateSetting(SETTING_KEYS.COLLEGE_MATERIAL_URL, url);
+}
+
+/* ============================================================
+   Notes API
+   ============================================================ */
+
+/**
+ * Fetch all published notes (public).
+ */
+export async function fetchNotes({ search, subjectId } = {}) {
+  if (!isSupabaseConfigured()) {
+    let filtered = [...DEMO_NOTES];
+    if (subjectId) filtered = filtered.filter((n) => n.subject_id === subjectId);
+    if (search) {
+      const q = search.toLowerCase();
+      filtered = filtered.filter(
+        (n) =>
+          n.title.toLowerCase().includes(q) ||
+          (n.subtitle && n.subtitle.toLowerCase().includes(q)) ||
+          (n.tags && n.tags.some((t) => t.toLowerCase().includes(q)))
+      );
+    }
+    return filtered.sort((a, b) => a.sort_order - b.sort_order);
+  }
+
+  let query = supabase
+    .from('notes')
+    .select('*, subjects(*)')
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false });
+
+  if (subjectId) query = query.eq('subject_id', subjectId);
+  if (search) {
+    const escaped = search.replace(/[%_\\]/g, '\\$&');
+    query = query.or(`title.ilike.%${escaped}%,subtitle.ilike.%${escaped}%`);
+  }
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Fetch all notes for admin.
+ */
+export async function fetchAllNotes() {
+  if (!isSupabaseConfigured()) {
+    return [...DEMO_NOTES];
+  }
+  return await adminRequest('getAllNotes');
+}
+
+/**
+ * Create a new note.
+ */
+export async function createNote(noteData) {
+  if (!isSupabaseConfigured()) {
+    const newNote = {
+      id: `demo-note-${Date.now()}`,
+      ...noteData,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      subjects: DEMO_SUBJECTS.find((s) => s.id === noteData.subject_id) || null,
+    };
+    DEMO_NOTES.push(newNote);
+    return newNote;
+  }
+  return await adminRequest('createNote', noteData);
+}
+
+/**
+ * Update a note.
+ */
+export async function updateNote(id, updates) {
+  if (!isSupabaseConfigured()) {
+    const idx = DEMO_NOTES.findIndex((n) => n.id === id);
+    if (idx === -1) throw new Error('Note not found');
+    DEMO_NOTES[idx] = {
+      ...DEMO_NOTES[idx],
+      ...updates,
+      updated_at: new Date().toISOString(),
+      subjects: updates.subject_id
+        ? DEMO_SUBJECTS.find((s) => s.id === updates.subject_id) || null
+        : DEMO_NOTES[idx].subjects,
+    };
+    return DEMO_NOTES[idx];
+  }
+  return await adminRequest('updateNote', { id, updates });
+}
+
+/**
+ * Delete a note.
+ */
+export async function deleteNote(id) {
+  if (!isSupabaseConfigured()) {
+    const idx = DEMO_NOTES.findIndex((n) => n.id === id);
+    if (idx !== -1) DEMO_NOTES.splice(idx, 1);
+    return;
+  }
+  await adminRequest('deleteNote', { id });
 }
 
 /* ============================================================

@@ -7,6 +7,7 @@ const PostPage = lazy(() => import('./pages/PostPage'));
 const CalendarPage = lazy(() => import('./pages/CalendarPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const ArchivePage = lazy(() => import('./pages/ArchivePage'));
+const NotesPage = lazy(() => import('./pages/NotesPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/calendar" element={<CalendarPage />} />
         <Route path="/archive" element={<ArchivePage />} />
+        <Route path="/notes" element={<NotesPage />} />
         <Route path="/post/:id" element={<PostPage />} />
         <Route path="/admin/*" element={<AdminPage />} />
         <Route path="*" element={<NotFoundPage />} />

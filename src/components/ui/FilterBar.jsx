@@ -6,26 +6,29 @@ export default function FilterBar({
   selectedSubject,
   onSubjectChange,
   subjects = [],
+  hideTypeFilter = false,
 }) {
   return (
     <div className="flex flex-col gap-2">
       {/* Type filters */}
-      <div className="flex gap-1.5 overflow-x-auto sm:flex-wrap touch-scroll py-0.5 -mx-4 px-4 sm:mx-0 sm:px-0">
-        <FilterChip
-          label="All"
-          active={!selectedType}
-          onClick={() => onTypeChange(null)}
-        />
-        {CONTENT_TYPE_LIST.map(({ value, label, icon: Icon }) => (
+      {!hideTypeFilter && (
+        <div className="flex gap-1.5 overflow-x-auto sm:flex-wrap touch-scroll py-0.5 -mx-4 px-4 sm:mx-0 sm:px-0">
           <FilterChip
-            key={value}
-            label={label}
-            icon={Icon}
-            active={selectedType === value}
-            onClick={() => onTypeChange(selectedType === value ? null : value)}
+            label="All"
+            active={!selectedType}
+            onClick={() => onTypeChange(null)}
           />
-        ))}
-      </div>
+          {CONTENT_TYPE_LIST.map(({ value, label, icon: Icon }) => (
+            <FilterChip
+              key={value}
+              label={label}
+              icon={Icon}
+              active={selectedType === value}
+              onClick={() => onTypeChange(selectedType === value ? null : value)}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Subject filters */}
       {subjects.length > 0 && (

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, FilePlus, FileText, BookOpen,
-  CalendarClock, SlidersHorizontal, LogOut, X
+  CalendarClock, SlidersHorizontal, LogOut, X, BookMarked
 } from 'lucide-react';
 import { APP_NAME } from '../../lib/constants';
 
@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { to: '/admin/create', icon: FilePlus, label: 'Create Post' },
   { to: '/admin/posts', icon: FileText, label: 'All Posts' },
   { to: '/admin/subjects', icon: BookOpen, label: 'Subjects' },
+  { to: '/admin/notes', icon: BookMarked, label: 'Notes' },
   { to: '/admin/calendar', icon: CalendarClock, label: 'Calendar' },
   { to: '/admin/settings', icon: SlidersHorizontal, label: 'Settings' },
 ];

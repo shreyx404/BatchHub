@@ -18,10 +18,10 @@
 │  │  • HomePage           │    │  │ admin.js   │ ← Admin CRUD │  │
 │  │  • CalendarPage (Lazy)│    │  │            │   + Auth      │  │
 │  │  • ArchivePage (Lazy) │    │  └────────────┘              │  │
-│  │  • PostPage (Lazy)    │    │  ┌────────────┐              │  │
-│  │  • AdminPage (Lazy)   │    │  │ calendar.js│ ← Calendar   │  │
-│  │  • NotFoundPage (Lazy)│    │  └────────────┘   Deadlines  │  │
-│  │                       │    │  ┌────────────┐              │  │
+│  │  • NotesPage (Lazy)   │    │  ┌────────────┐              │  │
+│  │  • PostPage (Lazy)    │    │  │ calendar.js│ ← Calendar   │  │
+│  │  • AdminPage (Lazy)   │    │  └────────────┘   Deadlines  │  │
+│  │  • NotFoundPage (Lazy)│    │  ┌────────────┐              │  │
 │  │  Reads via anon key / ┼───►│  │ discord.js │ ← Webhook     │  │
 │  │  public endpoints     │    │  │            │   + Sig       │  │
 │  │                       │    │  └────────────┘   Verify     │  │
@@ -210,6 +210,13 @@ Cross-component event sync (batchhub_material_url_changed) immediately updates m
     │   │   └── <PostCard> × N
     │   └── <Footer>
     │
+    ├── <NotesPage> (Lazy)         // "/notes" — Study notes gallery with Folder View
+    │   ├── <Header>               // Sticky nav with active Notes link
+    │   ├── <SearchBar>            // Debounced text input (Ctrl+K shortcut)
+    │   ├── Folder Grid            // <FolderCard> × N (Subject Folders)
+    │   ├── Subject View           // <NoteCard> × N + Back Button
+    │   └── <Footer>
+    │
     ├── <PostPage> (Lazy)          // "/post/:id" — Full post detail
     │   ├── <NavBar>               // Back navigation
     │   ├── <Badge> × N            // Type + Subject badges
@@ -229,6 +236,7 @@ Cross-component event sync (batchhub_material_url_changed) immediately updates m
     │       ├── <PostTable>        // "/admin/posts" — All posts list (status filter, created/due date sort)
     │       ├── <SubjectManager>   // "/admin/subjects" — CRUD subjects
     │       ├── <AdminCalendar>    // "/admin/calendar" — Dedicated calendar view in admin (Month/Week/Agenda)
+    │       ├── <NotesManager>     // "/admin/notes" — CRUD for externally-hosted notes
     │       └── <SettingsManager>  // "/admin/settings" — Configure global links (College Study Material Google Drive URL)
     │
     └── <NotFoundPage> (Lazy)      // "*" — 404
@@ -244,6 +252,7 @@ BatchHub uses **local component state + custom hooks** — no global state libra
 | `useUpcomingDeadlines()` | `hooks/usePosts.js` | Fetches posts with future `due_date`, sorted ascending |
 | `useCalendarPosts(year, month, options)` | `hooks/useCalendar.js` | Fetches posts with `due_date` falling within the month for calendar grid views (supports `includeDrafts` and `status` options) |
 | `useArchivePosts(filters, sortBy)` | `hooks/useArchivePosts.js` | Fetches archived deliverables (`status='archived'`) with client-side sorting (newest, oldest, due-date, title-az) |
+| `useNotes(filters)` | `hooks/useNotes.js` | Fetches study notes from the `notes` table supporting search and subject filtering |
 | `useCollegeMaterial()` | `hooks/useCollegeMaterial.js` | Provides active College Study Material Drive URL with module cache & real-time sync |
 | `usePost(id)` | `hooks/usePost.js` | Fetches a single post by UUID |
 | `useSubjects()` | `hooks/useSubjects.js` | Fetches all subjects sorted by name |
@@ -339,6 +348,16 @@ subjects (1) ──────────< (N) posts
                               │ links (JSONB: [{label, url}])
                               │ batch_id
                               │ created_by
+                              │ created_at
+                              │ updated_at (trigger)
+                              │
+    └──────────────────< (N) notes
+                              │ id (PK, UUID)
+                              │ title
+                              │ subtitle
+                              │ url
+                              │ tags
+                              │ subject_id (FK)
                               │ created_at
                               │ updated_at (trigger)
 

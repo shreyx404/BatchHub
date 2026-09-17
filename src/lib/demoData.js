@@ -303,10 +303,49 @@ const DEMO_POSTS = [
   },
 ];
 
+const DEMO_NOTES = [
+  {
+    id: 'note-1',
+    title: 'OSI Reference Model',
+    subtitle: 'Unit II — Data Communication & Networking',
+    subject_id: 'subj-dcn',
+    url: 'https://shreyx404.github.io/batch-notes/osi-unit2-notes.html',
+    tags: ['osi', 'networking', 'layers'],
+    sort_order: 0,
+    created_at: getRelativeDate(-5),
+    updated_at: getRelativeDate(-5),
+    subjects: DEMO_SUBJECTS[3],
+  },
+  {
+    id: 'note-2',
+    title: 'Stack & Queue Operations',
+    subtitle: 'Unit III — Fundamental Data Structures',
+    subject_id: 'subj-fds',
+    url: 'https://shreyx404.github.io/batch-notes/fds-unit3-notes.html',
+    tags: ['stack', 'queue', 'data-structures'],
+    sort_order: 1,
+    created_at: getRelativeDate(-3),
+    updated_at: getRelativeDate(-3),
+    subjects: DEMO_SUBJECTS[2],
+  },
+  {
+    id: 'note-3',
+    title: 'IoT Architecture & Protocols',
+    subtitle: 'Unit I — Basics of IoT',
+    subject_id: 'subj-biot',
+    url: 'https://shreyx404.github.io/batch-notes/biot-unit1-notes.html',
+    tags: ['iot', 'architecture', 'mqtt'],
+    sort_order: 2,
+    created_at: getRelativeDate(-1),
+    updated_at: getRelativeDate(-1),
+    subjects: DEMO_SUBJECTS[4],
+  },
+];
+
 const DEMO_SETTINGS = {
   college_material_url: 'https://drive.google.com/drive/folders/1MukhwWiRG7CTsOmi2a__buSqKY_HcQXy?usp=drive_link',
 };
 
-export { DEMO_SUBJECTS, DEMO_POSTS, DEMO_SETTINGS };
+export { DEMO_SUBJECTS, DEMO_POSTS, DEMO_NOTES, DEMO_SETTINGS };
 
 

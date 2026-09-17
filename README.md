@@ -17,6 +17,7 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 - 🔍 Browse, search (`Ctrl + K`), and filter updates
 - 🗓️ Full-page interactive Academic Deadlines Calendar (`/calendar`) with **Month**, **Week** (7-day timetable), and **Agenda** (chronological timeline strictly presenting active upcoming deliverables with contained independent scroll and sticky date headers) views, default selection date set to TODAY, subject filter chips, date navigation, today snap-back, selected-date inspector with empty-state handling, upcoming 7-day deadlines sidebar, and greyed-out display of past & archived deliverables in grid/week views
 - 🗄️ Full-page Archive gallery (`/archive`) to browse, search (`Ctrl + K`), filter (by content type and subject), and sort (Recent, Oldest, Due Date, A → Z) past events, expired deliverables, and completed assignments with bi-directional URL parameter state
+- 📓 **Notes Gallery (Folder View):** Full-page section (`/notes`) presenting subjects as interactive folders containing externally-hosted HTML study notes with global cross-subject search
 - 📋 View detailed posts with markdown content
 - 🔗 Direct access to resource links & document attachments (Google Drive, Classroom, PDFs, GitHub)
 - 📅 See upcoming deadlines (automatically unpinned when passed)
@@ -30,6 +31,7 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 - 🔐 Password-protected admin dashboard backed by a secure Serverless API
 - 🛡️ 4-Tier Security Fortress: Cloudflare Turnstile bot verification, Device Fingerprinting, 10-attempt 24-hour lockout, and 30/day global rate limiting
 - ⚙️ **App Settings & Material Link Manager:** Dedicated `/admin/settings` management view to configure, test in a new tab, reset to default, and update the global College Study Material URL with instant real-time sync across all mounted headers
+- 📝 **Admin Notes Manager:** Full CRUD control over the Notes gallery, linking subjects to externally hosted HTML notes
 - 👁️ Live "Student View" preview embedded directly inside the Admin Dashboard overview
 - 🗓️ Integrated multi-mode Admin Calendar view (`/admin/calendar`) with status filters (All, Upcoming, Past Due, Archived, Drafts), quick New Deadline action, and direct edit shortcuts
 - ✏️ Create, edit, publish, archive, and 1-click restore posts with timezone-safe date picking
@@ -179,8 +181,9 @@ src/
 │   ├── ui/               # Badges, search, filters, archive sort, modals, states
 │   ├── posts/            # PostCard, PostGrid, DeadlineBanner (countdown), PinnedSection, NoticesSection
 │   ├── calendar/         # CalendarGrid, CalendarWeekView, CalendarAgendaView, CalendarSidebar, CalendarControls
-│   └── admin/            # Admin forms, tables, sidebar, calendar, login with Turnstile
-└── pages/                # Route pages (HomePage, CalendarPage, ArchivePage, PostPage, AdminPage, NotFoundPage)
+│   ├── notes/            # NoteCard, FolderCard
+│   └── admin/            # Admin forms, tables, sidebar, calendar, NotesManager, login with Turnstile
+└── pages/                # Route pages (HomePage, CalendarPage, ArchivePage, PostPage, NotesPage, AdminPage, NotFoundPage)
 
 api/                      # Vercel Serverless Functions
 ├── admin.js              # Secure backend for admin dashboard (5-tier rate limiting)

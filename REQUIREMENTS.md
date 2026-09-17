@@ -26,6 +26,9 @@
 | FR-010i | Continuous ledger timeline layout in `PostGrid` (`gap-0`) with seamless borders and diamond node markers | P1 | ✅ Implemented |
 | FR-010j | Dark / Light theme toggle with anti-flash script in `index.html`, `localStorage` persistence, system preference listener, and sharp `<ThemeToggle />` button in header, admin bar, and login screen | P0 | ✅ Implemented |
 | FR-010k | Prominent College Study Material navigation button in top header located between Archive and Theme toggle, redirecting students directly to the batch's centralized Google Drive folder in a new tab (`target="_blank" rel="noopener noreferrer"`) | P0 | ✅ Implemented |
+| FR-010l | Display a full-page Notes Gallery (`/notes`) featuring a folder-based UI grid where subjects act as interactive folders | P0 | ✅ Implemented |
+| FR-010m | Support global debounced search overriding the folder view to find notes across all subjects | P0 | ✅ Implemented |
+| FR-010n | Manage external study notes via Admin Dashboard (`/admin/notes`) supporting CRUD operations and strict URL validation | P0 | ✅ Implemented |
 
 
 ### 1.1a Past Events & Deliverables Archive (Student View)
@@ -248,7 +251,20 @@
 | `file_type` | TEXT | MIME type |
 | `created_at` | TIMESTAMPTZ | Auto-set |
 
-### 3.4 Admin Login Attempts Table
+### 3.4 Notes Table
+
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `id` | UUID | Primary key, auto-generated |
+| `title` | TEXT | Not null |
+| `subtitle` | TEXT | Optional |
+| `url` | TEXT | Not null, must start with http/https |
+| `subject_id` | UUID | FK → subjects, `ON DELETE SET NULL` |
+| `tags` | TEXT | Optional CSV |
+| `created_at` | TIMESTAMPTZ | Auto-set |
+| `updated_at` | TIMESTAMPTZ | Auto-updated via trigger |
+
+### 3.5 Admin Login Attempts Table
 
 | Field | Type | Constraints |
 |-------|------|-------------|

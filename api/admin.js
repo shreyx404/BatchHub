@@ -162,6 +162,7 @@ function timingSafeCompare(a, b) {
 // ── Payload validators (whitelist allowed fields) ──────────────
 const POST_FIELDS = ['title', 'content', 'type', 'subject_id', 'is_pinned', 'pinned_until', 'status', 'due_date', 'created_at', 'tags', 'links'];
 const SUBJECT_FIELDS = ['name', 'code', 'color'];
+const NOTE_FIELDS = ['title', 'subtitle', 'subject_id', 'url', 'tags', 'sort_order'];
 const ALLOWED_SETTING_KEYS = ['college_material_url'];
 
 function pick(obj, fields) {
@@ -314,6 +315,10 @@ export default async function handler(req, res) {
     'createSubject',
     'updateSubject',
     'deleteSubject',
+    'getAllNotes',
+    'createNote',
+    'updateNote',
+    'deleteNote',
     'getCalendarDeadlines',
     'autoArchiveExpired',
     'getSetting',
@@ -400,6 +405,40 @@ export default async function handler(req, res) {
       case 'deleteSubject':
         if (!payload?.id) return res.status(400).json({ error: 'Missing subject ID.' });
         result = await supabase.from('subjects').delete().eq('id', payload.id);
+        break;
+      case 'getAllNotes':
+        result = await supabase
+          .from('notes')
+          .select('*, subjects(*)')
+          .order('sort_order', { ascending: true })
+          .order('created_at', { ascending: false });
+        break;
+      case 'createNote': {
+        if (!payload?.title || !payload?.url) return res.status(400).json({ error: 'Title and URL are required.' });
+        const trimmedUrl = String(payload.url).trim();
+        if (!/^https?:\/\//i.test(trimmedUrl)) {
+          return res.status(400).json({ error: 'Note URL must begin with http:// or https://' });
+        }
+        const noteData = pick({ ...payload, url: trimmedUrl }, NOTE_FIELDS);
+        result = await supabase.from('notes').insert(noteData).select('*, subjects(*)').single();
+        break;
+      }
+      case 'updateNote': {
+        if (!payload?.id) return res.status(400).json({ error: 'Missing note ID.' });
+        const updates = pick(payload.updates, NOTE_FIELDS);
+        if (updates.url) {
+          const trimmed = String(updates.url).trim();
+          if (!/^https?:\/\//i.test(trimmed)) {
+            return res.status(400).json({ error: 'Note URL must begin with http:// or https://' });
+          }
+          updates.url = trimmed;
+        }
+        result = await supabase.from('notes').update(updates).eq('id', payload.id).select('*, subjects(*)').single();
+        break;
+      }
+      case 'deleteNote':
+        if (!payload?.id) return res.status(400).json({ error: 'Missing note ID.' });
+        result = await supabase.from('notes').delete().eq('id', payload.id);
         break;
       case 'getCalendarDeadlines': {
         let query = supabase

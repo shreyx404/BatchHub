@@ -148,3 +148,33 @@ ALTER TABLE app_settings ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public read app_settings"  ON app_settings  FOR SELECT USING (true);
 CREATE POLICY "Service role full access app_settings" ON app_settings FOR ALL USING (auth.role() = 'service_role');
 
+-- ============================================================
+-- NOTES TABLE (Admin-managed study notes with external URLs)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS notes (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title      TEXT NOT NULL,
+  subtitle   TEXT,
+  subject_id UUID REFERENCES subjects(id) ON DELETE SET NULL,
+  url        TEXT NOT NULL,
+  tags       TEXT[] DEFAULT '{}',
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_notes_subject ON notes(subject_id);
+CREATE INDEX IF NOT EXISTS idx_notes_sort ON notes(sort_order);
+
+-- Auto-update updated_at
+DROP TRIGGER IF EXISTS trigger_notes_updated_at ON notes;
+CREATE TRIGGER trigger_notes_updated_at
+  BEFORE UPDATE ON notes FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at();
+
+-- RLS
+ALTER TABLE notes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public read notes" ON notes FOR SELECT USING (true);
+CREATE POLICY "Service role full access notes" ON notes
+  FOR ALL USING (auth.role() = 'service_role');
+

@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Settings, CalendarClock, Archive, FolderOpen } from 'lucide-react';
+import { Settings, CalendarClock, Archive, FolderOpen, BookMarked } from 'lucide-react';
 import ThemeToggle from '../ui/ThemeToggle';
 import { APP_NAME } from '../../lib/constants';
 import { useCollegeMaterial } from '../../hooks/useCollegeMaterial';
@@ -9,6 +9,7 @@ export default function Header() {
   const isAdmin = location.pathname.startsWith('/admin');
   const isCalendar = location.pathname === '/calendar';
   const isArchive = location.pathname === '/archive';
+  const isNotes = location.pathname === '/notes';
   const { materialUrl } = useCollegeMaterial();
 
 
@@ -59,6 +60,20 @@ export default function Header() {
                 title="Archive"
               >
                 <Archive size={17} className="sm:w-[18px] sm:h-[18px]" />
+              </Link>
+
+              {/* Notes Button */}
+              <Link
+                to="/notes"
+                className={`p-1.5 sm:p-2 min-h-[38px] min-w-[38px] sm:min-h-[40px] sm:min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors ${
+                  isNotes
+                    ? 'text-[var(--color-text)] bg-[var(--color-surface-2)] border border-[var(--color-border-light)]'
+                    : 'text-[var(--color-text-dim)] hover:text-[var(--color-text-muted)]'
+                }`}
+                aria-label="Study Notes"
+                title="Study Notes"
+              >
+                <BookMarked size={17} className="sm:w-[18px] sm:h-[18px]" />
               </Link>
 
               {/* College Study Material Drive Link (between Archive & Theme Toggle) */}
