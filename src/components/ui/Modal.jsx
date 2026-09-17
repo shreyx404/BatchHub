@@ -4,62 +4,83 @@ import { X } from 'lucide-react';
 export default function Modal({ isOpen, onClose, title, children, maxWidth = 'max-w-lg' }) {
   const modalRef = useRef(null);
   const previousFocusRef = useRef(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
-    if (isOpen) {
-      previousFocusRef.current = document.activeElement;
-      document.body.style.overflow = 'hidden';
+    if (!isOpen) return;
 
-      const handleKeyDown = (e) => {
-        if (e.key === 'Escape') {
-          onClose?.();
-          return;
-        }
+    previousFocusRef.current = document.activeElement;
+    document.body.style.overflow = 'hidden';
 
-        if (e.key === 'Tab' && modalRef.current) {
-          const focusableElements = modalRef.current.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-          );
-          if (focusableElements.length === 0) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onCloseRef.current?.();
+        return;
+      }
 
-          const firstElement = focusableElements[0];
-          const lastElement = focusableElements[focusableElements.length - 1];
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusableElements = modalRef.current.querySelectorAll(
+          'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])'
+        );
+        if (focusableElements.length === 0) return;
 
-          if (e.shiftKey) {
-            if (document.activeElement === firstElement) {
-              lastElement.focus();
-              e.preventDefault();
-            }
-          } else {
-            if (document.activeElement === lastElement) {
-              firstElement.focus();
-              e.preventDefault();
-            }
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            lastElement.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            firstElement.focus();
+            e.preventDefault();
           }
         }
-      };
+      }
+    };
 
-      window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
 
-      // Auto-focus first input or close button
-      setTimeout(() => {
-        if (modalRef.current) {
-          const autoFocusEl = modalRef.current.querySelector('[autofocus], input, button');
-          if (autoFocusEl) autoFocusEl.focus();
-        }
-      }, 50);
+    // Auto-focus on modal open: prioritize element with [autofocus], then first input/select/textarea, then first button
+    const timer = setTimeout(() => {
+      if (!modalRef.current) return;
+      // If an element inside the modal is already focused, do not steal focus
+      if (modalRef.current.contains(document.activeElement) && document.activeElement !== modalRef.current) {
+        return;
+      }
 
-      return () => {
-        document.body.style.overflow = '';
-        window.removeEventListener('keydown', handleKeyDown);
-        if (previousFocusRef.current && typeof previousFocusRef.current.focus === 'function') {
-          previousFocusRef.current.focus();
-        }
-      };
-    } else {
+      const autoFocusEl = modalRef.current.querySelector('[autofocus]');
+      if (autoFocusEl && typeof autoFocusEl.focus === 'function') {
+        autoFocusEl.focus();
+        return;
+      }
+
+      const firstInput = modalRef.current.querySelector(
+        'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled])'
+      );
+      if (firstInput && typeof firstInput.focus === 'function') {
+        firstInput.focus();
+        return;
+      }
+
+      const firstBtn = modalRef.current.querySelector('button:not([disabled])');
+      if (firstBtn && typeof firstBtn.focus === 'function') {
+        firstBtn.focus();
+      }
+    }, 50);
+
+    return () => {
+      clearTimeout(timer);
       document.body.style.overflow = '';
-    }
-  }, [isOpen, onClose]);
+      window.removeEventListener('keydown', handleKeyDown);
+      if (previousFocusRef.current && typeof previousFocusRef.current.focus === 'function') {
+        previousFocusRef.current.focus();
+      }
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

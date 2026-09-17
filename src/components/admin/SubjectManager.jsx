@@ -32,6 +32,11 @@ export default function SubjectManager() {
     setShowForm(true);
   };
 
+  const closeForm = () => {
+    setShowForm(false);
+    setEditTarget(null);
+  };
+
   const handleSave = async () => {
     if (!form.name.trim()) {
       toast.error('Subject name is required');
@@ -47,7 +52,7 @@ export default function SubjectManager() {
         await createSubject(form);
         toast.success('Subject created');
       }
-      setShowForm(false);
+      closeForm();
       refetch();
     } catch (err) {
       toast.error(err.message || 'Failed to save');
@@ -132,10 +137,10 @@ export default function SubjectManager() {
       {/* Create/Edit Modal */}
       <Modal
         isOpen={showForm}
-        onClose={() => setShowForm(false)}
+        onClose={closeForm}
         title={editTarget ? 'Edit Subject' : 'New Subject'}
       >
-        <div className="space-y-4">
+        <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="space-y-4">
           <div>
             <label className="text-sm font-medium text-[var(--color-text)] block mb-1.5">
               Name <span className="text-red-400">*</span>
@@ -143,7 +148,7 @@ export default function SubjectManager() {
             <input
               type="text"
               value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
               placeholder="e.g. Data Structures"
               className="input-field min-h-[42px]"
               autoFocus
@@ -156,7 +161,7 @@ export default function SubjectManager() {
             <input
               type="text"
               value={form.code}
-              onChange={(e) => setForm({ ...form, code: e.target.value })}
+              onChange={(e) => setForm((prev) => ({ ...prev, code: e.target.value }))}
               placeholder="e.g. CS201"
               className="input-field min-h-[42px]"
             />
@@ -170,7 +175,7 @@ export default function SubjectManager() {
                 <button
                   key={c}
                   type="button"
-                  onClick={() => setForm({ ...form, color: c })}
+                  onClick={() => setForm((prev) => ({ ...prev, color: c }))}
                   className="w-7 h-7 rotate-45 border transition-all hover:scale-110 active:scale-95 flex items-center justify-center min-h-[28px] min-w-[28px]"
                   style={{
                     background: c,
@@ -187,13 +192,14 @@ export default function SubjectManager() {
 
           <div className="flex gap-3 justify-end pt-3">
             <button
-              onClick={() => setShowForm(false)}
+              type="button"
+              onClick={closeForm}
               className="px-4 py-2.5 min-h-[42px] border border-[var(--color-border)] text-sm text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors"
             >
               Cancel
             </button>
             <button
-              onClick={handleSave}
+              type="submit"
               disabled={saving}
               className="btn-primary flex items-center gap-2 px-5 py-2.5 min-h-[42px] active:scale-[0.99] disabled:opacity-60 text-sm font-semibold transition-all"
             >
@@ -203,7 +209,7 @@ export default function SubjectManager() {
               {editTarget ? 'Update' : 'Create'}
             </button>
           </div>
-        </div>
+        </form>
       </Modal>
 
       {/* Delete confirmation */}

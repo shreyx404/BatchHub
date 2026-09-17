@@ -49,6 +49,11 @@ export default function NotesManager() {
     setShowForm(true);
   };
 
+  const closeForm = () => {
+    setShowForm(false);
+    setEditTarget(null);
+  };
+
   const handleSave = async () => {
     if (!form.title.trim()) {
       toast.error('Title is required');
@@ -82,7 +87,7 @@ export default function NotesManager() {
         await createNote(payload);
         toast.success('Note created');
       }
-      setShowForm(false);
+      closeForm();
       load();
     } catch (err) {
       toast.error(err.message || 'Failed to save');
@@ -188,10 +193,10 @@ export default function NotesManager() {
       {/* Create/Edit Modal */}
       <Modal
         isOpen={showForm}
-        onClose={() => setShowForm(false)}
+        onClose={closeForm}
         title={editTarget ? 'Edit Note' : 'New Note'}
       >
-        <div className="space-y-4">
+        <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="space-y-4">
           <div>
             <label className="text-sm font-medium text-[var(--color-text)] block mb-1.5">
               Title <span className="text-red-400">*</span>
@@ -199,7 +204,7 @@ export default function NotesManager() {
             <input
               type="text"
               value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
               placeholder="e.g. OSI Reference Model"
               className="input-field min-h-[42px]"
               autoFocus
@@ -212,7 +217,7 @@ export default function NotesManager() {
             <input
               type="text"
               value={form.subtitle}
-              onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
+              onChange={(e) => setForm((prev) => ({ ...prev, subtitle: e.target.value }))}
               placeholder="e.g. Unit II — Data Communication & Networking"
               className="input-field min-h-[42px]"
             />
@@ -224,7 +229,7 @@ export default function NotesManager() {
             <input
               type="url"
               value={form.url}
-              onChange={(e) => setForm({ ...form, url: e.target.value })}
+              onChange={(e) => setForm((prev) => ({ ...prev, url: e.target.value }))}
               placeholder="https://shreyx404.github.io/batch-notes/osi-notes.html"
               className="input-field min-h-[42px] font-mono text-xs"
             />
@@ -235,7 +240,7 @@ export default function NotesManager() {
             </label>
             <select
               value={form.subject_id}
-              onChange={(e) => setForm({ ...form, subject_id: e.target.value })}
+              onChange={(e) => setForm((prev) => ({ ...prev, subject_id: e.target.value }))}
               className="input-field min-h-[42px]"
             >
               <option value="">None</option>
@@ -253,7 +258,7 @@ export default function NotesManager() {
             <input
               type="text"
               value={form.tags}
-              onChange={(e) => setForm({ ...form, tags: e.target.value })}
+              onChange={(e) => setForm((prev) => ({ ...prev, tags: e.target.value }))}
               placeholder="osi, networking, layers (comma-separated)"
               className="input-field min-h-[42px]"
             />
@@ -262,13 +267,14 @@ export default function NotesManager() {
 
           <div className="flex gap-3 justify-end pt-3">
             <button
-              onClick={() => setShowForm(false)}
+              type="button"
+              onClick={closeForm}
               className="px-4 py-2.5 min-h-[42px] border border-[var(--color-border)] text-sm text-[var(--color-text-muted)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors"
             >
               Cancel
             </button>
             <button
-              onClick={handleSave}
+              type="submit"
               disabled={saving}
               className="btn-primary flex items-center gap-2 px-5 py-2.5 min-h-[42px] active:scale-[0.99] disabled:opacity-60 text-sm font-semibold transition-all"
             >
@@ -278,7 +284,7 @@ export default function NotesManager() {
               {editTarget ? 'Update' : 'Create'}
             </button>
           </div>
-        </div>
+        </form>
       </Modal>
 
       {/* Delete confirmation */}
