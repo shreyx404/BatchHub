@@ -18,6 +18,7 @@ import {
   updateCollegeMaterialUrl,
   fetchSetting,
   updateSetting,
+  fetchNotes,
 } from '../../src/lib/api.js';
 import { DEMO_POSTS, DEMO_SUBJECTS, DEMO_SETTINGS } from '../../src/lib/demoData.js';
 import { DEFAULT_COLLEGE_MATERIAL_URL } from '../../src/lib/constants.js';
@@ -410,6 +411,45 @@ describe('Dual-Mode API & Data Layer (Demo Fallback Mode)', () => {
       await updateSetting('custom_test_key', 'custom_value');
       const updatedFetched = await fetchSetting('custom_test_key');
       assert.equal(updatedFetched, 'custom_value');
+    });
+  });
+
+  describe('fetchNotes & Subject Folder Title Sorting', () => {
+    it('should return notes sorted according to Title in ascending order when inside a subject folder (subjectId specified)', async () => {
+      const dcnNotes = await fetchNotes({ subjectId: 'subj-dcn' });
+      assert.ok(dcnNotes.length > 1);
+
+      // Verify all belong to subj-dcn
+      for (const n of dcnNotes) {
+        assert.equal(n.subject_id, 'subj-dcn');
+      }
+
+      // Verify ascending alphabetical order by title
+      for (let i = 0; i < dcnNotes.length - 1; i++) {
+        const currentTitle = dcnNotes[i].title;
+        const nextTitle = dcnNotes[i + 1].title;
+        assert.ok(
+          currentTitle.localeCompare(nextTitle, undefined, { numeric: true, sensitivity: 'base' }) <= 0,
+          `Expected "${currentTitle}" to come before or equal to "${nextTitle}"`
+        );
+      }
+
+      const fdsNotes = await fetchNotes({ subjectId: 'subj-fds' });
+      assert.ok(fdsNotes.length > 1);
+      for (let i = 0; i < fdsNotes.length - 1; i++) {
+        const currentTitle = fdsNotes[i].title;
+        const nextTitle = fdsNotes[i + 1].title;
+        assert.ok(
+          currentTitle.localeCompare(nextTitle, undefined, { numeric: true, sensitivity: 'base' }) <= 0,
+          `Expected "${currentTitle}" to come before or equal to "${nextTitle}"`
+        );
+      }
+    });
+
+    it('should filter notes by search term and retain subject filtering', async () => {
+      const results = await fetchNotes({ search: 'HTTP' });
+      assert.ok(results.length > 0);
+      assert.ok(results.some(n => n.title.includes('HTTP')));
     });
   });
 });

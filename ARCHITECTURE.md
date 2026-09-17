@@ -214,7 +214,7 @@ Cross-component event sync (batchhub_material_url_changed) immediately updates m
     │   ├── <Header>               // Sticky nav with active Notes link
     │   ├── <SearchBar>            // Debounced text input (Ctrl+K shortcut)
     │   ├── Folder Grid            // <FolderCard> × N (Subject Folders)
-    │   ├── Subject View           // <NoteCard> × N + Back Button
+    │   ├── Subject View           // <NoteCard> × N (sorted by Title ascending A→Z) + Back Button
     │   └── <Footer>
     │
     ├── <PostPage> (Lazy)          // "/post/:id" — Full post detail

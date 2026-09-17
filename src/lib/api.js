@@ -427,16 +427,24 @@ export async function fetchNotes({ search, subjectId } = {}) {
           (n.tags && n.tags.some((t) => t.toLowerCase().includes(q)))
       );
     }
+    if (subjectId) {
+      return filtered.sort((a, b) =>
+        (a.title || '').localeCompare(b.title || '', undefined, { numeric: true, sensitivity: 'base' })
+      );
+    }
     return filtered.sort((a, b) => a.sort_order - b.sort_order);
   }
 
   let query = supabase
     .from('notes')
-    .select('*, subjects(*)')
-    .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: false });
+    .select('*, subjects(*)');
 
-  if (subjectId) query = query.eq('subject_id', subjectId);
+  if (subjectId) {
+    query = query.eq('subject_id', subjectId).order('title', { ascending: true });
+  } else {
+    query = query.order('sort_order', { ascending: true }).order('created_at', { ascending: false });
+  }
+
   if (search) {
     const escaped = search.replace(/[%_\\]/g, '\\$&');
     query = query.or(`title.ilike.%${escaped}%,subtitle.ilike.%${escaped}%`);
@@ -444,6 +452,11 @@ export async function fetchNotes({ search, subjectId } = {}) {
 
   const { data, error } = await query;
   if (error) throw error;
+  if (subjectId && data) {
+    return [...data].sort((a, b) =>
+      (a.title || '').localeCompare(b.title || '', undefined, { numeric: true, sensitivity: 'base' })
+    );
+  }
   return data;
 }
 

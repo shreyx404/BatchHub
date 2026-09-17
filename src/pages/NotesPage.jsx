@@ -84,6 +84,16 @@ export default function NotesPage() {
     return subjects.find(s => s.id === selectedSubject);
   }, [subjects, selectedSubject]);
 
+  const sortedNotes = useMemo(() => {
+    if (!notes) return [];
+    if (isSubjectView) {
+      return [...notes].sort((a, b) =>
+        (a.title || '').localeCompare(b.title || '', undefined, { numeric: true, sensitivity: 'base' })
+      );
+    }
+    return notes;
+  }, [notes, isSubjectView]);
+
   return (
     <div className="min-h-dvh flex flex-col bg-[var(--color-bg)]">
       <Header />
@@ -153,13 +163,13 @@ export default function NotesPage() {
                       <ArrowLeft size={16} />
                     </button>
                     <div className="section-divider flex-1 !mb-0">
-                      <span>{activeSubjectData ? activeSubjectData.name : 'Notes'} · {notes.length}</span>
+                      <span>{activeSubjectData ? activeSubjectData.name : 'Notes'} · {sortedNotes.length}</span>
                     </div>
                   </div>
 
                   {loading ? (
                     <LoadingState />
-                  ) : notes.length === 0 ? (
+                  ) : sortedNotes.length === 0 ? (
                      <EmptyState
                       icon={BookMarked}
                       title="Folder is empty"
@@ -167,7 +177,7 @@ export default function NotesPage() {
                     />
                   ) : (
                     <div className="space-y-0">
-                      {notes.map((note) => (
+                      {sortedNotes.map((note) => (
                         <NoteCard key={note.id} note={note} />
                       ))}
                     </div>
