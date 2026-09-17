@@ -29,9 +29,8 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 
 ### Admin (BR)
 - 🔐 Password-protected admin dashboard backed by a secure Serverless API
-- 🛡️ 4-Tier Security Fortress: Cloudflare Turnstile bot verification, Device Fingerprinting, 10-attempt 24-hour lockout, and 30/day global rate limiting
 - ⚙️ **App Settings & Material Link Manager:** Dedicated `/admin/settings` management view to configure, test in a new tab, reset to default, and update the global College Study Material URL with instant real-time sync across all mounted headers
-- 📝 **Admin Notes Manager:** Full CRUD control over the Notes gallery, linking subjects to externally hosted HTML notes
+- 📝 **Admin Notes Manager (Subject Folders):** Manage study notes via an intuitive subject folder interface where admins navigate by folders and create notes directly inside subject folders with pre-selected subjects
 - 👁️ Live "Student View" preview embedded directly inside the Admin Dashboard overview
 - 🗓️ Integrated multi-mode Admin Calendar view (`/admin/calendar`) with status filters (All, Upcoming, Past Due, Archived, Drafts), quick New Deadline action, and direct edit shortcuts
 - ✏️ Create, edit, publish, archive, and 1-click restore posts with timezone-safe date picking

@@ -45,9 +45,9 @@ src/
 │   ├── layout/           # Header, Footer
 │   ├── ui/               # Badge, SearchBar, FilterBar, ArchiveSortBar, ThemeToggle, Modal, LoadingState, ErrorState, EmptyState
 │   ├── posts/            # PostCard, PostGrid, DeadlineBanner, PinnedSection, NoticesSection
-│   ├── notes/            # NoteCard — gallery card for externally-hosted study notes
+│   ├── notes/            # FolderCard, NoteCard — folder cards & gallery cards for externally-hosted study notes
 │   ├── calendar/         # CalendarGrid, CalendarWeekView, CalendarAgendaView, CalendarSidebar, CalendarControls
-│   └── admin/            # AdminLogin, AdminSidebar, PostForm, PostTable, SubjectManager, NotesManager, AdminCalendar, SettingsManager
+│   └── admin/            # AdminLogin, AdminSidebar, PostForm, PostTable, SubjectManager, NotesManager (subject folders & notes CRUD), AdminCalendar, SettingsManager
 └── pages/
     ├── HomePage.jsx      # Student feed with structured sections
     ├── CalendarPage.jsx  # Full-page deadlines calendar (Month, Week, Agenda) with sidebar inspector

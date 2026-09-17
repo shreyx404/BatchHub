@@ -168,6 +168,26 @@ Admin changes URL in /admin/settings → api/admin updateSetting → Supabase ap
 Cross-component event sync (batchhub_material_url_changed) immediately updates mounted Header
 ```
 
+### 2.6 Notes Gallery & Admin Subject Folders Flow
+
+```
+Student View (/notes)
+    │  1. Renders Subject Folders Grid (<FolderCard> × N) with live note counts
+    │  2. Clicking a folder navigates to /notes?subject=...
+    │  3. Notes rendered sorted alphabetically by Title ascending (A → Z)
+    ▼
+Admin View (/admin/notes)
+    │  1. Renders Subject Folders Grid with note counts, subject codes, and quick-add actions
+    │  2. Clicking a folder navigates to /admin/notes?subject=...
+    │  3. Contextual "+ Add Note" button automatically pre-selects the active subject folder
+    │  4. Admin saves note → POST /api/admin (createNote) → Supabase notes table
+    ▼
+Supabase notes Table
+    │  Columns: id, title, subtitle, subject_id, url, tags, sort_order, created_at, updated_at
+    ▼
+Response → UI updates immediately in active folder and updates folder counter on back navigation
+```
+
 ---
 
 ## 3. Frontend Architecture
@@ -236,7 +256,7 @@ Cross-component event sync (batchhub_material_url_changed) immediately updates m
     │       ├── <PostTable>        // "/admin/posts" — All posts list (status filter, created/due date sort)
     │       ├── <SubjectManager>   // "/admin/subjects" — CRUD subjects
     │       ├── <AdminCalendar>    // "/admin/calendar" — Dedicated calendar view in admin (Month/Week/Agenda)
-    │       ├── <NotesManager>     // "/admin/notes" — CRUD for externally-hosted notes
+    │       ├── <NotesManager>     // "/admin/notes" — Subject folders overview, contextual note creation, title sorting & notes CRUD
     │       └── <SettingsManager>  // "/admin/settings" — Configure global links (College Study Material Google Drive URL)
     │
     └── <NotFoundPage> (Lazy)      // "*" — 404

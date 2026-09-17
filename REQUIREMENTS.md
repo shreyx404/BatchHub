@@ -28,7 +28,7 @@
 | FR-010k | Prominent College Study Material navigation button in top header located between Archive and Theme toggle, redirecting students directly to the batch's centralized Google Drive folder in a new tab (`target="_blank" rel="noopener noreferrer"`) | P0 | ✅ Implemented |
 | FR-010l | Display a full-page Notes Gallery (`/notes`) featuring a folder-based UI grid where subjects act as interactive folders | P0 | ✅ Implemented |
 | FR-010m | Support global debounced search overriding the folder view to find notes across all subjects | P0 | ✅ Implemented |
-| FR-010n | Manage external study notes via Admin Dashboard (`/admin/notes`) supporting CRUD operations and strict URL validation | P0 | ✅ Implemented |
+| FR-010n | Manage external study notes via Admin Dashboard (`/admin/notes`) through a subject folder interface where administrators can browse by folders, open a folder, and create/add notes directly inside that folder with pre-selected subjects | P0 | ✅ Implemented |
 
 
 ### 1.1a Past Events & Deliverables Archive (Student View)

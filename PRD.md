@@ -69,7 +69,7 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 | F-14 | **Metadata & Pin Duration Management** | Pin duration presets (`Indefinite`, `Until Due Date`, `24 Hours`, `3 Days`, `1 Week`, `2 Weeks`, `Custom Date`) with live expiration preview, external links (label + URL pairs with sequence reordering), due dates, and status control (tag input omitted for streamlined publishing) |
 | F-14a | **Admin Calendar View** | Dedicated multi-mode calendar view in Admin Dashboard (`/admin/calendar`) accessible from sidebar navigation for inspecting batch deliverables in Month, Week, and Agenda modes, featuring status filters for matrix views (`All`, `Upcoming`, `Past Due`, `Archived`, `Drafts`), upcoming queue, and direct "Edit Post" shortcuts (with past/archived items excluded in Agenda mode) |
 | F-14b | **App Settings & Material Link Manager** | Dedicated admin settings view (`/admin/settings`) accessible from sidebar and dashboard quick actions to manage system configurations, test links in a new tab, reset to defaults, and update the global College Study Material URL with instant real-time sync across all mounted headers. |
-| F-14c | **Admin Notes Manager** | Dedicated interface (`/admin/notes`) to CRUD study notes linking to external URLs (e.g. GitHub Pages) with strict HTTP scheme validation. |
+| F-14c | **Admin Notes Manager (Subject Folders)** | Dedicated subject folder interface (`/admin/notes`) mirroring the student gallery. Administrators browse subject folders with live note counts, open folders, and add/manage notes directly inside each subject folder with pre-selected subjects, URL validation, and cross-subject search. |
 
 
 ### 3.3 Discord Bot Integration (Optional)
