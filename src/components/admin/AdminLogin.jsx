@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Lock, AlertCircle, ShieldAlert, Clock, Shield } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Lock, AlertCircle, ShieldAlert, Clock, Shield, ArrowLeft } from 'lucide-react';
 import { APP_NAME } from '../../lib/constants';
 import { getLockoutInfo } from '../../hooks/useAdmin';
 import { useTheme } from '../../context/ThemeContext';
@@ -295,6 +296,13 @@ export default function AdminLogin({ onLogin }) {
           <p className="text-center text-[10px] font-light text-[var(--color-text-dim)] tracking-[0.02em]">
             Contact the batch representative for access.
           </p>
+          <Link
+            to="/"
+            className="mt-4 inline-flex items-center gap-1.5 text-[11px] text-[var(--color-text-muted)] hover:text-[var(--color-amber)] transition-colors duration-200 tracking-[0.01em]"
+          >
+            <ArrowLeft size={12} />
+            Back to {APP_NAME}
+          </Link>
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 # BatchHub — AI Agent Guidelines
 
-> **Version:** 1.9  
-> **Last Updated:** 2026-09-10
+> **Version:** 2.0  
+> **Last Updated:** 2026-09-21
 
 This file provides context and rules for AI coding agents working on the BatchHub codebase.
 
@@ -47,7 +47,7 @@ src/
 │   ├── posts/            # PostCard, PostGrid, DeadlineBanner, PinnedSection, NoticesSection
 │   ├── notes/            # FolderCard, NoteCard — folder cards & gallery cards for externally-hosted study notes
 │   ├── calendar/         # CalendarGrid, CalendarWeekView, CalendarAgendaView, CalendarSidebar, CalendarControls
-│   └── admin/            # AdminLogin, AdminSidebar, PostForm, PostTable, SubjectManager, NotesManager (subject folders & notes CRUD), AdminCalendar, SettingsManager
+│   └── admin/            # AdminLogin (with back-to-home escape hatch), AdminSidebar, PostForm, PostTable, SubjectManager, NotesManager (subject folders & notes CRUD), AdminCalendar, SettingsManager
 └── pages/
     ├── HomePage.jsx      # Student feed with structured sections
     ├── CalendarPage.jsx  # Full-page deadlines calendar (Month, Week, Agenda) with sidebar inspector

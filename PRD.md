@@ -1,7 +1,7 @@
 # BatchHub — Product Requirements Document (PRD)
 
-> **Version:** 1.7  
-> **Last Updated:** 2026-09-10  
+> **Version:** 1.8  
+> **Last Updated:** 2026-09-21  
 > **Status:** Living Document
 
 ---
@@ -62,6 +62,7 @@ College batches rely on WhatsApp groups to share assignments, deadlines, lab sch
 | # | Feature | Description |
 |---|---------|-------------|
 | F-09 | **Secure Login & Multi-Layer Defense** | Password validated server-side with SHA-256 hashed `crypto.timingSafeEqual`; protected by 4 security layers: 10 attempts / 24-hour lockout per IP, per-device fingerprint tracking, Cloudflare Turnstile bot verification, and a 30 failed attempts / 24-hour global site-wide limit |
+| F-09a | **Back to Home Navigation** | Dedicated return navigation link ("← Back to BatchHub") on the admin login screen allowing students or users who navigate to `/admin` to smoothly return to the public homepage |
 | F-10 | **Dashboard Overview & Live Student View** | Stats cards (total posts, published, drafts, archived, subjects), quick action buttons, and an embedded live "Student View" preview panel mirroring the homepage feed |
 | F-11 | **Post CRUD & Management** | Create, edit, publish, archive, and delete posts with live Markdown preview; filter by status and sort by created date or due date |
 | F-12 | **Subject Manager** | Create, edit, delete subjects with color coding |

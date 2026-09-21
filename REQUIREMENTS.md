@@ -1,7 +1,7 @@
 # BatchHub — Requirements Specification
 
-> **Version:** 1.7  
-> **Last Updated:** 2026-09-10
+> **Version:** 1.8  
+> **Last Updated:** 2026-09-21
 
 ---
 
@@ -61,6 +61,7 @@
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
 | FR-019 | Password-protected admin login screen at `/admin` | P0 | ✅ Implemented |
+| FR-019a | Provide a visible, styled "← Back to BatchHub" navigation link on the admin login screen returning users to the public homepage (`/`) | P1 | ✅ Implemented |
 | FR-020 | Password validated server-side only (never checked client-side; instant demo bypass in dev) | P0 | ✅ Implemented |
 | FR-021 | Store authenticated session token in `sessionStorage` (cleared on tab close) | P0 | ✅ Implemented |
 | FR-022 | Support logout action that clears the session token | P0 | ✅ Implemented |

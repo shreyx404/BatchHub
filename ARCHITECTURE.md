@@ -1,7 +1,7 @@
 # BatchHub — Architecture Document
 
-> **Version:** 1.6  
-> **Last Updated:** 2026-09-09
+> **Version:** 1.7  
+> **Last Updated:** 2026-09-21
 
 ---
 
@@ -246,7 +246,7 @@ Response → UI updates immediately in active folder and updates folder counter 
     │   └── <Footer>
     │
     ├── <AdminPage> (Lazy)         // "/admin/*" — Protected dashboard
-    │   ├── <AdminLogin>           // Password gate (Turnstile protected)
+    │   ├── <AdminLogin>           // Password gate (Turnstile protected, back navigation link to home "/")
     │   ├── <AdminSidebar>         // Navigation sidebar (Dashboard, Create, Posts, Subjects, Calendar, Settings)
     │   └── Nested routes:
     │       ├── <AdminDashboard>   // "/admin" — Stats + quick actions + live Student View feed preview

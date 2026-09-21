@@ -1,7 +1,7 @@
 # BatchHub — Task Breakdown
 
-> **Version:** 1.6  
-> **Last Updated:** 2026-09-10  
+> **Version:** 1.7  
+> **Last Updated:** 2026-09-21  
 
 > **Status Legend:** ✅ Done · 🔲 Planned · 🚧 In Progress
 
@@ -195,6 +195,7 @@
 - [x] **T-121** — Fix Modal Focus Stealing & Input Cursor Jumping in Admin Dashboard: Resolved critical UX issue where typing in modal form fields (Title, Subtitle, URL, Tags in `NotesManager`, and Name/Code in `SubjectManager`) caused the cursor to lose focus or jump erratically to the Close button or trigger button. Stored `onClose` callback in a ref (`onCloseRef`) so inline handler references do not trigger effect cleanup and re-runs on every keystroke. Scoped the autofocus lifecycle strictly to `[isOpen]` transitions, prevented focus-stealing if an active element already exists inside the modal, prioritized explicit `[autofocus]` elements before general buttons in DOM queries, and enhanced form submissions with `<form onSubmit=...>` semantics and functional state updaters. Verified with 45/45 automated unit & security tests and end-to-end browser subagent recording.
 - [x] **T-122** — Subject Notes Folder Ascending Title Sorting: Configured notes inside each subject's folder to automatically sort according to Title name in ascending order (A → Z) using natural alphanumeric comparison (`localeCompare` with `numeric: true`, `sensitivity: 'base'`). Applied both in the data layer (`fetchNotes` in `src/lib/api.js` for Supabase and demo mode) and in the UI layer (`NotesPage.jsx` via `sortedNotes` memoization). Expanded sample demo notes fixtures across subjects in `demoData.js` and added automated unit tests in `api.test.js` (47/47 passing).
 - [x] **T-123** — Admin Dashboard Notes Subject Folders & Contextual Creation: Restructured `/admin/notes` from a flat list into a subject-folder-first interface mirroring the student gallery. Displays subject folder cards with live note counters, subject code badges, and quick-add actions. Allows administrators to navigate into individual subject folders with breadcrumbs and back navigation (`/admin/notes?subject=...`), pre-selects the active subject when creating notes inside a folder, displays alphabetical title-sorted notes with edit/delete/open actions, supports uncategorized notes handling, and includes instant global cross-subject search. Verified with browser subagent recording and 47/47 passing automated tests.
+- [x] **T-124** — Admin Login Back to Home Navigation: Added a dedicated "← Back to BatchHub" navigation link (`<Link to="/">`) on the `AdminLogin.jsx` authentication screen with `ArrowLeft` icon and warm amber hover accent, eliminating dead-end navigation and allowing students and users to return effortlessly to the main homepage.
 
 ---
 
