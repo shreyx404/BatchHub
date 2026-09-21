@@ -28,7 +28,7 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 - 🔗 Deep links and native formatted post sharing with clipboard fallback
 
 ### Admin (BR)
-- 🔐 Password-protected admin dashboard backed by a secure Serverless API (with "← Back to BatchHub" escape navigation on the login screen)
+- 🔐 Password-protected admin dashboard backed by a secure Serverless API (with "← Back to BatchHub" escape navigation in the top-left corner of the login screen)
 - ⚙️ **App Settings & Material Link Manager:** Dedicated `/admin/settings` management view to configure, test in a new tab, reset to default, and update the global College Study Material URL with instant real-time sync across all mounted headers
 - 📝 **Admin Notes Manager (Subject Folders):** Manage study notes via an intuitive subject folder interface where admins navigate by folders and create notes directly inside subject folders with pre-selected subjects
 - 👁️ Live "Student View" preview embedded directly inside the Admin Dashboard overview

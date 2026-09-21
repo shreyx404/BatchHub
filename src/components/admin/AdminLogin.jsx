@@ -186,6 +186,18 @@ export default function AdminLogin({ onLogin }) {
 
   return (
     <div className="min-h-dvh flex items-center justify-center bg-[var(--color-bg)] px-4 py-8 pt-safe pb-safe relative">
+      <div className="fixed top-3 left-3 sm:top-4 sm:left-4 z-10">
+        <Link
+          to="/"
+          className="px-2.5 sm:px-3 py-2 min-h-[40px] flex items-center gap-2 text-[var(--text-xs)] font-medium text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors duration-200 group"
+          title={`Back to ${APP_NAME}`}
+          aria-label={`Back to ${APP_NAME}`}
+        >
+          <ArrowLeft size={16} className="transition-transform duration-200 group-hover:-translate-x-0.5 group-hover:text-[var(--color-amber)]" />
+          <span className="text-xs sm:hidden">Back</span>
+          <span className="hidden sm:inline text-xs">Back to {APP_NAME}</span>
+        </Link>
+      </div>
       <div className="fixed top-3 right-3 sm:top-4 sm:right-4 z-10">
         <ThemeToggle />
       </div>
@@ -296,13 +308,6 @@ export default function AdminLogin({ onLogin }) {
           <p className="text-center text-[10px] font-light text-[var(--color-text-dim)] tracking-[0.02em]">
             Contact the batch representative for access.
           </p>
-          <Link
-            to="/"
-            className="mt-4 inline-flex items-center gap-1.5 text-[11px] text-[var(--color-text-muted)] hover:text-[var(--color-amber)] transition-colors duration-200 tracking-[0.01em]"
-          >
-            <ArrowLeft size={12} />
-            Back to {APP_NAME}
-          </Link>
         </div>
       </div>
     </div>
