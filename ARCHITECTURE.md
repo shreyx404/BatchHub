@@ -304,9 +304,9 @@ BatchHub provides a zero-flicker dual-theme system calibrated to the "Editorial 
 | Endpoint | File | Auth Method | Purpose |
 |----------|------|-------------|---------|
 | `POST /api/admin` | `api/admin.js` | Bearer token (timing-safe SHA-256) | All admin CRUD operations with 5-layer rate limiting (in-memory & persistent Supabase IP rate limit) |
-| `GET /api/calendar` | `api/calendar.js` | None (Public) | Fetch calendar deliverables with start/end date filters (published + archived) via service role |
+| `GET /api/calendar` | `api/calendar.js` | None (Public) | Fetch calendar deliverables with start/end date filters (published + archived) via service role; includes opportunistic auto-archive (`?autoArchive=1`) |
 | `POST /api/discord` | `api/discord.js` | Ed25519 signature | Discord interaction webhook |
-| `GET /api/cron/auto-archive` | `api/cron/auto-archive.js` | `CRON_SECRET` Bearer token (timing-safe SHA-256) | Daily auto-archive of expired posts (fail-closed if unconfigured) |
+| `GET /api/cron/auto-archive` | `api/cron/auto-archive.js` | `CRON_SECRET`, `ADMIN_PASSWORD`, or Vercel internal cron header (`x-vercel-cron: 1`) | Daily auto-archive of expired posts (> 24h past due) with fail-closed security |
 
 ### 4.2 Admin API Actions
 

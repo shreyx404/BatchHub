@@ -365,12 +365,25 @@ export default async function handler(req, res) {
   try {
     let result;
     switch (action) {
-      case 'getAllPosts':
+      case 'getAllPosts': {
+        const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+        try {
+          await supabase
+            .from('posts')
+            .update({ status: 'archived' })
+            .eq('status', 'published')
+            .not('due_date', 'is', null)
+            .lt('due_date', cutoff);
+        } catch (err) {
+          console.error('[getAllPosts] Auto-archive check error:', err);
+        }
+
         result = await supabase
           .from('posts')
           .select('*, subjects(*)')
           .order('created_at', { ascending: false });
         break;
+      }
       case 'getPost': {
         if (!payload?.id) return res.status(400).json({ error: 'Missing post ID.' });
         result = await supabase

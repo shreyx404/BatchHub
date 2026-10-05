@@ -32,18 +32,32 @@ async function adminRequest(action, payload) {
    Posts API
    ============================================================ */
 
+export const AUTO_ARCHIVE_CUTOFF_MS = 24 * 60 * 60 * 1000; // 24 hours
+
 /**
  * Fetch published posts with optional filtering.
  */
 export async function fetchPosts({ type, subjectId, search, status = 'published' } = {}) {
+  const now = new Date();
+  const archiveCutoff = new Date(now.getTime() - AUTO_ARCHIVE_CUTOFF_MS);
+
   if (!isSupabaseConfigured()) {
-    return filterDemoPosts({ type, subjectId, search, status });
+    return filterDemoPosts({ type, subjectId, search, status, archiveCutoff });
   }
 
   let query = supabase
     .from('posts')
-    .select('*, subjects(*)')
-    .eq('status', status)
+    .select('*, subjects(*)');
+
+  if (status === 'archived') {
+    // Query both published and archived so recently expired posts (> 24h past due)
+    // are included even before the background database update finishes.
+    query = query.in('status', ['published', 'archived']);
+  } else {
+    query = query.eq('status', status);
+  }
+
+  query = query
     .order('is_pinned', { ascending: false })
     .order('due_date', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: true });
@@ -59,9 +73,41 @@ export async function fetchPosts({ type, subjectId, search, status = 'published'
   const { data, error } = await query;
   if (error) throw error;
 
-  // Dynamic unpinning: if post has explicit pinned_until or due_date that has passed, treat it as unpinned.
-  const now = new Date();
-  const processedData = data.map(post => {
+  // 1. Dynamic filtering & status mapping based on 24h expiration rule
+  let processedData = [];
+  let foundExpiredPublished = false;
+
+  for (const post of data) {
+    const isExpired = post.due_date && new Date(post.due_date) < archiveCutoff;
+
+    if (status === 'published') {
+      // Exclude posts whose due_date passed > 24 hours ago
+      if (isExpired) {
+        foundExpiredPublished = true;
+        continue;
+      }
+      processedData.push(post);
+    } else if (status === 'archived') {
+      // Include posts explicitly marked archived OR published posts whose due_date passed > 24 hours ago
+      if (post.status === 'archived') {
+        processedData.push(post);
+      } else if (post.status === 'published' && isExpired) {
+        foundExpiredPublished = true;
+        processedData.push({ ...post, status: 'archived' });
+      }
+    } else {
+      processedData.push(post);
+    }
+  }
+
+  // If we detected any published post that has passed the 24h auto-archive cutoff,
+  // trigger opportunistic database auto-archive in the background
+  if (foundExpiredPublished) {
+    autoArchiveExpiredPosts().catch(() => {});
+  }
+
+  // 2. Dynamic unpinning: if post has explicit pinned_until or due_date that has passed, treat it as unpinned.
+  processedData = processedData.map(post => {
     if (post.is_pinned) {
       if (post.pinned_until) {
         if (new Date(post.pinned_until) < now) {
@@ -74,7 +120,7 @@ export async function fetchPosts({ type, subjectId, search, status = 'published'
     return post;
   });
 
-  // Client-side sort: Pinned first, then by due_date ascending (nulls at the very end), then created_at ascending
+  // 3. Client-side sort: Pinned first, then by due_date ascending (nulls at the very end), then created_at ascending
   processedData.sort((a, b) => {
     if (a.is_pinned !== b.is_pinned) return b.is_pinned ? 1 : -1;
     if (a.due_date && b.due_date) {
@@ -97,7 +143,7 @@ export async function fetchPosts({ type, subjectId, search, status = 'published'
 export async function autoArchiveExpiredPosts() {
   if (!isSupabaseConfigured()) {
     // Demo mode: mutate in-memory array
-    const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+    const cutoff = Date.now() - AUTO_ARCHIVE_CUTOFF_MS;
     let count = 0;
     for (const post of DEMO_POSTS) {
       if (
@@ -113,13 +159,29 @@ export async function autoArchiveExpiredPosts() {
     return count;
   }
 
-  try {
-    const archived = await adminRequest('autoArchiveExpired');
-    return archived?.length || 0;
-  } catch (err) {
-    console.error('Auto-archive check failed (non-fatal):', err);
-    return 0;
+  // 1. If admin token is available, request through admin API
+  const token = sessionStorage.getItem('batchhub_admin_token');
+  if (token) {
+    try {
+      const archived = await adminRequest('autoArchiveExpired');
+      return archived?.length || 0;
+    } catch (err) {
+      console.error('Admin auto-archive check failed (non-fatal):', err);
+    }
   }
+
+  // 2. Otherwise trigger through opportunistic calendar endpoint (runs with server service role)
+  try {
+    const res = await fetch('/api/calendar?autoArchive=1');
+    if (res.ok) {
+      const json = await res.json();
+      return json.archived || 0;
+    }
+  } catch (err) {
+    console.error('Opportunistic auto-archive check failed (non-fatal):', err);
+  }
+
+  return 0;
 }
 
 /**
@@ -269,7 +331,16 @@ export async function fetchCalendarDeadlines(year, month, options = {}) {
   const { data, error } = await query.order('due_date', { ascending: true });
 
   if (error) throw error;
-  return data;
+
+  const archiveCutoff = new Date(Date.now() - AUTO_ARCHIVE_CUTOFF_MS);
+  const mapped = (data || []).map(post => {
+    if (post.status === 'published' && post.due_date && new Date(post.due_date) < archiveCutoff) {
+      return { ...post, status: 'archived' };
+    }
+    return post;
+  });
+
+  return mapped;
 }
 
 /**
@@ -525,8 +596,29 @@ export async function deleteNote(id) {
    ============================================================ */
 
 
-function filterDemoPosts({ type, subjectId, search, status }) {
-  let filtered = DEMO_POSTS.filter((p) => p.status === status);
+function filterDemoPosts({ type, subjectId, search, status, archiveCutoff }) {
+  const cutoff = archiveCutoff || new Date(Date.now() - AUTO_ARCHIVE_CUTOFF_MS);
+
+  let filtered = [];
+  for (const p of DEMO_POSTS) {
+    const isExpired = p.due_date && new Date(p.due_date) < cutoff;
+    if (status === 'published') {
+      if (p.status === 'published' && !isExpired) {
+        filtered.push(p);
+      }
+    } else if (status === 'archived') {
+      if (p.status === 'archived') {
+        filtered.push(p);
+      } else if (p.status === 'published' && isExpired) {
+        filtered.push({ ...p, status: 'archived' });
+      }
+    } else if (status) {
+      if (p.status === status) filtered.push(p);
+    } else {
+      filtered.push(p);
+    }
+  }
+
   if (type) filtered = filtered.filter((p) => p.type === type);
   if (subjectId) filtered = filtered.filter((p) => p.subject_id === subjectId);
   if (search) {

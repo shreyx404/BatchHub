@@ -13,6 +13,7 @@ import ErrorState from '../components/ui/ErrorState';
 import { usePosts, useUpcomingDeadlines } from '../hooks/usePosts';
 import { useSubjects } from '../hooks/useSubjects';
 import { APP_NAME, APP_TAGLINE } from '../lib/constants';
+import { autoArchiveExpiredPosts } from '../lib/api';
 
 /* ── Scroll Reveal Hook ── */
 function useScrollReveal() {
@@ -49,6 +50,11 @@ export default function HomePage() {
   const [selectedSubject, setSelectedSubject] = useState(initialSubject);
 
   const searchTimerRef = useRef(null);
+
+  // Opportunistic auto-archive on feed mount
+  useEffect(() => {
+    autoArchiveExpiredPosts().catch(() => {});
+  }, []);
 
   // Helper to sync state to URL
   const updateUrlParams = useCallback((type, subject, query) => {

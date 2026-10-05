@@ -25,9 +25,35 @@ export default async function handler(req, res) {
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
-  const { start, end, status } = req.query || req.body || {};
+  const { start, end, status, autoArchive } = req.query || req.body || {};
 
   try {
+    // Opportunistic auto-archive: update published posts whose due_date passed > 24 hours ago
+    const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    let archivedPosts = [];
+    if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      try {
+        const { data: archivedData } = await supabase
+          .from('posts')
+          .update({ status: 'archived' })
+          .eq('status', 'published')
+          .not('due_date', 'is', null)
+          .lt('due_date', cutoff)
+          .select('id, title');
+        archivedPosts = archivedData || [];
+      } catch (err) {
+        console.error('[calendar API] Opportunistic auto-archive error:', err);
+      }
+    }
+
+    if (autoArchive) {
+      return res.status(200).json({
+        success: true,
+        archived: archivedPosts.length,
+        posts: archivedPosts,
+      });
+    }
+
     let query = supabase
       .from('posts')
       .select('*, subjects(*)')

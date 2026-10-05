@@ -89,4 +89,31 @@ describe('Cron Auto-Archive Endpoint (/api/cron/auto-archive)', () => {
     await cronHandler(req2, res2);
     assert.equal(res2._getResult().statusCode, 401);
   });
+
+  it('should accept Vercel internal cron header (x-vercel-cron: 1) even when CRON_SECRET is not configured', async () => {
+    delete process.env.CRON_SECRET;
+    const { req, res } = createMockReqRes({
+      method: 'GET',
+      headers: { 'x-vercel-cron': '1' },
+    });
+
+    await cronHandler(req, res);
+    const result = res._getResult();
+    // Passes authentication check (status will be 500 Supabase not configured in unit test environment, but not 401 or 'Cron authentication is not configured')
+    assert.notEqual(result.statusCode, 401);
+    assert.notEqual(result.responseData?.error, 'Cron authentication is not configured on the server.');
+  });
+
+  it('should accept ADMIN_PASSWORD as Bearer token for auto-archive execution', async () => {
+    process.env.ADMIN_PASSWORD = 'admin_secret_pass_123';
+    const { req, res } = createMockReqRes({
+      method: 'GET',
+      headers: { authorization: 'Bearer admin_secret_pass_123' },
+    });
+
+    await cronHandler(req, res);
+    const result = res._getResult();
+    assert.notEqual(result.statusCode, 401);
+    delete process.env.ADMIN_PASSWORD;
+  });
 });

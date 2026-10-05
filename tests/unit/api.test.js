@@ -57,14 +57,14 @@ describe('Dual-Mode API & Data Layer (Demo Fallback Mode)', () => {
     });
 
     it('should dynamically unpin posts whose due_date has already passed', async () => {
-      // Create a test post in DEMO_POSTS that is pinned but has a past due date
+      // Create a test post in DEMO_POSTS that is pinned but has a past due date (within 24h grace window)
       const pastDuePost = {
         id: 'test-past-due-pinned',
         title: 'Expired Pinned Post',
         type: 'assignment',
         is_pinned: true,
         status: 'published',
-        due_date: new Date(Date.now() - 48 * 3600 * 1000).toISOString(),
+        due_date: new Date(Date.now() - 2 * 3600 * 1000).toISOString(), // 2 hours ago (past due, within 24h)
         created_at: new Date(Date.now() - 72 * 3600 * 1000).toISOString(),
         links: [],
       };
@@ -77,6 +77,34 @@ describe('Dual-Mode API & Data Layer (Demo Fallback Mode)', () => {
 
       // Cleanup
       const idx = DEMO_POSTS.findIndex(p => p.id === 'test-past-due-pinned');
+      if (idx !== -1) DEMO_POSTS.splice(idx, 1);
+    });
+
+    it('should automatically exclude posts whose due_date passed more than 24 hours ago from published feed', async () => {
+      const expiredPost = {
+        id: 'test-expired-published-feed',
+        title: 'Older than 24h Post',
+        type: 'assignment',
+        is_pinned: false,
+        status: 'published',
+        due_date: new Date(Date.now() - 36 * 3600 * 1000).toISOString(), // 36 hours ago
+        created_at: new Date(Date.now() - 72 * 3600 * 1000).toISOString(),
+        links: [],
+      };
+      DEMO_POSTS.unshift(expiredPost);
+
+      const publishedPosts = await fetchPosts({ status: 'published' });
+      const foundPublished = publishedPosts.find(p => p.id === 'test-expired-published-feed');
+      assert.equal(foundPublished, undefined, 'Posts with deadline > 24h past must not appear in published feed');
+
+      // Should automatically appear when status: 'archived' is requested
+      const archivedPosts = await fetchPosts({ status: 'archived' });
+      const foundArchived = archivedPosts.find(p => p.id === 'test-expired-published-feed');
+      assert.ok(foundArchived, 'Posts with deadline > 24h past must appear in archived feed');
+      assert.equal(foundArchived.status, 'archived', 'Status should be mapped to archived');
+
+      // Cleanup
+      const idx = DEMO_POSTS.findIndex(p => p.id === 'test-expired-published-feed');
       if (idx !== -1) DEMO_POSTS.splice(idx, 1);
     });
 

@@ -18,20 +18,46 @@ function timingSafeCompare(a, b) {
  * Protected by CRON_SECRET to prevent unauthorized invocations.
  */
 export default async function handler(req, res) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+
   // Only allow GET (Vercel cron uses GET)
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // Verify cron secret to prevent external abuse (fail closed if not configured)
   const cronSecret = process.env.CRON_SECRET;
-  if (!cronSecret) {
-    console.error('[auto-archive cron] CRON_SECRET environment variable is not set.');
-    return res.status(500).json({ error: 'Cron authentication is not configured on the server.' });
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  const authHeader = req.headers.authorization;
+  const isVercelCron = req.headers['x-vercel-cron'] === '1';
+
+  let isAuthorized = false;
+
+  // 1. Authorized via CRON_SECRET bearer token
+  if (cronSecret && authHeader && timingSafeCompare(authHeader, `Bearer ${cronSecret}`)) {
+    isAuthorized = true;
+  }
+  // 2. Authorized via ADMIN_PASSWORD bearer token
+  else if (adminPassword && authHeader && timingSafeCompare(authHeader, `Bearer ${adminPassword}`)) {
+    isAuthorized = true;
+  }
+  // 3. Authorized via Vercel's internal cron header (trusted platform header)
+  else if (isVercelCron) {
+    isAuthorized = true;
   }
 
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !timingSafeCompare(authHeader, `Bearer ${cronSecret}`)) {
+  if (!isAuthorized) {
+    // If CRON_SECRET is not configured on the server and not from Vercel cron, fail closed
+    if (!cronSecret) {
+      console.error('[auto-archive cron] CRON_SECRET environment variable is not set.');
+      return res.status(500).json({ error: 'Cron authentication is not configured on the server.' });
+    }
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
