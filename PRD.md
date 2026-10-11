@@ -156,14 +156,16 @@ When filters or search are active, all sections collapse into a flat, chronologi
 
 ## 9. Fundamentals of Data Structures (FDS) Course Project Scope
 
-To demonstrate practical applications of college data structures coursework without altering core production UX or forcing artificial math/compiler concepts, the project focuses deeply on **4 core, high-impact data structures** (+ Unit 1 Complexity Analysis):
+To demonstrate practical software engineering without altering core production UX or forcing artificial math/compiler concepts, the project focuses deeply on the **3 data structures that are really used in BatchHub**:
 
-1. **Production Feature Integration:**
-   - **Pillar 1 — Priority Queue (Min-Heap):** Upcoming deadline ranking in `useUpcomingDeadlines()` using an array-backed complete binary min-heap for $O(1)$ urgent peek and $O(\log n)$ insertion.
-   - **Pillar 2 — Doubly Linked List:** Post-to-post navigation on `PostPage.jsx` using bidirectional pointers (`prev` ⇄ `next`) with $O(1)$ traversal without full list re-indexes.
-   - **Pillar 3 — Sorting & Binary Search:** Alternative sorting algorithms selectable directly on the Archive page (`/archive`) with live comparison/swap metrics and binary search lookup.
-   - **Pillar 4 — Curriculum Knowledge Graph:** BFS-driven subject recommendation engine mapping curriculum topics connected by shared tags and prerequisites.
-2. **Academic Showcase (`/ds`):**
-   - An interactive laboratory demonstrating these 4 core pillars with step-by-step state visualization, execution controls (play, speed, step), and Big-O theoretical annotations, plus Unit 1 Complexity growth curves ($O(1)$ through $O(2^n)$).
+1. **Priority Queue (Min-Heap) [Unit 4]:**
+   - Upcoming deadline ranking in `useUpcomingDeadlines()` and Homepage `DeadlineBanner` using an array-backed complete binary min-heap for $O(1)$ urgent peek and $O(\log n)$ insertion.
+2. **Doubly Linked List [Unit 3]:**
+   - Post-to-post navigation on `PostPage.jsx` using bidirectional memory pointers (`prev` ⇄ `next`) with $O(1)$ pointer jumps without array re-scans.
+3. **Custom Sorting Algorithms [Unit 2]:**
+   - Live sorting algorithms selectable directly on the Archive page (`/archive`) with real-time comparison and swap telemetry executed directly on actual batch records.
+4. **Interactive Showcase (`/ds`):**
+   - An interactive laboratory specifically demonstrating these 3 real implementations with step-by-step state visualization and operational call sites.
+
 
 

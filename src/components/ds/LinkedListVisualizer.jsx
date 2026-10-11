@@ -8,11 +8,11 @@ import { SinglyLinkedList, DoublyLinkedList, CircularLinkedList } from '../../li
 const INITIAL_VALUES = ['Assignment 1', 'Lab Report', 'Midterm Prep', 'Project Draft'];
 
 export default function LinkedListVisualizer() {
-  const [listType, setListType] = useState('singly'); // 'singly' | 'doubly' | 'circular'
+  const [listType, setListType] = useState('doubly'); // 'doubly' | 'singly' | 'circular'
   
   // Recreate the active list instance
   const [list, setList] = useState(() => {
-    const l = new SinglyLinkedList();
+    const l = new DoublyLinkedList();
     INITIAL_VALUES.forEach(v => l.append(v));
     return l;
   });
@@ -150,24 +150,24 @@ export default function LinkedListVisualizer() {
       <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-[var(--color-surface)] border border-[var(--color-border)]">
         <div className="flex items-center border border-[var(--color-border)] overflow-hidden">
           <button
-            onClick={() => handleTypeChange('singly')}
+            onClick={() => handleTypeChange('doubly')}
             className={`px-3 py-1.5 text-[var(--text-xs)] font-medium transition-colors ${
+              listType === 'doubly'
+                ? 'bg-[var(--color-surface-2)] text-[var(--color-amber)] border-b-2 border-b-[var(--color-amber)]'
+                : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
+            }`}
+          >
+            Doubly Linked List · <span className="text-[var(--color-amber)] font-mono text-[10px]">Active in BatchHub</span>
+          </button>
+          <button
+            onClick={() => handleTypeChange('singly')}
+            className={`px-3 py-1.5 text-[var(--text-xs)] font-medium border-l border-[var(--color-border)] transition-colors ${
               listType === 'singly'
                 ? 'bg-[var(--color-surface-2)] text-[var(--color-amber)] border-b-2 border-b-[var(--color-amber)]'
                 : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
             }`}
           >
             Singly Linked List
-          </button>
-          <button
-            onClick={() => handleTypeChange('doubly')}
-            className={`px-3 py-1.5 text-[var(--text-xs)] font-medium border-l border-[var(--color-border)] transition-colors ${
-              listType === 'doubly'
-                ? 'bg-[var(--color-surface-2)] text-[var(--color-amber)] border-b-2 border-b-[var(--color-amber)]'
-                : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
-            }`}
-          >
-            Doubly Linked List
           </button>
           <button
             onClick={() => handleTypeChange('circular')}

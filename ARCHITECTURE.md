@@ -456,37 +456,32 @@ Vercel CI/CD
 
 ---
 
-## 7. Data Structures Layer & 4 Core Pillars Architecture
+## 7. Data Structures Layer & 3 Core Implementations Really Used in BatchHub
 
-To serve as a course project for Fundamentals of Data Structures (FDS), BatchHub incorporates custom, zero-dependency pure JavaScript data structure implementations in `src/lib/ds/` that power actual application behaviors alongside an academic showcase at `/ds`. Rather than shoehorning disconnected theoretical exercises, BatchHub intentionally centers on **4 core, high-impact pillars**:
+To serve as a course project for Fundamentals of Data Structures (FDS), BatchHub incorporates custom, zero-dependency pure JavaScript data structure implementations in `src/lib/ds/` that power actual application behaviors alongside an interactive showcase at `/ds`. Rather than shoehorning disconnected theoretical concepts that don't fit a batch management application, BatchHub intentionally centers on the **3 data structures that are really used in BatchHub**:
 
 ```
 src/lib/ds/
-├── priorityQueue.js    ← Pillar 1: Min-Heap Priority Queue for upcoming deadlines
-├── linkedList.js       ← Pillar 2: Doubly Linked List for post-to-post navigation
-├── sorting.js          ← Pillar 3: Bubble, Selection, Insertion, Merge, Quick Sort for Archive
-├── binarySearch.js     ← Pillar 3: Binary & Linear search for event lookup
-├── graph.js            ← Pillar 4: Curriculum Graph with BFS traversal for subject networks
-├── complexity.js       ← Theoretical reference: Big-O, Ω, Θ metadata & growth curves
+├── priorityQueue.js    ← #1: Min-Heap Priority Queue for upcoming deadlines
+├── linkedList.js       ← #2: Doubly Linked List for post-to-post navigation
+├── sorting.js          ← #3: Bubble, Selection, Insertion, Merge, Quick Sort for Archive
 └── index.js            ← Central re-export index
 
 src/hooks/
 └── useDSIntegration.js ← Bridge hook integrating DS classes into real features
 ```
 
-### 7.1 Core Pillar Integration Points
+### 7.1 Real BatchHub Integration Points
 
-1. **Pillar 1 — Priority Queue / Min-Heap (`useUpcomingDeadlines`):**
+1. **Priority Queue / Min-Heap (`useUpcomingDeadlines` & `DeadlineBanner`):**
    - Academic deliverables are inserted into a `MinHeap` keyed by `due_date`.
-   - Peeking the most urgent deadline operates in $O(1)$ time at the root node. Inserting new notices takes $O(\log n)$ bubble-up, and removing completed tasks takes $O(\log n)$ bubble-down.
-2. **Pillar 2 — Doubly Linked List (`PostPage.jsx`):**
+   - Peeking the most urgent deadline operates in $O(1)$ time at the root node. Inserting new notices takes $O(\log n)$ bubble-up, and extracting completed tasks takes $O(\log n)$ bubble-down.
+2. **Doubly Linked List (`PostPage.jsx`):**
    - The active post feed is structured into a `DoublyLinkedList`.
-   - Previous and Next buttons navigate via pointer traversal (`prev` ⇄ `next`) in $O(1)$ time without array indexing overhead.
-3. **Pillar 3 — Sorting & Binary Search (`ArchivePage.jsx`):**
-   - Posts are sorted using hand-written Bubble, Selection, Insertion, Merge, or Quick Sort algorithms from `sorting.js`.
-   - Real-time comparison count and swap count telemetry is rendered to prove algorithmic execution on live data.
-4. **Pillar 4 — Curriculum Knowledge Graph (`GraphVisualizer.jsx` / `/notes`):**
-   - Subjects and posts are modeled as vertices in an Adjacency List `Graph` connected by shared tags and syllabus prerequisites.
-   - Breadth-First Search (BFS) explores related coursework across curriculum boundaries.
+   - Previous and Next buttons navigate via pointer traversal (`prev` ⇄ `next`) in $O(1)$ time without array indexing overhead or full re-queries.
+3. **Sorting Algorithms (`ArchivePage.jsx` & `ArchiveSortBar`):**
+   - Archived deliverables are sorted using hand-written Bubble, Selection, Insertion, Merge, or Quick Sort algorithms from `sorting.js`.
+   - Real-time comparison count and swap count telemetry is rendered to prove algorithmic execution on actual batch records.
+
 
 

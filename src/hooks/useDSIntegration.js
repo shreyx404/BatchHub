@@ -1,9 +1,7 @@
-import { useMemo } from 'react';
 import {
   DoublyLinkedList,
   MinHeap,
   SORTING_ALGORITHMS,
-  buildSubjectGraph,
 } from '../lib/ds';
 
 /**

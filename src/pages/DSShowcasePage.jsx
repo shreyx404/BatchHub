@@ -1,30 +1,28 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Layers, Link2, ArrowRightLeft, GitBranch,
-  BarChart3, ChevronRight, Binary, ExternalLink
+  Layers, Link2, ArrowRightLeft,
+  ChevronRight, Binary, ExternalLink, CheckCircle2
 } from 'lucide-react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import QueueVisualizer from '../components/ds/QueueVisualizer';
 import LinkedListVisualizer from '../components/ds/LinkedListVisualizer';
 import SortingVisualizer from '../components/ds/SortingVisualizer';
-import BinarySearchVisualizer from '../components/ds/BinarySearchVisualizer';
-import GraphVisualizer from '../components/ds/GraphVisualizer';
-import ComplexityChart from '../components/ds/ComplexityChart';
 
-const CORE_PILLARS = [
+const REAL_DATA_STRUCTURES = [
   {
     id: 'priority-queue',
     number: 1,
     unit: 'Unit 4',
     title: 'Priority Queue (Min-Heap)',
     subtitle: 'Upcoming Deadlines & Urgency Scheduling',
-    description: 'Models assignment and lab deadlines as a complete binary min-heap. Guarantees O(1) peek time for the earliest deliverable and O(log n) dynamic insertions.',
+    description: 'Models batch assignment and lab deadlines as a complete binary min-heap. Guarantees O(1) peek time for the earliest deliverable and O(log n) dynamic insertions when new posts are published.',
     icon: Layers,
     color: '#f59e0b',
     featureRoute: '/',
     featureLabel: 'Live on Homepage (Upcoming Deadlines Banner)',
+    realUsage: 'Powers useUpcomingDeadlines() hook and the urgency countdown banner. Finds the next urgent assignment in O(1) time without sorting the entire post database.',
   },
   {
     id: 'linked-list',
@@ -32,55 +30,33 @@ const CORE_PILLARS = [
     unit: 'Unit 3',
     title: 'Doubly Linked List',
     subtitle: 'Post Feed & Prev/Next Pointer Navigation',
-    description: 'Represents the active post sequence as a bidirectional chain of DLLNodes with .prev and .next memory pointers, eliminating O(n) array searching.',
+    description: 'Represents the active post sequence as a bidirectional chain of DLLNodes with .prev and .next memory pointers, eliminating O(n) array lookups.',
     icon: Link2,
     color: '#a855f7',
-    featureRoute: '/archive',
+    featureRoute: '/',
     featureLabel: 'Live on Post Detail View (/post/:id)',
+    realUsage: 'Powers post-to-post sequential navigation on PostPage.jsx. Students hop directly between previous and next posts via memory pointers in O(1) time.',
   },
   {
-    id: 'sorting-search',
+    id: 'sorting',
     number: 3,
     unit: 'Unit 2',
-    title: 'Sorting & Binary Search',
+    title: 'Sorting Algorithms',
     subtitle: 'Archive Event Discovery & Benchmarking',
-    description: 'Hand-written implementations of Bubble, Selection, Insertion, Merge, and Quick Sort, plus divide-and-conquer Binary Search with live comparison telemetry.',
+    description: 'Hand-written implementations of Bubble, Selection, Insertion, Merge, and Quick Sort running on live batch records with real-time comparison and swap telemetry.',
     icon: ArrowRightLeft,
     color: '#3b82f6',
     featureRoute: '/archive',
     featureLabel: 'Live on Archive Page (/archive Sort Bar)',
-  },
-  {
-    id: 'curriculum-graph',
-    number: 4,
-    unit: 'Unit 6',
-    title: 'Curriculum Knowledge Graph',
-    subtitle: 'Subject Relationships & BFS Traversal',
-    description: 'Adjacency List graph where college subjects are vertices connected by shared academic tags and curriculum prerequisites, explored via Breadth-First Search.',
-    icon: GitBranch,
-    color: '#06b6d4',
-    featureRoute: '/notes',
-    featureLabel: 'Live on Notes & Subject Network',
-  },
-  {
-    id: 'complexity',
-    number: 5,
-    unit: 'Unit 1',
-    title: 'Complexity Analysis (Big-O)',
-    subtitle: 'Theoretical Foundations & Growth Curves',
-    description: 'Comparative mathematical growth analysis comparing O(1), O(log n), O(n), O(n log n), O(n²), and O(2ⁿ) with interactive input size scaling.',
-    icon: BarChart3,
-    color: '#10b981',
-    featureRoute: null,
-    featureLabel: 'Algorithmic Reference',
+    realUsage: 'Powers the FDS algorithm selector in ArchiveSortBar.jsx. Replaces black-box browser sorts so students can inspect exact comparisons and swaps on real batch posts.',
   },
 ];
 
 export default function DSShowcasePage() {
   const [activeTab, setActiveTab] = useState('priority-queue');
 
-  const currentPillar = useMemo(
-    () => CORE_PILLARS.find((p) => p.id === activeTab),
+  const currentItem = useMemo(
+    () => REAL_DATA_STRUCTURES.find((p) => p.id === activeTab),
     [activeTab]
   );
 
@@ -98,12 +74,11 @@ export default function DSShowcasePage() {
             </span>
           </div>
           <h1 className="font-display text-[var(--text-3xl)] sm:text-[var(--text-4xl)] font-semibold tracking-[-0.02em] leading-tight mb-2">
-            Core Data Structures in
+            Data Structures Really Used in
             <span className="text-[var(--color-amber)]"> BatchHub</span>
           </h1>
           <p className="text-[var(--text-sm)] text-[var(--color-text-muted)] max-w-2xl leading-relaxed">
-            BatchHub integrates hand-written, pure JavaScript data structures into real user workflows.
-            Explore the 4 core pillars below to inspect how each structure solves computational problems in our college batch gallery.
+            Rather than shoehorning textbook concepts that don’t fit a batch management system, BatchHub focuses exclusively on the <strong>3 data structures that genuinely power production workflows</strong>. Inspect their implementations, complexity metrics, and live in-app behaviors below.
           </p>
         </div>
         <div className="grain-overlay" />
@@ -112,100 +87,125 @@ export default function DSShowcasePage() {
       <div className="mx-auto max-w-6xl px-3 sm:px-4 py-6 sm:py-8">
         <div className="flex flex-col lg:flex-row gap-6">
 
-          {/* Sidebar — Pillars Navigation */}
-          <nav className="lg:w-64 shrink-0">
+          {/* Sidebar — Structures Navigation */}
+          <nav className="lg:w-72 shrink-0">
             <div className="lg:sticky lg:top-20">
               <p className="text-[var(--text-xs)] tracking-[0.1em] uppercase text-[var(--color-text-dim)] mb-3 font-medium">
-                Core DS Pillars
+                Active In BatchHub
               </p>
-              <div className="flex lg:flex-col gap-1.5 overflow-x-auto lg:overflow-x-visible scrollbar-hide pb-2 lg:pb-0">
-                {CORE_PILLARS.map((pillar) => {
-                  const isActive = activeTab === pillar.id;
-                  const Icon = pillar.icon;
+
+              <div className="flex flex-col gap-1 border border-[var(--color-border)] bg-[var(--color-surface)] p-1">
+                {REAL_DATA_STRUCTURES.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
                   return (
                     <button
-                      key={pillar.id}
-                      onClick={() => setActiveTab(pillar.id)}
-                      className={`group flex items-center gap-2.5 px-3 py-2.5 text-left transition-all whitespace-nowrap lg:whitespace-normal w-full border ${
+                      key={item.id}
+                      onClick={() => setActiveTab(item.id)}
+                      className={`w-full text-left p-3 transition-colors flex items-start gap-3 border ${
                         isActive
-                          ? 'bg-[var(--color-surface-2)] border-[var(--color-border-light)] text-[var(--color-text)]'
-                          : 'border-transparent text-[var(--color-text-dim)] hover:text-[var(--color-text-muted)] hover:bg-[var(--color-surface)]'
+                          ? 'bg-[var(--color-surface-2)] border-[var(--color-amber)] text-[var(--color-text)] shadow-sm'
+                          : 'border-transparent text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)]'
                       }`}
                     >
                       <div
-                        className="w-6 h-6 flex items-center justify-center shrink-0 transition-colors"
-                        style={{ color: isActive ? pillar.color : undefined }}
+                        className="w-8 h-8 shrink-0 flex items-center justify-center border mt-0.5"
+                        style={{
+                          borderColor: isActive ? 'var(--color-amber)' : 'var(--color-border)',
+                          backgroundColor: isActive ? 'var(--color-amber-glow)' : 'transparent',
+                          color: isActive ? 'var(--color-amber)' : 'inherit',
+                        }}
                       >
-                        <Icon size={15} />
+                        <Icon size={16} />
                       </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] font-mono text-[var(--color-text-dim)]">{pillar.unit}</span>
-                          <span className="text-[var(--text-xs)] font-medium leading-tight truncate">
-                            {pillar.title}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <span className="text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-wider">
+                            {item.unit}
+                          </span>
+                          <span className="text-[10px] text-[var(--color-border)]">·</span>
+                          <span className="text-[10px] font-mono text-[var(--color-amber)]">
+                            #{item.number}
                           </span>
                         </div>
-                        <div className="text-[10px] text-[var(--color-text-dim)] leading-tight hidden lg:block truncate mt-0.5">
-                          {pillar.subtitle}
-                        </div>
+                        <p className="text-[var(--text-xs)] font-medium truncate">
+                          {item.title}
+                        </p>
+                        <p className="text-[11px] text-[var(--color-text-dim)] truncate">
+                          {item.subtitle}
+                        </p>
                       </div>
-                      {isActive && (
-                        <ChevronRight size={12} className="ml-auto shrink-0 hidden lg:block text-[var(--color-text-dim)]" />
-                      )}
+                      <ChevronRight
+                        size={14}
+                        className={`shrink-0 mt-2 transition-transform ${
+                          isActive ? 'text-[var(--color-amber)] translate-x-0.5' : 'text-transparent'
+                        }`}
+                      />
                     </button>
                   );
                 })}
               </div>
+
+              {/* Integrity Note */}
+              <div className="mt-4 p-3 border border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--text-xs)] text-[var(--color-text-dim)] leading-relaxed">
+                <div className="flex items-center gap-1.5 text-[var(--color-amber)] font-medium mb-1">
+                  <CheckCircle2 size={13} />
+                  <span>Engineering Integrity</span>
+                </div>
+                No artificial fillers. Only data structures with real, verifiable call sites in BatchHub’s codebase are featured here.
+              </div>
             </div>
           </nav>
 
-          {/* Main Content — Visualizer Viewport */}
+          {/* Main Visualizer Area */}
           <main className="flex-1 min-w-0">
-            {/* Pillar Header Card */}
-            <div className="mb-6 p-4 sm:p-5 bg-[var(--color-surface)] border border-[var(--color-border)]">
+            {/* Header info for active structure */}
+            <div className="mb-6 p-4 sm:p-5 border border-[var(--color-border)] bg-[var(--color-surface)]">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                 <span
-                  className="text-[var(--text-xs)] font-mono font-bold tracking-wider"
-                  style={{ color: currentPillar?.color }}
+                  className="text-[10px] font-mono uppercase tracking-widest px-2 py-0.5 border"
+                  style={{
+                    borderColor: 'var(--color-amber)',
+                    color: 'var(--color-amber)',
+                    backgroundColor: 'var(--color-amber-glow)',
+                  }}
                 >
-                  {currentPillar?.unit} · PILLAR #{currentPillar?.number}
+                  {currentItem?.unit} · IMPLEMENTATION #{currentItem?.number}
                 </span>
 
-                {currentPillar?.featureRoute && (
+                {currentItem?.featureRoute && (
                   <Link
-                    to={currentPillar.featureRoute}
+                    to={currentItem.featureRoute}
                     className="flex items-center gap-1.5 text-[11px] font-mono text-[var(--color-amber)] hover:underline border border-[var(--color-amber)]/40 px-2 py-0.5 bg-[var(--color-amber-glow)]/20"
                   >
-                    <span>{currentPillar.featureLabel}</span>
+                    <span>{currentItem.featureLabel}</span>
                     <ExternalLink size={11} />
                   </Link>
                 )}
               </div>
 
               <h2 className="font-display text-[var(--text-xl)] sm:text-[var(--text-2xl)] font-semibold tracking-[-0.01em]">
-                {currentPillar?.title}
+                {currentItem?.title}
               </h2>
               <p className="text-[var(--text-xs)] text-[var(--color-text-dim)] font-medium mt-0.5">
-                {currentPillar?.subtitle}
+                {currentItem?.subtitle}
               </p>
               <p className="text-[var(--text-xs)] text-[var(--color-text-muted)] mt-2 leading-relaxed">
-                {currentPillar?.description}
+                {currentItem?.description}
               </p>
+
+              {/* Real In-App Usage Callout */}
+              <div className="mt-3 pt-3 border-t border-[var(--color-border)] flex items-start gap-2 text-[var(--text-xs)] text-[var(--color-text-muted)]">
+                <span className="font-medium text-[var(--color-amber)] shrink-0">Real BatchHub Usage:</span>
+                <span>{currentItem?.realUsage}</span>
+              </div>
             </div>
 
             {/* Tab Visualizer Body */}
             <div className="animate-fade-in" key={activeTab}>
               {activeTab === 'priority-queue' && <QueueVisualizer />}
               {activeTab === 'linked-list' && <LinkedListVisualizer />}
-              {activeTab === 'sorting-search' && (
-                <div className="space-y-8">
-                  <SortingVisualizer />
-                  <div className="section-divider" />
-                  <BinarySearchVisualizer />
-                </div>
-              )}
-              {activeTab === 'curriculum-graph' && <GraphVisualizer />}
-              {activeTab === 'complexity' && <ComplexityChart />}
+              {activeTab === 'sorting' && <SortingVisualizer />}
             </div>
           </main>
         </div>

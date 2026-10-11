@@ -3,7 +3,7 @@ import { ArrowRightLeft, ArrowRight, ArrowDown, Plus, Minus, Sparkles, RefreshCw
 import { Queue, CircularQueue, MinHeap } from '../../lib/ds';
 
 export default function QueueVisualizer() {
-  const [activeTab, setActiveTab] = useState('linear'); // 'linear' | 'circular' | 'priority'
+  const [activeTab, setActiveTab] = useState('priority'); // 'priority' | 'linear' | 'circular'
 
   /* --- Linear Queue State --- */
   const [linearQ] = useState(() => {
@@ -121,14 +121,24 @@ export default function QueueVisualizer() {
       {/* Tabs */}
       <div className="flex items-center border border-[var(--color-border)] overflow-hidden bg-[var(--color-surface)]">
         <button
-          onClick={() => setActiveTab('linear')}
+          onClick={() => setActiveTab('priority')}
           className={`flex-1 px-3 py-2 text-[var(--text-xs)] font-medium transition-colors ${
+            activeTab === 'priority'
+              ? 'bg-[var(--color-surface-2)] text-[var(--color-amber)] border-b-2 border-b-[var(--color-amber)]'
+              : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
+          }`}
+        >
+          1. Priority Queue (Min-Heap) · <span className="text-[var(--color-amber)] font-mono text-[10px]">Active in BatchHub</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('linear')}
+          className={`flex-1 px-3 py-2 text-[var(--text-xs)] font-medium border-l border-[var(--color-border)] transition-colors ${
             activeTab === 'linear'
               ? 'bg-[var(--color-surface-2)] text-[var(--color-amber)] border-b-2 border-b-[var(--color-amber)]'
               : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
           }`}
         >
-          1. Standard Queue (FIFO)
+          2. Standard Queue (FIFO)
         </button>
         <button
           onClick={() => setActiveTab('circular')}
@@ -138,17 +148,7 @@ export default function QueueVisualizer() {
               : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
           }`}
         >
-          2. Circular Queue (Ring Buffer)
-        </button>
-        <button
-          onClick={() => setActiveTab('priority')}
-          className={`flex-1 px-3 py-2 text-[var(--text-xs)] font-medium border-l border-[var(--color-border)] transition-colors ${
-            activeTab === 'priority'
-              ? 'bg-[var(--color-surface-2)] text-[var(--color-amber)] border-b-2 border-b-[var(--color-amber)]'
-              : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
-          }`}
-        >
-          3. Priority Queue (Min-Heap)
+          3. Circular Queue (Ring Buffer)
         </button>
       </div>
 

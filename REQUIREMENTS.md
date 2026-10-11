@@ -296,24 +296,19 @@
 
 ## 5. Fundamentals of Data Structures (FDS) Course Project Requirements
 
-BatchHub implements the **Fundamentals of Data Structures (FDS)** curriculum by focusing on **4 core, high-impact data structure pillars** that solve real batch information problems, backed by the complete underlying pure JavaScript library in `src/lib/ds/`:
+BatchHub implements the **Fundamentals of Data Structures (FDS)** curriculum by focusing on the **3 data structures really used in BatchHub** to solve real batch information problems:
 
-### 5.1 The 4 Core Pillars (Application & Showcase)
+### 5.1 The 3 Real Data Structures (Application & Showcase)
 
-1. **Pillar 1 — Priority Queue / Min-Heap (Unit 4):**
+1. **Priority Queue / Min-Heap (Unit 4):**
    - Array-backed complete binary min-heap (`priorityQueue.js`) with $O(1)$ peek and $O(\log n)$ bubble-up / bubble-down.
    - Powers `useUpcomingDeadlines()` and the `DeadlineBanner` with live urgency ranking.
-2. **Pillar 2 — Doubly Linked List (Unit 3):**
-   - Bidirectional node structure (`linkedList.js`) with `prev` and `next` pointers.
-   - Powers post-to-post feed navigation on `PostPage.jsx` with $O(1)$ pointer jumps.
-3. **Pillar 3 — Searching & Sorting Algorithms (Unit 2):**
-   - Bubble, Selection, Insertion, Merge, and Quick Sort in `sorting.js` with frame-by-frame snapshot capture.
-   - Binary Search and Linear Search in `binarySearch.js` with search bounds tracking.
-   - Integrated into `/archive` sorting dropdown with real-time comparison and swap metrics computed on live batch posts.
-4. **Pillar 4 — Curriculum Knowledge Graph (Unit 6):**
-   - Adjacency list and matrix graph representations in `graph.js` supporting Breadth-First Search (BFS), Depth-First Search (DFS), and topological sort.
-   - Powers `buildSubjectGraph()` to map prerequisite chains and recommend related subjects based on shared academic tags.
-5. **Reference — Complexity Analysis (Unit 1):**
-   - Metadata and theoretical growth functions in `complexity.js` with interactive growth curves ($O(1)$ to $O(2^n)$) on `/ds`.
+2. **Doubly Linked List (Unit 3):**
+   - Bidirectional node structure (`linkedList.js`) with `prev` and `next` memory pointers.
+   - Powers post-to-post feed navigation on `PostPage.jsx` with $O(1)$ pointer jumps without array re-scans.
+3. **Custom Sorting Algorithms (Unit 2):**
+   - Bubble, Selection, Insertion, Merge, and Quick Sort in `sorting.js`.
+   - Integrated into `/archive` sorting dropdown with real-time comparison and swap metrics computed directly on live batch posts.
+
 
 

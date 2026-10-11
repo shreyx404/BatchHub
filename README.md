@@ -24,12 +24,10 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 - 📌 Pinned important updates
 - 📢 Highlighted Notices & Important section at the top of the feed
 - 🗂️ Structured feed: Notices → Pinned → Deadline-sorted → General updates
-- 🧩 **Data Structures Showcase (`/ds`):** Interactive academic showcase designed for the Fundamentals of Data Structures (FDS) course project, highlighting the 4 core data structures that power BatchHub without artificial bloat:
-  - **Pillar 1 — Priority Queue (Min-Heap):** Live deadline ranking in `useUpcomingDeadlines()` ordering academic deliverables by urgency with O(1) peek time
-  - **Pillar 2 — Doubly Linked List:** Bidirectional post-to-post navigation (`prev` ⇄ `next`) on `PostPage.jsx` with active cursor tracking and O(1) pointer traversal
-  - **Pillar 3 — Sorting & Binary Search:** Dynamic algorithm selector on the Archive page (`/archive`) allowing real-time sorting using Bubble, Selection, Insertion, Merge, or Quick Sort with live comparison and swap telemetry
-  - **Pillar 4 — Curriculum Knowledge Graph:** Adjacency List graph modeling college subjects and prerequisites with Breadth-First Search (BFS) recommendation
-  - **Pillar 5 — Complexity Analysis:** Interactive Big-O growth curves and theoretical complexity benchmarks ($O(1)$ to $O(2^n)$)
+- 🧩 **Data Structures Showcase (`/ds`):** Interactive academic showcase designed for the Fundamentals of Data Structures (FDS) course project, highlighting the 3 data structures that genuinely power BatchHub without artificial textbook fillers:
+  - **1. Priority Queue (Min-Heap):** Live deadline ranking in `useUpcomingDeadlines()` ordering academic deliverables by urgency with $O(1)$ peek time
+  - **2. Doubly Linked List:** Bidirectional post-to-post navigation (`prev` ⇄ `next`) on `PostPage.jsx` with active memory pointers and $O(1)$ cursor traversal
+  - **3. Sorting Algorithms:** Dynamic algorithm selector on the Archive page (`/archive`) allowing real-time sorting using Bubble, Selection, Insertion, Merge, or Quick Sort with live comparison and swap telemetry computed on real batch posts
 - ⚡ Fast route code splitting with React `Suspense` and `lazy`
 - 🔗 Deep links and native formatted post sharing with clipboard fallback
 
@@ -172,17 +170,15 @@ BatchHub includes a built-in serverless function (`api/discord.js`) providing fu
 
 The `vercel.json` handles SPA routing and CSP automatically.
 
-## FDS Course Project — 4 Core Data Structure Pillars
+## FDS Course Project — 3 Core Data Structures Really Used in BatchHub
 
-BatchHub serves as a full course project for **Fundamentals of Data Structures (FDS)**. Instead of forcing arbitrary math or compiler concepts, the project focuses deeply on **4 core, high-impact data structures** that naturally solve real batch information problems, demonstrated interactively at `/ds` and integrated into live user workflows:
+BatchHub serves as a full course project for **Fundamentals of Data Structures (FDS)**. Instead of forcing arbitrary math or compiler concepts that don't belong in a batch gallery, the project focuses deeply on the **3 data structures that genuinely solve production problems in BatchHub**, demonstrated interactively at `/ds` and integrated into live user workflows:
 
-| Pillar | Core Data Structure | Syllabus Mapping | Real BatchHub In-App Feature | Showcase Visualizer (`/ds`) |
+| # | Core Data Structure | Syllabus Mapping | Real BatchHub In-App Feature | Live Operational Benefit |
 |---|---|---|---|---|
-| **Pillar 1** | **Priority Queue (Min-Heap)** | Unit 4 (Heaps & Priority Queues) | **Upcoming Deadline Ranking** in `useUpcomingDeadlines()` ordering assignments by urgency with $O(1)$ peek root | Heap array mapping, complete binary tree structure, and $O(\log n)$ bubble-up / bubble-down step animations |
-| **Pillar 2** | **Doubly Linked List (DLL)** | Unit 3 (Linked Lists & Pointers) | **Bidirectional Post Navigation** (`/post/:id`) via `.prev` ⇄ `.next` pointer hops with $O(1)$ cursor traversal | Interactive node-chain visualization with pointer arrows, insert, delete, search, and animated traversal |
-| **Pillar 3** | **Sorting & Binary Search** | Unit 2 (Sorting & Searching) | **Archive Sorting Selector** (`/archive`) with live comparisons & swaps telemetry on real archived posts | Animated bar-chart step sorting (Bubble, Selection, Insertion, Merge, Quick) and binary search range locator |
-| **Pillar 4** | **Curriculum Knowledge Graph** | Unit 6 (Graphs & Traversals) | **Subject Relationship Network** connecting college subjects by shared tags and curriculum prerequisites | Interactive SVG network graph with live BFS queue, DFS stack, shortest pathfinder, and DAG topological sort |
-| **Reference** | **Complexity Analysis** | Unit 1 (Big-O, $\Omega$, $\Theta$) | Big-$O$ time & space annotations displayed on every operation | Interactive Growth Rate Curves comparing $O(1)$ through $O(2^n)$ with dynamic $n$ slider |
+| **1** | **Priority Queue (Min-Heap)** | Unit 4 (Heaps & Priority Queues) | **Upcoming Deadline Ranking** in `useUpcomingDeadlines()` and Homepage `DeadlineBanner` | $O(1)$ peek root extracts the most urgent deadline immediately without $O(n \log n)$ array sorting |
+| **2** | **Doubly Linked List (DLL)** | Unit 3 (Linked Lists & Pointers) | **Bidirectional Post Navigation** (`/post/:id`) via `.prev` ⇄ `.next` node pointers | $O(1)$ pointer jumps between adjacent posts without array slicing or search scans |
+| **3** | **Sorting Algorithms** | Unit 2 (Sorting Techniques) | **Archive Sorting Engine** (`/archive`) via `ArchiveSortBar` selector | Runs Quick, Merge, Insertion, Selection, or Bubble Sort on real posts with live comparison & swap telemetry |
 
 ## Project Structure
 
