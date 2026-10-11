@@ -471,17 +471,85 @@ src/hooks/
 └── useDSIntegration.js ← Bridge hook integrating DS classes into real features
 ```
 
-### 7.1 Real BatchHub Integration Points
+### 7.1 Priority Queue (Min-Heap) — Urgency Scheduling Engine
 
-1. **Priority Queue / Min-Heap (`useUpcomingDeadlines` & `DeadlineBanner`):**
-   - Academic deliverables are inserted into a `MinHeap` keyed by `due_date`.
-   - Peeking the most urgent deadline operates in $O(1)$ time at the root node. Inserting new notices takes $O(\log n)$ bubble-up, and extracting completed tasks takes $O(\log n)$ bubble-down.
-2. **Doubly Linked List (`PostPage.jsx`):**
-   - The active post feed is structured into a `DoublyLinkedList`.
-   - Previous and Next buttons navigate via pointer traversal (`prev` ⇄ `next`) in $O(1)$ time without array indexing overhead or full re-queries.
-3. **Sorting Algorithms (`ArchivePage.jsx` & `ArchiveSortBar`):**
-   - Archived deliverables are sorted using hand-written Bubble, Selection, Insertion, Merge, or Quick Sort algorithms from `sorting.js`.
-   - Real-time comparison count and swap count telemetry is rendered to prove algorithmic execution on actual batch records.
+#### WHAT Is Used
+- **ADT & Category:** Complete Binary Min-Heap (`MinHeap` class in `src/lib/ds/priorityQueue.js`).
+- **Internal Storage:** 0-indexed flat contiguous array (`this.heap = []`).
+  - Parent index: $\lfloor (i - 1) / 2 \rfloor$
+  - Left child: $2i + 1$; Right child: $2i + 2$
+- **Methods:** `insert(item)` with `_bubbleUp()` ($O(\log n)$), `extractMin()` with `_sinkDown()` ($O(\log n)$), `peek()` ($O(1)$).
+- **Comparator:** `(a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime()`
+
+#### HOW It Operates in BatchHub
+1. **API Ingestion:** `fetchUpcomingDeadlines()` queries Supabase or demo storage for published deliverables with `due_date > now()`.
+2. **Heap Construction:** In `src/hooks/usePosts.js` (`useUpcomingDeadlines()`), a `new MinHeap(comparator)` is instantiated and populated via `heap.insert(item)`. Each insertion bubbles up in $O(\log n)$ time.
+3. **Ordering:** `heap.extractMin()` dequeues items in strictly ascending chronological sequence without sorting the entire post table.
+4. **UI Consumption:** `DeadlineBanner.jsx` on the Homepage inspects index 0 in $O(1)$ time to render the live ticking urgency countdown with amber focal styling and a `"Priority Queue (Min-Heap) O(1)"` badge.
+
+#### WHY It Is Used
+- **The Operational Problem:** Batch portals frequently ingest newly announced deadlines throughout the day. Students constantly ask: *"What is due right now?"*
+- **Versus Naive `Array.prototype.sort()`:** A naive approach re-sorts the entire array on every check or insertion, costing $O(n \log n)$ comparisons. The Min-Heap guarantees $O(1)$ immediate peek of the most critical task at the root, and dynamic insertions cost only $O(\log n)$.
+- **Space & Memory:** Employs a flat array with zero pointer allocations, maximizing CPU cache locality and maintaining $O(n)$ space.
+
+---
+
+### 7.2 Doubly Linked List — Sequential Post Feed Navigation
+
+#### WHAT Is Used
+- **ADT & Category:** Bidirectional Doubly Linked List (`DoublyLinkedList` and `DLLNode` classes in `src/lib/ds/linkedList.js`).
+- **Node Topology:** Each `DLLNode` encapsulates `{ data, prev, next }`, where `prev` points to the prior post node and `next` points to the succeeding post node.
+- **Methods:** `append(data)` ($O(1)$), `prepend(data)` ($O(1)$), `delete(value)` ($O(1)$), `getPostNavigation(posts, currentId)` in `src/hooks/useDSIntegration.js`.
+
+#### HOW It Operates in BatchHub
+1. **Route Mount:** When a student opens a post detail view at `/post/:id` (`PostPage.jsx`), the component accesses `allPosts` from `usePosts()`.
+2. **DLL Construction:** `getPostNavigation(allPosts, id)` instantiates a `DoublyLinkedList` and chains all posts sequentially.
+3. **Pointer Hop:** The active node corresponding to the URL parameter is located, and `current.prev.data` and `current.next.data` are returned directly.
+4. **UI Consumption:** `PostPage.jsx` renders **← Previous Post** and **Next Post →** buttons with post titles and subject badges, enabling instant navigation via pointer jumps.
+
+#### WHY It Is Used
+- **The Operational Problem:** Reading academic posts is sequential. Students flip between consecutive assignments, lab manuals, and notices like an editorial ledger.
+- **Versus Naive `findIndex()`:** Scanning a flat array on every post navigation with `posts.findIndex(p => p.id === id)` costs $O(n)$ search time per page hop. In a Doubly Linked List, stepping forward or backward is a direct $O(1)$ pointer dereference (`current.prev`, `current.next`).
+- **Ledger Model:** Eliminates array index bounds calculation and matches the continuous editorial ledger user mental model.
+
+---
+
+### 7.3 Custom Sorting Algorithms — Archive Query Engine & Live Telemetry
+
+#### WHAT Is Used
+- **Algorithms & Category:** Pure JavaScript Sorting Algorithms (`src/lib/ds/sorting.js`).
+- **Implemented Algorithms:**
+  - `quickSort`: In-place divide-and-conquer with Lomuto partitioning ($O(n \log n)$ average).
+  - `mergeSort`: Stable divide-and-conquer with auxiliary half merging ($O(n \log n)$ all cases).
+  - `insertionSort`: In-place adaptive shifting ($O(n)$ best case for nearly-sorted inputs).
+  - `selectionSort`: Linear minimum element selection ($O(n^2)$).
+  - `bubbleSort`: Adjacent pair swapping with early-exit flag ($O(n)$ best, $O(n^2)$ average/worst).
+- **Telemetry Return:** Returns `{ sorted, comparisons, swaps, timeAvg, spaceAux }`.
+
+#### HOW It Operates in BatchHub
+1. **Archive Ingestion:** `ArchivePage.jsx` queries past deliverables and completed assignments via `useArchivePosts()`.
+2. **User Selection:** `ArchiveSortBar.jsx` renders an algorithm selector dropdown alongside primary sort fields (`Due Date`, `Created Date`, `Title`).
+3. **In-Memory Telemetry Run:** `useDSIntegration.sortPosts(posts, algorithmKey, field, isAsc)` executes the chosen algorithm on a copy of the posts, incrementing comparison and swap counters.
+4. **UI Consumption:** The archive grid immediately reflects the sorted output, while a live badge displays the exact metrics (e.g. `[Quick Sort] 18 comparisons · 7 swaps · O(n log n) average`).
+
+#### WHY It Is Used
+- **The Operational Problem:** JavaScript's native `Array.prototype.sort()` is a compiled C++ black box (V8 Timsort). It offers zero insight into algorithmic efficiency or step counts.
+- **Empirical Transparency:** Hand-written implementations allow students to empirically inspect computational complexity on actual batch data (e.g. observing how Insertion Sort runs in near $O(n)$ time on nearly sorted timestamps, whereas Bubble Sort incurs quadratic overhead).
+- **Educational Value:** Bridges classroom theoretical algorithms with production web application state management.
+
+---
+
+### 7.4 Algorithmic Complexity Comparison Matrix
+
+| Data Structure / Algorithm | Operation | Naive Array Approach | BatchHub DS Engine | Operational Benefit |
+| :--- | :--- | :--- | :--- | :--- |
+| **Min-Heap Priority Queue** | Peek Earliest Deadline | $O(n)$ scan / $O(n \log n)$ sort | **$O(1)$ root peek** | Instant urgency countdown banner |
+| **Min-Heap Priority Queue** | Insert New Announcement | $O(n \log n)$ full re-sort | **$O(\log n)$ bubble-up** | Negligible overhead on live feed mutations |
+| **Doubly Linked List** | Step to Next / Prev Post | $O(n)$ `findIndex()` scan | **$O(1)$ pointer hop** | Zero search scans between consecutive posts |
+| **Doubly Linked List** | Feed Insertion (Head/Tail) | $O(n)$ array shift | **$O(1)$ pointer wire** | Constant-time prepend / append |
+| **Quick Sort** | Archive Post Ordering | Black-box engine | **$O(n \log n)$ + Telemetry** | Full comparison & swap visibility |
+| **Insertion Sort** | Nearly-Sorted Event Order | Black-box engine | **$O(n)$ adaptive + Telemetry** | Minimal swaps on chronological archives |
+
 
 
 
