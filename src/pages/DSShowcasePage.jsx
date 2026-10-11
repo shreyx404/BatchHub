@@ -1,78 +1,87 @@
 import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import {
-  BarChart3, Search, Link2, Layers, ArrowRightLeft,
-  TreePine, GitBranch, ChevronRight, Binary, Boxes
+  Layers, Link2, ArrowRightLeft, GitBranch,
+  BarChart3, ChevronRight, Binary, ExternalLink
 } from 'lucide-react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
-import ComplexityChart from '../components/ds/ComplexityChart';
+import QueueVisualizer from '../components/ds/QueueVisualizer';
+import LinkedListVisualizer from '../components/ds/LinkedListVisualizer';
 import SortingVisualizer from '../components/ds/SortingVisualizer';
 import BinarySearchVisualizer from '../components/ds/BinarySearchVisualizer';
-import SparseMatrixVisualizer from '../components/ds/SparseMatrixVisualizer';
-import LinkedListVisualizer from '../components/ds/LinkedListVisualizer';
-import StackVisualizer from '../components/ds/StackVisualizer';
-import QueueVisualizer from '../components/ds/QueueVisualizer';
-import BSTVisualizer from '../components/ds/BSTVisualizer';
-import ExpressionTreeVisualizer from '../components/ds/ExpressionTreeVisualizer';
 import GraphVisualizer from '../components/ds/GraphVisualizer';
+import ComplexityChart from '../components/ds/ComplexityChart';
 
-const UNITS = [
+const CORE_PILLARS = [
   {
-    id: 'unit-1',
+    id: 'priority-queue',
     number: 1,
-    title: 'Complexity Analysis',
-    subtitle: 'Big-O, Big-Ω, Big-Θ Notation',
-    icon: BarChart3,
-    color: '#10b981',
-  },
-  {
-    id: 'unit-2',
-    number: 2,
-    title: 'Arrays, Searching & Sorting',
-    subtitle: 'Bubble, Selection, Insertion, Merge, Quick Sort',
-    icon: ArrowRightLeft,
-    color: '#3b82f6',
-  },
-  {
-    id: 'unit-3',
-    number: 3,
-    title: 'Linked Lists',
-    subtitle: 'Singly, Doubly & Circular',
-    icon: Link2,
-    color: '#a855f7',
-  },
-  {
-    id: 'unit-4',
-    number: 4,
-    title: 'Stacks & Queues',
-    subtitle: 'Stack, Queue, Circular Queue, Priority Queue, Deque',
+    unit: 'Unit 4',
+    title: 'Priority Queue (Min-Heap)',
+    subtitle: 'Upcoming Deadlines & Urgency Scheduling',
+    description: 'Models assignment and lab deadlines as a complete binary min-heap. Guarantees O(1) peek time for the earliest deliverable and O(log n) dynamic insertions.',
     icon: Layers,
     color: '#f59e0b',
+    featureRoute: '/',
+    featureLabel: 'Live on Homepage (Upcoming Deadlines Banner)',
   },
   {
-    id: 'unit-5',
-    number: 5,
-    title: 'Trees',
-    subtitle: 'BST, Traversals & Expression Trees',
-    icon: TreePine,
-    color: '#ec4899',
+    id: 'linked-list',
+    number: 2,
+    unit: 'Unit 3',
+    title: 'Doubly Linked List',
+    subtitle: 'Post Feed & Prev/Next Pointer Navigation',
+    description: 'Represents the active post sequence as a bidirectional chain of DLLNodes with .prev and .next memory pointers, eliminating O(n) array searching.',
+    icon: Link2,
+    color: '#a855f7',
+    featureRoute: '/archive',
+    featureLabel: 'Live on Post Detail View (/post/:id)',
   },
   {
-    id: 'unit-6',
-    number: 6,
-    title: 'Graphs',
-    subtitle: 'BFS, DFS & Topological Sort',
+    id: 'sorting-search',
+    number: 3,
+    unit: 'Unit 2',
+    title: 'Sorting & Binary Search',
+    subtitle: 'Archive Event Discovery & Benchmarking',
+    description: 'Hand-written implementations of Bubble, Selection, Insertion, Merge, and Quick Sort, plus divide-and-conquer Binary Search with live comparison telemetry.',
+    icon: ArrowRightLeft,
+    color: '#3b82f6',
+    featureRoute: '/archive',
+    featureLabel: 'Live on Archive Page (/archive Sort Bar)',
+  },
+  {
+    id: 'curriculum-graph',
+    number: 4,
+    unit: 'Unit 6',
+    title: 'Curriculum Knowledge Graph',
+    subtitle: 'Subject Relationships & BFS Traversal',
+    description: 'Adjacency List graph where college subjects are vertices connected by shared academic tags and curriculum prerequisites, explored via Breadth-First Search.',
     icon: GitBranch,
     color: '#06b6d4',
+    featureRoute: '/notes',
+    featureLabel: 'Live on Notes & Subject Network',
+  },
+  {
+    id: 'complexity',
+    number: 5,
+    unit: 'Unit 1',
+    title: 'Complexity Analysis (Big-O)',
+    subtitle: 'Theoretical Foundations & Growth Curves',
+    description: 'Comparative mathematical growth analysis comparing O(1), O(log n), O(n), O(n log n), O(n²), and O(2ⁿ) with interactive input size scaling.',
+    icon: BarChart3,
+    color: '#10b981',
+    featureRoute: null,
+    featureLabel: 'Algorithmic Reference',
   },
 ];
 
 export default function DSShowcasePage() {
-  const [activeUnit, setActiveUnit] = useState('unit-1');
+  const [activeTab, setActiveTab] = useState('priority-queue');
 
-  const currentUnit = useMemo(
-    () => UNITS.find((u) => u.id === activeUnit),
-    [activeUnit]
+  const currentPillar = useMemo(
+    () => CORE_PILLARS.find((p) => p.id === activeTab),
+    [activeTab]
   );
 
   return (
@@ -85,39 +94,38 @@ export default function DSShowcasePage() {
           <div className="flex items-center gap-2 mb-3">
             <Binary size={14} className="text-[var(--color-amber)]" />
             <span className="text-[var(--text-xs)] tracking-[0.12em] uppercase text-[var(--color-text-dim)] font-medium">
-              Fundamentals of Data Structures
+              Fundamentals of Data Structures · Course Project
             </span>
           </div>
           <h1 className="font-display text-[var(--text-3xl)] sm:text-[var(--text-4xl)] font-semibold tracking-[-0.02em] leading-tight mb-2">
-            Data Structures
-            <span className="text-[var(--color-amber)]"> Showcase</span>
+            Core Data Structures in
+            <span className="text-[var(--color-amber)]"> BatchHub</span>
           </h1>
-          <p className="text-[var(--text-sm)] text-[var(--color-text-muted)] max-w-xl leading-relaxed">
-            Interactive visualizations of every data structure powering BatchHub — mapped directly to the FDS syllabus.
-            Each structure is implemented from scratch and integrated into real features.
+          <p className="text-[var(--text-sm)] text-[var(--color-text-muted)] max-w-2xl leading-relaxed">
+            BatchHub integrates hand-written, pure JavaScript data structures into real user workflows.
+            Explore the 4 core pillars below to inspect how each structure solves computational problems in our college batch gallery.
           </p>
         </div>
-        {/* Subtle grain overlay */}
         <div className="grain-overlay" />
       </section>
 
       <div className="mx-auto max-w-6xl px-3 sm:px-4 py-6 sm:py-8">
         <div className="flex flex-col lg:flex-row gap-6">
 
-          {/* Sidebar — Unit Navigation */}
-          <nav className="lg:w-56 shrink-0">
+          {/* Sidebar — Pillars Navigation */}
+          <nav className="lg:w-64 shrink-0">
             <div className="lg:sticky lg:top-20">
               <p className="text-[var(--text-xs)] tracking-[0.1em] uppercase text-[var(--color-text-dim)] mb-3 font-medium">
-                Syllabus Units
+                Core DS Pillars
               </p>
               <div className="flex lg:flex-col gap-1.5 overflow-x-auto lg:overflow-x-visible scrollbar-hide pb-2 lg:pb-0">
-                {UNITS.map((unit) => {
-                  const isActive = activeUnit === unit.id;
-                  const Icon = unit.icon;
+                {CORE_PILLARS.map((pillar) => {
+                  const isActive = activeTab === pillar.id;
+                  const Icon = pillar.icon;
                   return (
                     <button
-                      key={unit.id}
-                      onClick={() => setActiveUnit(unit.id)}
+                      key={pillar.id}
+                      onClick={() => setActiveTab(pillar.id)}
                       className={`group flex items-center gap-2.5 px-3 py-2.5 text-left transition-all whitespace-nowrap lg:whitespace-normal w-full border ${
                         isActive
                           ? 'bg-[var(--color-surface-2)] border-[var(--color-border-light)] text-[var(--color-text)]'
@@ -126,16 +134,19 @@ export default function DSShowcasePage() {
                     >
                       <div
                         className="w-6 h-6 flex items-center justify-center shrink-0 transition-colors"
-                        style={{ color: isActive ? unit.color : undefined }}
+                        style={{ color: isActive ? pillar.color : undefined }}
                       >
                         <Icon size={15} />
                       </div>
                       <div className="min-w-0">
-                        <div className="text-[var(--text-xs)] font-medium leading-tight">
-                          Unit {unit.number}
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-mono text-[var(--color-text-dim)]">{pillar.unit}</span>
+                          <span className="text-[var(--text-xs)] font-medium leading-tight truncate">
+                            {pillar.title}
+                          </span>
                         </div>
-                        <div className="text-[10px] text-[var(--color-text-dim)] leading-tight hidden lg:block truncate">
-                          {unit.title}
+                        <div className="text-[10px] text-[var(--color-text-dim)] leading-tight hidden lg:block truncate mt-0.5">
+                          {pillar.subtitle}
                         </div>
                       </div>
                       {isActive && (
@@ -148,54 +159,53 @@ export default function DSShowcasePage() {
             </div>
           </nav>
 
-          {/* Main Content — Visualizer Area */}
+          {/* Main Content — Visualizer Viewport */}
           <main className="flex-1 min-w-0">
-            {/* Unit Header */}
-            <div className="mb-6 pb-4 border-b border-[var(--color-border)]">
-              <div className="flex items-center gap-2 mb-1">
+            {/* Pillar Header Card */}
+            <div className="mb-6 p-4 sm:p-5 bg-[var(--color-surface)] border border-[var(--color-border)]">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                 <span
-                  className="text-[var(--text-xs)] font-mono font-bold"
-                  style={{ color: currentUnit?.color }}
+                  className="text-[var(--text-xs)] font-mono font-bold tracking-wider"
+                  style={{ color: currentPillar?.color }}
                 >
-                  UNIT {currentUnit?.number}
+                  {currentPillar?.unit} · PILLAR #{currentPillar?.number}
                 </span>
+
+                {currentPillar?.featureRoute && (
+                  <Link
+                    to={currentPillar.featureRoute}
+                    className="flex items-center gap-1.5 text-[11px] font-mono text-[var(--color-amber)] hover:underline border border-[var(--color-amber)]/40 px-2 py-0.5 bg-[var(--color-amber-glow)]/20"
+                  >
+                    <span>{currentPillar.featureLabel}</span>
+                    <ExternalLink size={11} />
+                  </Link>
+                )}
               </div>
+
               <h2 className="font-display text-[var(--text-xl)] sm:text-[var(--text-2xl)] font-semibold tracking-[-0.01em]">
-                {currentUnit?.title}
+                {currentPillar?.title}
               </h2>
-              <p className="text-[var(--text-sm)] text-[var(--color-text-dim)] mt-0.5">
-                {currentUnit?.subtitle}
+              <p className="text-[var(--text-xs)] text-[var(--color-text-dim)] font-medium mt-0.5">
+                {currentPillar?.subtitle}
+              </p>
+              <p className="text-[var(--text-xs)] text-[var(--color-text-muted)] mt-2 leading-relaxed">
+                {currentPillar?.description}
               </p>
             </div>
 
-            {/* Visualizer Content */}
-            <div className="animate-fade-in" key={activeUnit}>
-              {activeUnit === 'unit-1' && <ComplexityChart />}
-              {activeUnit === 'unit-2' && (
+            {/* Tab Visualizer Body */}
+            <div className="animate-fade-in" key={activeTab}>
+              {activeTab === 'priority-queue' && <QueueVisualizer />}
+              {activeTab === 'linked-list' && <LinkedListVisualizer />}
+              {activeTab === 'sorting-search' && (
                 <div className="space-y-8">
                   <SortingVisualizer />
                   <div className="section-divider" />
                   <BinarySearchVisualizer />
-                  <div className="section-divider" />
-                  <SparseMatrixVisualizer />
                 </div>
               )}
-              {activeUnit === 'unit-3' && <LinkedListVisualizer />}
-              {activeUnit === 'unit-4' && (
-                <div className="space-y-8">
-                  <StackVisualizer />
-                  <div className="section-divider" />
-                  <QueueVisualizer />
-                </div>
-              )}
-              {activeUnit === 'unit-5' && (
-                <div className="space-y-8">
-                  <BSTVisualizer />
-                  <div className="section-divider" />
-                  <ExpressionTreeVisualizer />
-                </div>
-              )}
-              {activeUnit === 'unit-6' && <GraphVisualizer />}
+              {activeTab === 'curriculum-graph' && <GraphVisualizer />}
+              {activeTab === 'complexity' && <ComplexityChart />}
             </div>
           </main>
         </div>

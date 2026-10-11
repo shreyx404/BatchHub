@@ -296,27 +296,24 @@
 
 ## 5. Fundamentals of Data Structures (FDS) Course Project Requirements
 
-### 5.1 Syllabus Unit Alignment
+BatchHub implements the **Fundamentals of Data Structures (FDS)** curriculum by focusing on **4 core, high-impact data structure pillars** that solve real batch information problems, backed by the complete underlying pure JavaScript library in `src/lib/ds/`:
 
-1. **Unit 1 (Complexity Analysis):**
-   - Pure JS metadata module (`complexity.js`) mapping best, average, worst time complexity and auxiliary space.
-   - Comparative growth rate mathematical equations (`GROWTH_FUNCTIONS`) for $O(1)$, $O(\log n)$, $O(n)$, $O(n \log n)$, $O(n^2)$, and $O(2^n)$.
-2. **Unit 2 (Arrays, Searching, Sorting, Sparse Matrix):**
-   - Hand-written implementations of Bubble, Selection, Insertion, Merge, and Quick Sort in `sorting.js` with frame-by-frame snapshot capture.
-   - Binary Search and Linear Search in `binarySearch.js` with low/mid/high range tracking.
-   - Coordinate Triplet representation in `sparseMatrix.js` storing $(row, col, value)$ with matrix transposition.
-   - Integration into `/archive` sorting dropdown with comparison/swap metrics.
-3. **Unit 3 (Linked Lists):**
-   - `SinglyLinkedList`, `DoublyLinkedList`, and `CircularLinkedList` in `linkedList.js`.
-   - Integration into `/post/:id` for $O(1)$ bidirectional post-to-post navigation via pointer hops.
-4. **Unit 4 (Stacks & Queues):**
-   - `Stack` with Shunting-Yard infix-to-postfix and postfix evaluator in `stack.js`.
-   - `Queue`, `CircularQueue` (modular ring buffer), and `MinHeap` Priority Queue in `queue.js` and `priorityQueue.js`.
-   - Integration of `MinHeap` in `useUpcomingDeadlines` to rank deadlines by urgency.
-5. **Unit 5 (Trees):**
-   - `BST` in `bst.js` supporting insert, search, delete, in-order, pre-order, post-order, and level-order traversals, plus range queries $[low..high]$.
-   - `ExpressionTree` in `expressionTree.js` constructed from postfix tokens via stack and evaluated recursively.
-6. **Unit 6 (Graphs):**
-   - `Graph` in `graph.js` supporting Adjacency List, Adjacency Matrix, Breadth-First Search (BFS), Depth-First Search (DFS), shortest path, and topological sort.
-   - Dynamic subject relationship graph (`buildSubjectGraph`) linking curriculum topics by shared tags.
+### 5.1 The 4 Core Pillars (Application & Showcase)
+
+1. **Pillar 1 — Priority Queue / Min-Heap (Unit 4):**
+   - Array-backed complete binary min-heap (`priorityQueue.js`) with $O(1)$ peek and $O(\log n)$ bubble-up / bubble-down.
+   - Powers `useUpcomingDeadlines()` and the `DeadlineBanner` with live urgency ranking.
+2. **Pillar 2 — Doubly Linked List (Unit 3):**
+   - Bidirectional node structure (`linkedList.js`) with `prev` and `next` pointers.
+   - Powers post-to-post feed navigation on `PostPage.jsx` with $O(1)$ pointer jumps.
+3. **Pillar 3 — Searching & Sorting Algorithms (Unit 2):**
+   - Bubble, Selection, Insertion, Merge, and Quick Sort in `sorting.js` with frame-by-frame snapshot capture.
+   - Binary Search and Linear Search in `binarySearch.js` with search bounds tracking.
+   - Integrated into `/archive` sorting dropdown with real-time comparison and swap metrics computed on live batch posts.
+4. **Pillar 4 — Curriculum Knowledge Graph (Unit 6):**
+   - Adjacency list and matrix graph representations in `graph.js` supporting Breadth-First Search (BFS), Depth-First Search (DFS), and topological sort.
+   - Powers `buildSubjectGraph()` to map prerequisite chains and recommend related subjects based on shared academic tags.
+5. **Reference — Complexity Analysis (Unit 1):**
+   - Metadata and theoretical growth functions in `complexity.js` with interactive growth curves ($O(1)$ to $O(2^n)$) on `/ds`.
+
 

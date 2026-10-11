@@ -156,14 +156,14 @@ When filters or search are active, all sections collapse into a flat, chronologi
 
 ## 9. Fundamentals of Data Structures (FDS) Course Project Scope
 
-To demonstrate practical applications of college data structures coursework without altering core production UX:
+To demonstrate practical applications of college data structures coursework without altering core production UX or forcing artificial math/compiler concepts, the project focuses deeply on **4 core, high-impact data structures** (+ Unit 1 Complexity Analysis):
 
-1. **Academic Showcase (`/ds`):**
-   - An interactive laboratory demonstrating all 6 syllabus units (Complexity Analysis, Arrays & Sorting, Linked Lists, Stacks & Queues, Trees, and Graphs).
-   - Real-time step-by-step state visualization, execution controls (play, speed, step), and Big-O annotations.
-2. **Production Feature Integration:**
-   - **Unit 2 Sorting:** Alternative sorting algorithms selectable directly on the Archive page (`/archive`) with live comparison/swap metrics.
-   - **Unit 3 Doubly Linked List:** Post-to-post navigation on `PostPage.jsx` using bidirectional pointers.
-   - **Unit 4 Priority Queue:** Upcoming deadline ranking in `useUpcomingDeadlines()` using an array-backed binary min-heap.
-   - **Unit 6 Graph:** BFS-driven subject recommendation engine mapping curriculum topics connected by shared tags.
+1. **Production Feature Integration:**
+   - **Pillar 1 — Priority Queue (Min-Heap):** Upcoming deadline ranking in `useUpcomingDeadlines()` using an array-backed complete binary min-heap for $O(1)$ urgent peek and $O(\log n)$ insertion.
+   - **Pillar 2 — Doubly Linked List:** Post-to-post navigation on `PostPage.jsx` using bidirectional pointers (`prev` ⇄ `next`) with $O(1)$ traversal without full list re-indexes.
+   - **Pillar 3 — Sorting & Binary Search:** Alternative sorting algorithms selectable directly on the Archive page (`/archive`) with live comparison/swap metrics and binary search lookup.
+   - **Pillar 4 — Curriculum Knowledge Graph:** BFS-driven subject recommendation engine mapping curriculum topics connected by shared tags and prerequisites.
+2. **Academic Showcase (`/ds`):**
+   - An interactive laboratory demonstrating these 4 core pillars with step-by-step state visualization, execution controls (play, speed, step), and Big-O theoretical annotations, plus Unit 1 Complexity growth curves ($O(1)$ through $O(2^n)$).
+
 
