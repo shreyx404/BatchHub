@@ -151,3 +151,19 @@ When filters or search are active, all sections collapse into a flat, chronologi
 - Multi-batch / multi-tenant support (schema has `batch_id` placeholder but not implemented)
 - Analytics dashboard for admin
 - PWA / offline caching
+
+---
+
+## 9. Fundamentals of Data Structures (FDS) Course Project Scope
+
+To demonstrate practical applications of college data structures coursework without altering core production UX:
+
+1. **Academic Showcase (`/ds`):**
+   - An interactive laboratory demonstrating all 6 syllabus units (Complexity Analysis, Arrays & Sorting, Linked Lists, Stacks & Queues, Trees, and Graphs).
+   - Real-time step-by-step state visualization, execution controls (play, speed, step), and Big-O annotations.
+2. **Production Feature Integration:**
+   - **Unit 2 Sorting:** Alternative sorting algorithms selectable directly on the Archive page (`/archive`) with live comparison/swap metrics.
+   - **Unit 3 Doubly Linked List:** Post-to-post navigation on `PostPage.jsx` using bidirectional pointers.
+   - **Unit 4 Priority Queue:** Upcoming deadline ranking in `useUpcomingDeadlines()` using an array-backed binary min-heap.
+   - **Unit 6 Graph:** BFS-driven subject recommendation engine mapping curriculum topics connected by shared tags.
+

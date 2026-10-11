@@ -19,12 +19,14 @@
 │  │  • CalendarPage (Lazy)│    │  │            │   + Auth      │  │
 │  │  • ArchivePage (Lazy) │    │  └────────────┘              │  │
 │  │  • NotesPage (Lazy)   │    │  ┌────────────┐              │  │
-│  │  • PostPage (Lazy)    │    │  │ calendar.js│ ← Calendar   │  │
-│  │  • AdminPage (Lazy)   │    │  └────────────┘   Deadlines  │  │
-│  │  • NotFoundPage (Lazy)│    │  ┌────────────┐              │  │
-│  │  Reads via anon key / ┼───►│  │ discord.js │ ← Webhook     │  │
-│  │  public endpoints     │    │  │            │   + Sig       │  │
-│  │                       │    │  └────────────┘   Verify     │  │
+│  │  • DSShowcasePage(Lazy)│   │  │ calendar.js│ ← Calendar   │  │
+│  │  • PostPage (Lazy)    │    │  └────────────┘   Deadlines  │  │
+│  │  • AdminPage (Lazy)   │    │  ┌────────────┐              │  │
+│  │  • NotFoundPage (Lazy)│    │  │ discord.js │ ← Webhook     │  │
+│  │                       │    │  │            │   + Sig       │  │
+│  │  Reads via anon key / ┼───►│  └────────────┘   Verify     │  │
+│  │  public endpoints     │    │                              │  │
+│  │                       │    │                              │  │
 │  │  Archived posts read  │    │                              │  │
 │  │  directly via RLS     │    │                              │  │
 │  └───────────────────────┘    └──────────┬───────────────────┘  │
@@ -451,3 +453,44 @@ Vercel CI/CD
 | `SUPABASE_SERVICE_ROLE_KEY` | Runtime only (serverless functions) | Full database access key |
 | `TURNSTILE_SECRET_KEY` | Runtime only (serverless functions) | Cloudflare Turnstile server validation key |
 | `DISCORD_PUBLIC_KEY` | Runtime only (serverless functions) | Discord interaction webhook signature verification |
+
+---
+
+## 7. Data Structures Layer & FDS Syllabus Architecture
+
+To serve as a course project for Fundamentals of Data Structures (FDS), BatchHub incorporates custom, zero-dependency pure JavaScript data structure implementations in `src/lib/ds/` that power actual application behaviors alongside an academic showcase at `/ds`:
+
+```
+src/lib/ds/
+├── complexity.js       ← Unit 1: Big-O, Ω, Θ metadata & growth curves
+├── sorting.js          ← Unit 2: Bubble, Selection, Insertion, Merge, Quick Sort (with step snapshots)
+├── binarySearch.js     ← Unit 2: Linear & Binary search with divide-and-conquer steps
+├── sparseMatrix.js     ← Unit 2: Triplet (Coordinate) representation & matrix transpose
+├── linkedList.js       ← Unit 3: Singly, Doubly (bidirectional), and Circular Linked Lists
+├── stack.js            ← Unit 4: LIFO Stack, Shunting-Yard infix→postfix, postfix evaluator
+├── queue.js            ← Unit 4: FIFO Queue, Circular Queue (modular ring buffer), Deque
+├── priorityQueue.js    ← Unit 4: Min-Heap Priority Queue (array-backed complete binary tree)
+├── bst.js              ← Unit 5: Binary Search Tree, Range queries, In/Pre/Post/Level traversals
+├── expressionTree.js   ← Unit 5: Binary expression tree from postfix tokens & evaluation
+├── graph.js            ← Unit 6: Adjacency List & Matrix, BFS, DFS, Shortest Path, Topological Sort
+└── index.js            ← Re-export index
+
+src/hooks/
+└── useDSIntegration.js ← Bridge hook integrating DS classes into real features
+```
+
+### 7.1 Integration Points
+
+1. **Archive Sorting Selector (`/archive`):**
+   - Posts are sorted using hand-written Bubble, Selection, Insertion, Merge, or Quick Sort algorithms from `sorting.js`.
+   - Real-time comparison count and swap count telemetry is rendered to prove algorithmic execution.
+2. **Post Navigation (`/post/:id`):**
+   - The active post feed is structured into a `DoublyLinkedList`.
+   - Previous and Next buttons navigate via pointer traversal (`prev` ⇄ `next`) in O(1) time without array indexing overhead.
+3. **Deadline Ranking (`useUpcomingDeadlines`):**
+   - Academic deliverables are inserted into a `MinHeap` keyed by `due_date`.
+   - Deliverables are extracted via `extractMin()` to guarantee that the earliest deadline is always prioritized.
+4. **Subject Relationship Graph (`/ds`):**
+   - Subjects and posts are modeled as vertices in a `Graph` connected by shared tags.
+   - Breadth-First Search (BFS) explores related coursework across curriculum boundaries.
+

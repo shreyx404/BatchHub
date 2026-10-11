@@ -1,12 +1,15 @@
+import { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   ArrowLeft, CalendarClock, ExternalLink,
-  Share2
+  Share2, Link2
 } from 'lucide-react';
 import { format, formatDistanceToNow, isPast, differenceInHours } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
 import toast from 'react-hot-toast';
 import { usePost } from '../hooks/usePost';
+import { usePosts } from '../hooks/usePosts';
+import { useDSIntegration } from '../hooks/useDSIntegration';
 import Badge from '../components/ui/Badge';
 import { LoadingSpinner } from '../components/ui/LoadingState';
 import ErrorState from '../components/ui/ErrorState';
@@ -28,6 +31,13 @@ function getSafeUrl(url) {
 export default function PostPage() {
   const { id } = useParams();
   const { post, loading, error } = usePost(id);
+  const { posts: allPosts } = usePosts();
+  const { getPostNavigation } = useDSIntegration();
+
+  // Unit 3 Doubly Linked List post navigation
+  const { prevPost, nextPost } = useMemo(() => {
+    return getPostNavigation(allPosts, id);
+  }, [allPosts, id, getPostNavigation]);
 
   if (loading) {
     return (
@@ -188,6 +198,56 @@ export default function PostPage() {
                   </a>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {/* Doubly Linked List Post Navigation (Unit 3) */}
+        {(prevPost || nextPost) && (
+          <div className="pt-6 border-t border-[var(--color-border)] space-y-2.5">
+            <div className="flex items-center justify-between text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-wider">
+              <span>Post Navigation</span>
+              <Link to="/ds" className="flex items-center gap-1 text-[var(--color-amber)] hover:underline">
+                <Link2 size={11} />
+                <span>Doubly Linked List (O(1) Pointers)</span>
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {prevPost ? (
+                <Link
+                  to={`/post/${prevPost.id}`}
+                  className="p-3 bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] transition-all flex flex-col group min-h-[58px]"
+                >
+                  <span className="text-[10px] text-[var(--color-text-dim)] font-mono flex items-center gap-1">
+                    <ArrowLeft size={10} /> Prev Post
+                  </span>
+                  <span className="text-[var(--text-xs)] font-medium text-[var(--color-text)] truncate mt-1 group-hover:text-[var(--color-amber)]">
+                    {prevPost.title}
+                  </span>
+                </Link>
+              ) : (
+                <div className="p-3 bg-[var(--color-surface-2)]/30 border border-[var(--color-border)] opacity-40 text-[10px] text-[var(--color-text-dim)] flex items-center">
+                  Head of feed (no previous post)
+                </div>
+              )}
+
+              {nextPost ? (
+                <Link
+                  to={`/post/${nextPost.id}`}
+                  className="p-3 bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-border-light)] transition-all flex flex-col items-end text-right group min-h-[58px]"
+                >
+                  <span className="text-[10px] text-[var(--color-text-dim)] font-mono flex items-center gap-1">
+                    Next Post <ArrowLeft size={10} className="rotate-180" />
+                  </span>
+                  <span className="text-[var(--text-xs)] font-medium text-[var(--color-text)] truncate mt-1 group-hover:text-[var(--color-amber)]">
+                    {nextPost.title}
+                  </span>
+                </Link>
+              ) : (
+                <div className="p-3 bg-[var(--color-surface-2)]/30 border border-[var(--color-border)] opacity-40 text-[10px] text-[var(--color-text-dim)] flex items-center justify-end text-right">
+                  Tail of feed (no next post)
+                </div>
+              )}
             </div>
           </div>
         )}

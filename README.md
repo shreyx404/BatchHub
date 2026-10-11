@@ -24,6 +24,13 @@ BatchHub is a modern, mobile-first web app that serves as a centralized academic
 - 📌 Pinned important updates
 - 📢 Highlighted Notices & Important section at the top of the feed
 - 🗂️ Structured feed: Notices → Pinned → Deadline-sorted → General updates
+- 🧩 **Data Structures Showcase (`/ds`):** Interactive academic showcase designed for the Fundamentals of Data Structures (FDS) course project, mapping hand-written pure JavaScript algorithms and ADTs 1:1 to all 6 syllabus units (Big-O Growth Charts, Sorting Visualizers, Binary Search, Sparse Matrix Triplet representations, Doubly & Circular Linked Lists, LIFO Stacks & Shunting-Yard, FIFO / Ring / Min-Heap Priority Queues, Binary Search Trees & Traversals, Expression Trees, and BFS/DFS Subject Graphs)
+- ⚡ **Real In-App Data Structure Integration:**
+  - **Unit 2 Sorting:** Dynamic algorithm selector in the Archive page (`/archive`) allowing real-time sorting of archived posts using Bubble, Selection, Insertion, Merge, or Quick Sort with live comparison and swap telemetry
+  - **Unit 3 Doubly Linked List:** O(1) bidirectional post-to-post navigation (`prev` ⇄ `next`) on `PostPage.jsx` with active cursor tracking
+  - **Unit 4 Priority Queue (Min-Heap):** Live deadline ranking in `useUpcomingDeadlines()` ordering academic deliverables by urgency with O(1) peek
+  - **Unit 2 Sparse Matrix:** Triplet coordinate compression for calendar deadline density
+  - **Unit 6 Graph:** Curriculum knowledge graph modeling subject connections and shared tags with BFS discovery
 - ⚡ Fast route code splitting with React `Suspense` and `lazy`
 - 🔗 Deep links and native formatted post sharing with clipboard fallback
 
@@ -166,6 +173,19 @@ BatchHub includes a built-in serverless function (`api/discord.js`) providing fu
 
 The `vercel.json` handles SPA routing and CSP automatically.
 
+## FDS Course Project — Syllabus Mapping
+
+BatchHub serves as a full course project for **Fundamentals of Data Structures (FDS)**. Every syllabus unit is implemented from scratch as a pure JavaScript data structure in `src/lib/ds/`, demonstrated interactively at `/ds`, and integrated into live user workflows:
+
+| Unit | Syllabus Topics | Implemented Data Structure | Real BatchHub In-App Feature | Showcase Visualizer (`/ds`) |
+|---|---|---|---|---|
+| **Unit 1** | ADTs, Complexity Analysis (Big-O, Ω, Θ), Time-Space Trade-off | `complexity.js` metadata & comparative growth functions | Big-O annotations across all features | Interactive Growth Rate Curves with dynamic `n` slider |
+| **Unit 2** | Arrays, Searching, Sorting (Bubble, Selection, Insertion, Merge, Quick), Sparse Matrix | `sorting.js`, `binarySearch.js`, `sparseMatrix.js` | **Archive Sorting Selector** (`/archive`) with live comparison/swap metrics; Heatmap calendar density | Animated bar-chart step sorting, binary search range locator, and 2D sparse triplet grid with transposition |
+| **Unit 3** | Singly, Doubly & Circular Linked Lists | `linkedList.js` (`SinglyLinkedList`, `DoublyLinkedList`, `CircularLinkedList`) | **Bidirectional Post Navigation** (`/post/:id`) via DLL pointers; Deadline carousel via CLL | Interactive node-chain visualization with pointer arrows, insert, delete, search & traversal |
+| **Unit 4** | Stacks (LIFO), Infix-to-Postfix, Postfix Eval, Queues (FIFO), Circular Queue, Priority Queue | `stack.js`, `queue.js`, `priorityQueue.js` (`MinHeap`, `CircularQueue`) | **Deadline Priority Queue** ranking upcoming deadlines in `useUpcomingDeadlines()`; Toast buffer | Vertical stack tube with push/pop, Shunting-Yard converter & evaluator table, FIFO pipe, ring buffer & min-heap |
+| **Unit 5** | Binary Search Tree (BST), Traversals (In/Pre/Post/Level), Expression Trees | `bst.js`, `expressionTree.js` | BST date-range queries for calendar intervals | SVG tree renderer with animated in/pre/post/level traversals, range pruning & expression tree evaluator |
+| **Unit 6** | Graphs (Adjacency List & Matrix), BFS, DFS, Shortest Path, Topological Sort | `graph.js` (`Graph`, `buildSubjectGraph`) | **Curriculum Knowledge Graph** & BFS recommendation of related topics | SVG network graph with live BFS queue, DFS stack, shortest pathfinder & DAG topological sort |
+
 ## Project Structure
 
 ```
@@ -174,15 +194,17 @@ src/
 ├── App.jsx               # Router (lazy route splitting + Suspense)
 ├── index.css             # Design system (@theme, surface ladder, amber tokens, utilities)
 ├── lib/                  # API, constants, Supabase client, demoData.js, fingerprint.js
-├── hooks/                # Custom React hooks (usePosts, usePost, useSubjects, useCalendar, useArchivePosts, useAdmin)
+│   └── ds/               # Pure Data Structure implementations (Units 1 to 6)
+├── hooks/                # React hooks (usePosts, usePost, useSubjects, useCalendar, useArchivePosts, useDSIntegration, useAdmin)
 ├── components/
-│   ├── layout/           # Header, Footer (with quick navigation)
-│   ├── ui/               # Badges, search, filters, archive sort, modals, states
-│   ├── posts/            # PostCard, PostGrid, DeadlineBanner (countdown), PinnedSection, NoticesSection
+│   ├── layout/           # Header, Footer (with quick navigation & DS showcase link)
+│   ├── ui/               # Badges, search, filters, archive sort (with FDS algorithm picker), modals, states
+│   ├── posts/            # PostCard, PostGrid, DeadlineBanner (min-heap priority queue), PinnedSection, NoticesSection
 │   ├── calendar/         # CalendarGrid, CalendarWeekView, CalendarAgendaView, CalendarSidebar, CalendarControls
 │   ├── notes/            # NoteCard, FolderCard
+│   ├── ds/               # Showcase Visualizers (Complexity, Sorting, Search, Sparse, LL, Stack, Queue, BST, ExprTree, Graph)
 │   └── admin/            # Admin forms, tables, sidebar, calendar, NotesManager, login with Turnstile
-└── pages/                # Route pages (HomePage, CalendarPage, ArchivePage, PostPage, NotesPage, AdminPage, NotFoundPage)
+└── pages/                # Route pages (HomePage, CalendarPage, ArchivePage, PostPage, NotesPage, DSShowcasePage, AdminPage, NotFoundPage)
 
 api/                      # Vercel Serverless Functions
 ├── admin.js              # Secure backend for admin dashboard (5-tier rate limiting)
@@ -191,8 +213,10 @@ api/                      # Vercel Serverless Functions
 └── cron/
     └── auto-archive.js   # Daily Vercel Cron for archiving expired posts
 
-tests/                    # Automated Test Suite
-└── runner.js             # Zero-dependency test runner (unit, api, security, cron, discord)
+tests/                    # Automated Test Suite (72 passing tests)
+├── runner.js             # Zero-dependency test runner
+├── unit/                 # Unit tests (fingerprint, api, ds)
+└── security/             # Security tests (admin-api, cron, discord)
 
 scripts/                  
 └── register-discord-commands.js # Script to deploy Discord slash commands

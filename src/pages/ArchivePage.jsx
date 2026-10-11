@@ -12,6 +12,7 @@ import ErrorState from '../components/ui/ErrorState';
 import EmptyState from '../components/ui/EmptyState';
 import { useArchivePosts } from '../hooks/useArchivePosts';
 import { useSubjects } from '../hooks/useSubjects';
+import { useDSIntegration } from '../hooks/useDSIntegration';
 
 /* ── Scroll Reveal Hook ── */
 function useScrollReveal() {
@@ -48,7 +49,9 @@ export default function ArchivePage() {
   const [selectedType, setSelectedType] = useState(initialType);
   const [selectedSubject, setSelectedSubject] = useState(initialSubject);
   const [sortBy, setSortBy] = useState(initialSort);
+  const [sortAlgorithm, setSortAlgorithm] = useState('native');
 
+  const { sortPosts } = useDSIntegration();
   const searchTimerRef = useRef(null);
 
   // Sync state to URL
@@ -92,6 +95,17 @@ export default function ArchivePage() {
 
   const { posts, totalCount, loading, error, refetch } = useArchivePosts(filters, sortBy);
   const { subjects } = useSubjects();
+
+  // Unit 2 Sorting integration: re-sort posts using hand-written FDS algorithms when selected
+  const { displayPosts, sortStats } = useMemo(() => {
+    if (sortAlgorithm === 'native' || !posts || posts.length === 0) {
+      return { displayPosts: posts, sortStats: null };
+    }
+    const isAsc = sortBy === 'oldest' || sortBy === 'title_asc' || sortBy === 'due_asc';
+    const field = sortBy.startsWith('title') ? 'title' : sortBy.startsWith('due') ? 'due_date' : 'created_at';
+    const res = sortPosts(posts, sortAlgorithm, field, isAsc);
+    return { displayPosts: res.sorted, sortStats: res };
+  }, [posts, sortAlgorithm, sortBy, sortPosts]);
 
   useScrollReveal();
 
@@ -141,6 +155,9 @@ export default function ArchivePage() {
               onSortChange={handleSortChange}
               totalCount={totalCount}
               loading={loading}
+              sortAlgorithm={sortAlgorithm}
+              onAlgorithmChange={setSortAlgorithm}
+              stats={sortStats}
             />
 
             <div className="section-divider mt-4 sm:mt-5 mb-5 sm:mb-6">
@@ -153,7 +170,7 @@ export default function ArchivePage() {
             <ErrorState message={error} onRetry={refetch} />
           ) : loading ? (
             <LoadingState />
-          ) : posts.length === 0 ? (
+          ) : displayPosts.length === 0 ? (
             <EmptyState
               icon={Archive}
               title="No archived posts"
@@ -161,7 +178,7 @@ export default function ArchivePage() {
             />
           ) : (
             <div className="scroll-reveal opacity-90">
-              <PostGrid posts={posts} loading={false} />
+              <PostGrid posts={displayPosts} loading={false} />
             </div>
           )}
         </div>

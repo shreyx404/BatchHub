@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Settings, CalendarClock, Archive, FolderOpen, BookMarked } from 'lucide-react';
+import { Settings, CalendarClock, Archive, FolderOpen, BookMarked, Boxes } from 'lucide-react';
 import ThemeToggle from '../ui/ThemeToggle';
 import { APP_NAME } from '../../lib/constants';
 import { useCollegeMaterial } from '../../hooks/useCollegeMaterial';
@@ -10,6 +10,7 @@ export default function Header() {
   const isCalendar = location.pathname === '/calendar';
   const isArchive = location.pathname === '/archive';
   const isNotes = location.pathname === '/notes';
+  const isDS = location.pathname === '/ds';
   const { materialUrl } = useCollegeMaterial();
 
 
@@ -87,6 +88,20 @@ export default function Header() {
               >
                 <FolderOpen size={17} className="sm:w-[18px] sm:h-[18px]" />
               </a>
+
+              {/* Data Structures Showcase Link */}
+              <Link
+                to="/ds"
+                className={`p-1.5 sm:p-2 min-h-[38px] min-w-[38px] sm:min-h-[40px] sm:min-w-[40px] flex items-center justify-center hover:bg-[var(--color-surface-2)] active:bg-[var(--color-surface-3)] transition-colors ${
+                  isDS
+                    ? 'text-[var(--color-amber)] bg-[var(--color-surface-2)] border border-[var(--color-amber)]'
+                    : 'text-[var(--color-text-dim)] hover:text-[var(--color-amber)]'
+                }`}
+                aria-label="Data Structures Showcase (FDS Course Project)"
+                title="Data Structures Showcase (FDS Course Project)"
+              >
+                <Boxes size={17} className="sm:w-[18px] sm:h-[18px]" />
+              </Link>
 
               {/* Theme Toggle */}
               <ThemeToggle />

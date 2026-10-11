@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { CalendarClock, ChevronRight } from 'lucide-react';
+import { CalendarClock, ChevronRight, Layers } from 'lucide-react';
 import { format, differenceInDays, differenceInHours, differenceInMinutes } from 'date-fns';
 import { CONTENT_TYPES } from '../../lib/constants';
 
@@ -95,8 +95,16 @@ export default function DeadlineBanner({ deadlines }) {
 
   return (
     <div className="animate-fade-in">
-      <div className="section-divider mb-4 sm:mb-5">
+      <div className="section-divider mb-4 sm:mb-5 flex items-center justify-between">
         <span>Upcoming Deadlines</span>
+        <Link
+          to="/ds"
+          className="text-[10px] font-mono text-[var(--color-amber)] hover:underline flex items-center gap-1 normal-case tracking-normal pl-2"
+          title="Ranked via Min-Heap Priority Queue (Unit 4)"
+        >
+          <Layers size={11} />
+          <span>Priority Queue (Min-Heap)</span>
+        </Link>
       </div>
 
       <div className="flex gap-3 sm:gap-4 overflow-x-auto touch-scroll py-1 -mx-4 px-4 sm:mx-0 sm:px-0">

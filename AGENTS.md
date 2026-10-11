@@ -31,21 +31,36 @@ src/
 │   ├── api.js            # ALL data fetching — dual-mode (Supabase + demo fallback)
 │   ├── constants.js      # Content types, statuses, app metadata, sort options, default material URL
 │   ├── demoData.js       # In-memory mock data & settings for demo mode
-│   └── fingerprint.js    # Client device fingerprinting (hardware & canvas hashing)
+│   ├── fingerprint.js    # Client device fingerprinting (hardware & canvas hashing)
+│   └── ds/               # Pure Data Structure implementations (Units 1 to 6)
+│       ├── complexity.js # Big-O metadata & growth functions (Unit 1)
+│       ├── sorting.js    # Bubble, Selection, Insertion, Merge, Quick Sort (Unit 2)
+│       ├── binarySearch.js # Binary & Linear search (Unit 2)
+│       ├── sparseMatrix.js # Triplet representation & transpose (Unit 2)
+│       ├── linkedList.js # Singly, Doubly, and Circular Linked Lists (Unit 3)
+│       ├── stack.js      # Stack, infixToPostfix, evaluatePostfix (Unit 4)
+│       ├── queue.js      # Queue, CircularQueue, Deque (Unit 4)
+│       ├── priorityQueue.js # Min-Heap Priority Queue (Unit 4)
+│       ├── bst.js        # Binary Search Tree & Traversals (Unit 5)
+│       ├── expressionTree.js # Expression Tree & evaluation (Unit 5)
+│       ├── graph.js      # Graph, BFS, DFS, shortest path, topo sort, subject graph (Unit 6)
+│       └── index.js      # Central DS re-exports
 ├── hooks/
-│   ├── usePosts.js       # usePosts(filters), useUpcomingDeadlines()
+│   ├── usePosts.js       # usePosts(filters), useUpcomingDeadlines() (Min-Heap ordered)
 │   ├── usePost.js        # usePost(id)
 │   ├── useSubjects.js    # useSubjects()
 │   ├── useNotes.js       # useNotes({ search, subjectId }) — notes gallery query
 │   ├── useCalendar.js    # useCalendarPosts(year, month)
 │   ├── useArchivePosts.js# useArchivePosts(filters, sortBy) — archived post query & multi-sort
 │   ├── useCollegeMaterial.js# useCollegeMaterial() — reactive college study material URL state & sync
+│   ├── useDSIntegration.js# useDSIntegration() — bridge hook connecting DS classes to real features
 │   └── useAdmin.js       # useAdmin() — auth state + login/logout + 24h lockout (instant demo bypass)
 ├── components/
 │   ├── layout/           # Header, Footer
-│   ├── ui/               # Badge, SearchBar, FilterBar, ArchiveSortBar, ThemeToggle, Modal, LoadingState, ErrorState, EmptyState
-│   ├── posts/            # PostCard, PostGrid, DeadlineBanner, PinnedSection, NoticesSection
+│   ├── ui/               # Badge, SearchBar, FilterBar, ArchiveSortBar (with FDS sort algorithm selector), ThemeToggle, Modal, LoadingState, ErrorState, EmptyState
+│   ├── posts/            # PostCard, PostGrid, DeadlineBanner (Priority Queue), PinnedSection, NoticesSection
 │   ├── notes/            # FolderCard, NoteCard — folder cards & gallery cards for externally-hosted study notes
+│   ├── ds/               # Showcase Visualizers (Complexity, Sorting, Search, Sparse, LL, Stack, Queue, BST, ExprTree, Graph)
 │   ├── calendar/         # CalendarGrid, CalendarWeekView, CalendarAgendaView, CalendarSidebar, CalendarControls
 │   └── admin/            # AdminLogin (with back-to-home escape hatch), AdminSidebar, PostForm, PostTable, SubjectManager, NotesManager (subject folders & notes CRUD), AdminCalendar, SettingsManager
 └── pages/
@@ -53,7 +68,8 @@ src/
     ├── CalendarPage.jsx  # Full-page deadlines calendar (Month, Week, Agenda) with sidebar inspector
     ├── ArchivePage.jsx   # Full-page past & archived events browser with search, filters & sorting
     ├── NotesPage.jsx     # Study notes gallery — links to externally-hosted HTML notes
-    ├── PostPage.jsx      # Full post detail view
+    ├── PostPage.jsx      # Full post detail view (with Doubly Linked List post navigation)
+    ├── DSShowcasePage.jsx# Interactive Data Structures Showcase for FDS Course Project (/ds)
     ├── AdminPage.jsx     # Admin dashboard with nested routes & live student preview
     └── NotFoundPage.jsx  # 404 page
 

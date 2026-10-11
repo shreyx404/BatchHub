@@ -12,6 +12,7 @@ console.log('====================================================\n');
 const testFiles = [
   path.join(__dirname, 'unit/fingerprint.test.js'),
   path.join(__dirname, 'unit/api.test.js'),
+  path.join(__dirname, 'unit/ds.test.js'),
   path.join(__dirname, 'security/admin-api.test.js'),
   path.join(__dirname, 'security/cron-auto-archive.test.js'),
   path.join(__dirname, 'security/discord.test.js'),

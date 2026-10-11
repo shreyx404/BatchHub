@@ -291,3 +291,32 @@
 | `DISCORD_PUBLIC_KEY` | Server only | Optional | Discord interaction signature verification |
 | `DISCORD_TOKEN` | Local script only | Optional | Bot token for command registration |
 | `DISCORD_APP_ID` | Local script only | Optional | Application ID for command registration |
+
+---
+
+## 5. Fundamentals of Data Structures (FDS) Course Project Requirements
+
+### 5.1 Syllabus Unit Alignment
+
+1. **Unit 1 (Complexity Analysis):**
+   - Pure JS metadata module (`complexity.js`) mapping best, average, worst time complexity and auxiliary space.
+   - Comparative growth rate mathematical equations (`GROWTH_FUNCTIONS`) for $O(1)$, $O(\log n)$, $O(n)$, $O(n \log n)$, $O(n^2)$, and $O(2^n)$.
+2. **Unit 2 (Arrays, Searching, Sorting, Sparse Matrix):**
+   - Hand-written implementations of Bubble, Selection, Insertion, Merge, and Quick Sort in `sorting.js` with frame-by-frame snapshot capture.
+   - Binary Search and Linear Search in `binarySearch.js` with low/mid/high range tracking.
+   - Coordinate Triplet representation in `sparseMatrix.js` storing $(row, col, value)$ with matrix transposition.
+   - Integration into `/archive` sorting dropdown with comparison/swap metrics.
+3. **Unit 3 (Linked Lists):**
+   - `SinglyLinkedList`, `DoublyLinkedList`, and `CircularLinkedList` in `linkedList.js`.
+   - Integration into `/post/:id` for $O(1)$ bidirectional post-to-post navigation via pointer hops.
+4. **Unit 4 (Stacks & Queues):**
+   - `Stack` with Shunting-Yard infix-to-postfix and postfix evaluator in `stack.js`.
+   - `Queue`, `CircularQueue` (modular ring buffer), and `MinHeap` Priority Queue in `queue.js` and `priorityQueue.js`.
+   - Integration of `MinHeap` in `useUpcomingDeadlines` to rank deadlines by urgency.
+5. **Unit 5 (Trees):**
+   - `BST` in `bst.js` supporting insert, search, delete, in-order, pre-order, post-order, and level-order traversals, plus range queries $[low..high]$.
+   - `ExpressionTree` in `expressionTree.js` constructed from postfix tokens via stack and evaluated recursively.
+6. **Unit 6 (Graphs):**
+   - `Graph` in `graph.js` supporting Adjacency List, Adjacency Matrix, Breadth-First Search (BFS), Depth-First Search (DFS), shortest path, and topological sort.
+   - Dynamic subject relationship graph (`buildSubjectGraph`) linking curriculum topics by shared tags.
+

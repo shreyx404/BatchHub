@@ -8,6 +8,7 @@ const CalendarPage = lazy(() => import('./pages/CalendarPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const ArchivePage = lazy(() => import('./pages/ArchivePage'));
 const NotesPage = lazy(() => import('./pages/NotesPage'));
+const DSShowcasePage = lazy(() => import('./pages/DSShowcasePage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/calendar" element={<CalendarPage />} />
         <Route path="/archive" element={<ArchivePage />} />
         <Route path="/notes" element={<NotesPage />} />
+        <Route path="/ds" element={<DSShowcasePage />} />
         <Route path="/post/:id" element={<PostPage />} />
         <Route path="/admin/*" element={<AdminPage />} />
         <Route path="*" element={<NotFoundPage />} />

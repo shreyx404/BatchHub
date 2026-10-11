@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { fetchPosts, fetchUpcomingDeadlines } from '../lib/api';
+import { MinHeap } from '../lib/ds';
 
 export function usePosts(filters = {}) {
   const [posts, setPosts] = useState([]);
@@ -51,7 +52,20 @@ export function useUpcomingDeadlines() {
     setLoading(true);
     fetchUpcomingDeadlines()
       .then((data) => {
-        if (!cancelled) setDeadlines(data || []);
+        if (!cancelled) {
+          if (data && data.length > 0) {
+            // Unit 4 Priority Queue: Min-Heap ordered by earliest due_date
+            const heap = new MinHeap((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime());
+            data.forEach((item) => heap.insert(item));
+            const sorted = [];
+            while (!heap.isEmpty()) {
+              sorted.push(heap.extractMin());
+            }
+            setDeadlines(sorted);
+          } else {
+            setDeadlines([]);
+          }
+        }
       })
       .catch(() => {
         if (!cancelled) setDeadlines([]);
