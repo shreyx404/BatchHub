@@ -180,6 +180,10 @@ BatchHub serves as a full course project for **Fundamentals of Data Structures (
 | **2** | **Doubly Linked List (DLL)** | Unit 3 (Linked Lists & Pointers) | **Bidirectional Post Navigation** (`/post/:id`) via `.prev` ⇄ `.next` node pointers | $O(1)$ pointer jumps between adjacent posts without array slicing or search scans |
 | **3** | **Sorting Algorithms** | Unit 2 (Sorting Techniques) | **Archive Sorting Engine** (`/archive`) via `ArchiveSortBar` selector | Runs Quick, Merge, Insertion, Selection, or Bubble Sort on real posts with live comparison & swap telemetry |
 
+### Academic Course Deliverables
+- 📄 **Project Report:** `BatchHub - FDS Course Project Report.docx` — Complete, publication-grade academic report formatted according to the department specification of Vishwakarma Institute of Technology, Pune (SPPU).
+- 📊 **Project Presentation:** `BatchHub_Presentation.pptx` — Official 8-slide course presentation covering Abstract, Program Flow, Syllabus Topics (Units I–VI), Out-of-Syllabus Engineering Architecture, Final Outputs, and Conclusions with blank student fields.
+
 ## Project Structure
 
 ```
